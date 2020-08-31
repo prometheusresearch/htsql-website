@@ -1,0 +1,125 @@
+*******************************
+  Snort Demo : Daily Overview
+*******************************
+
+.. demo::
+
+    <script type="text/javascript"
+        src="/htraf/htraf.js"
+        data-htsql-version="2"
+        data-htsql-prefix="/@snort">
+    </script>
+
+    <table>
+    <col width="50%"><col width="50%">
+    <tr>
+
+    <!-- Today's Events by Hour -->
+    <td>
+    <div style="width: 345px; height: 275px;"
+        data-htsql="/((event?date(timestamp)=today())^{hour(timestamp)})
+                        {*1 :as Hour, count(^) :as Events}"
+        data-type="line"
+        data-widget="chart"
+        data-yint="true"
+        data-title="Today's Events by Hour">
+    </div>
+    </td>
+
+    <!-- Today's Events by Protocol -->
+    <td>
+    <div style="width: 345px; height: 275px;"
+        data-htsql="/((event?date(timestamp)=today())^{date(timestamp)})
+                        {*1 :as Day,
+                         count(^.tcphdr) :as TCP,
+                         count(^.udphdr) :as UDP,
+                         count(^.icmphdr) :as ICMP}"
+        data-type="bar"
+        data-widget="chart"
+        data-yint="true"
+        data-title="Today's Events by Protocol">
+    </div>
+    </td>
+
+    </tr>
+    <tr>
+
+    <!-- Today's Events by Hour and Protocol -->
+    <td colspan="2">
+    <div style="width: 700px; height: 325px;"
+        data-htsql="/((event?date(timestamp)=today())^{hour(timestamp)})
+                        {*1 :as Hour,
+                         count(^.tcphdr) :as TCP,
+                         count(^.udphdr) :as UDP,
+                         count(^.icmphdr) :as ICMP}"
+        data-type="line"
+        data-widget="chart"
+        data-yint="true"
+        data-title="Today's Events by Hour and Protocol">
+    </div>
+    </td>
+
+    </tr>
+    <tr>
+
+    <td colspan="2">
+    <h3>Today's Top 10 Signatures</h3>
+    <table id="top10sig"
+        data-htsql="/((event?date(timestamp)=today())^{signature.sig_name})
+                        {*1 :as Signature,
+                         count(^)- :as '%23'}.limit(10)">
+    </table>
+    </td>
+
+    </tr>
+    <tr>
+
+    <td>
+    <h3>Today's Top 10 Source IPs</h3>
+    <table id="top10sip"
+        data-htsql="/((event?date(timestamp)=today())^{inet(iphdr.ip_src)})
+                        {*1 :as 'Source IP',
+                         count(^)- :as '%23'}.limit(10)">
+    </table>
+    </td>
+
+    <td>
+    <h3>Today's Top 10 Destination IPs</h3>
+    <table id="top10dip"
+        data-htsql="/((event?date(timestamp)=today())^{inet(iphdr.ip_dst)})
+                        {*1 :as 'Destination IP',
+                         count(^)- :as '%23'}.limit(10)">
+    </table>
+    </td>
+
+    </tr>
+    <tr>
+
+    <td>
+    <h3>Today's Events by Protocol</h3>
+    <table id="eventcount"
+        data-htsql="/((event?date(timestamp)=today())^{date(timestamp)})
+                        {count(^.tcphdr) :as TCP,
+                         count(^.udphdr) :as UDP,
+                         count(^.icmphdr) :as ICMP}">
+    </table>
+    </td>
+
+    <td>
+    <h3>Today's Events By Severity</h3>
+    <table id="hscount"
+        data-htsql="/{count(event?date(timestamp)=today()&signature.sig_priority='1')
+                        :as 'High Severity',
+                      count(event?date(timestamp)=today()&signature.sig_priority='2')
+                        :as 'Medium Severity',
+                      count(event?date(timestamp)=today()&signature.sig_priority='3')
+                        :as 'Low Severity'}">
+    </table>
+    </td>
+
+    </tr>
+    </table>
+
+.. **
+
+

@@ -1,0 +1,198 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTSQL 2.1 Development Update &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Open question: ambiguous names" href="discuss-ambiguous-names.html" />
+    <link rel="prev" title="HTSQL Roadmap for April, 2011" href="htsql-2011-april.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-2-1-development-update">
+<h1>HTSQL 2.1 Development Update<a class="headerlink" href="#htsql-2-1-development-update" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-03-20</em></p>
+<p>This is a development status update for HTSQL 2.1, including a
+statement of scope, notes on projections, database backends and
+numerous other features that we&#8217;re currently working on.</p>
+<div class="section" id="release-scope">
+<h2>Release Scope<a class="headerlink" href="#release-scope" title="Permalink to this headline">¶</a></h2>
+<p>The scope for the HTSQL 2.1 release is defined primarily around an
+end-user deliverable &#8211; the ability to succinctly translate a sample of
+complex SQL queries from the financial industry.  Along these lines, the
+primary gaps in HTSQL that we identified were:</p>
+<blockquote>
+<div><ul class="simple">
+<li>support for <em>projections</em>, the ability for a each row in the result
+to represent distinct values from a set of expressions;</li>
+<li>support for <em>detachment</em>, so that we can compare a row-value of
+a column to an aggregate on that same column;</li>
+<li>support for <em>macros</em>, parameterized logic fragments that can be
+declared once and re-used several times in a given query; and</li>
+<li>an optimization phase so that sets of similar aggregate expressions
+can be converted into a single subquery frame using conditional logic
+instead of requiring a subquery for each aggregate.</li>
+</ul>
+</div></blockquote>
+<p>Besides this core objective, we have several internal refactor goals:</p>
+<blockquote>
+<div><ul class="simple">
+<li>review semantics of <tt class="docutils literal"><span class="pre">select</span></tt> and <tt class="docutils literal"><span class="pre">filter</span></tt> operators and
+provide a functional syntax equivalent to aid composability;</li>
+<li>review name lookup rules and mechanisms to refer to components
+from prior query contexts</li>
+</ul>
+</div></blockquote>
+<p>Finally, because of user feedback, we added two more objectives:</p>
+<blockquote>
+<div><ul class="simple">
+<li>support for <tt class="docutils literal"><span class="pre">datetime</span></tt> data type and corresponding operators;</li>
+<li>support for MySQL, Oracle and MS SQL Server backends.</li>
+</ul>
+</div></blockquote>
+<p>We also intend to expand the documentation &#8211; many features in the 2.0
+release weren&#8217;t documented.  We hope to fill in this gap and document all
+of the new features we&#8217;re introducing.</p>
+<p>While there are lots of other things we could have put in this release,
+it&#8217;s already too big, so many other high-value features will wait for
+the next release.  Two features we will reluctantly omit are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>a mechanism to override the HTSQL catalog to exclude/rename tables
+and other introspected meta-data objects;</li>
+<li>any sort of introspection, ie, listing tables available in HTSQL,
+or columns that you can in the database;</li>
+</ul>
+</div></blockquote>
+<p>In short... due to feature creep, this release is quite substantial and
+will take some time to specify, complete, document and test.</p>
+</div>
+<div class="section" id="current-status">
+<h2>Current Status<a class="headerlink" href="#current-status" title="Permalink to this headline">¶</a></h2>
+<p>At this point, support for projections, macros, and other backends is
+implemented &#8211; but all of these features lack documentation and full
+regression coverage tests.  We also reviewed name lookup rules (to
+support macros) and have adjusted the implementation to support new
+behavior that is required.</p>
+<p>What&#8217;s up next is documentation for projections and macros, support
+for datetime/timestamp, and several other features and changes.</p>
+<p>Finally, we&#8217;ve added the optimization phase to the translator, but it
+doesn&#8217;t yet perform the specific query transformation we have in mind.
+This, other optimizations and refactors after low-level code review
+will take the final month of the release cycle.</p>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/htsql-2011-march";
+var disqus_title = "HTSQL 2.1 Development Update";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

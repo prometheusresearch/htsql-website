@@ -1,0 +1,309 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Discussion on Catalog &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Discussion on Commands" href="discuss-commands.html" />
+    <link rel="prev" title="Introducing References" href="introducing-references.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="discussion-on-catalog">
+<h1>Discussion on Catalog<a class="headerlink" href="#discussion-on-catalog" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-08-09</em></p>
+<p>This is a brainstorm topic on catalog structure, extensions, and access.
+On startup, HTSQL introspects the database to find catalog information.
+Sometimes this information needs to be augmented with additional detail,
+including missing information, renaming links, providing for calculated
+attributes and custom application data.</p>
+<div class="section" id="basics">
+<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
+<p>So, by Catalog we mean both the API for access and
+internal Entities: currently Schema, Table &amp; Column.</p>
+<p>There are two aspects.  Structurally, Plugins can add
+entities and attributes of entities.  The content of
+the Catalog structure would be db introspection,
+catalog configuration overrides, or converters from
+ORMs such.</p>
+<p>At the HTSQL level, we&#8217;re assuming an unmanaged,
+product based approach with YAML configuration.  We
+are leaving it to framework adapters and higher-level
+automation tools to make it more &#8220;user friendly&#8221;.</p>
+<p>The catalog that is configured &amp; used to generate SQL
+is not the same information that is returned by an
+introspection operation.  Although they are tightly
+related.  Since you can&#8217;t access SQL entities
+directly via HTSQL, it makes no point to permit them
+to be queried.</p>
+<p>Instead, the introspection model consists of nodes
+and arcs.  In this view, a &#8220;table&#8221; is really an arc
+from the root node to an node representing the given
+table; a foreign key from a table to another table
+is also an arc, creating a unified model.  Columns
+are encapsulated as node attributes, and actual
+database type of a column is only realized via the
+HTSQL Domain.</p>
+</div>
+<div class="section" id="example-column-label">
+<h2>Example: Column Label<a class="headerlink" href="#example-column-label" title="Permalink to this headline">¶</a></h2>
+<p>For example, let&#8217;s take a column label attribute that
+would be attached to the Column entity.  This would
+be kind of &#8220;entity plugin&#8221;, it would override the
+construction of Column objects to add the <tt class="docutils literal"><span class="pre">label</span></tt>
+attribute.  This plugin would also have its own
+configuration file that would <em>override</em> any
+&#8220;introspected&#8221; values.  We&#8217;d imagine this would
+simply be a mapping of <tt class="docutils literal"><span class="pre">schema.table.column</span></tt>
+identifiers onto the actual labels.  Perhaps tedious,
+but functional and obvious.</p>
+<p>It would then be the task of any introspector plugin
+to fill in this <tt class="docutils literal"><span class="pre">label</span></tt> attribute if it knew of a
+strategy to do so.  For example a Django configurator
+that would run instead of the default introspector
+might grab the title from the corresponding ORM
+Entity objects.  We assume that there wouldn&#8217;t be
+more than one configurator plugin active.</p>
+</div>
+<div class="section" id="use-cases">
+<h2>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h2>
+<p><em>Calculations</em></p>
+<blockquote>
+<div>How do we add a calculation to the server?  We
+could have it be done via configuration only, but
+this would limit it only to administration.  This
+could be done via a UserCalc plugin that uses YAML
+and/or SQLite storage; then on restart/refresh load
+them.  How do we do this incrementally?</div></blockquote>
+<p><em>Extra Attributes</em></p>
+<blockquote>
+<div>User interface tools may wish to add attributes, such
+as a column label or coordinates for layout.  How are
+these stored, updated, queried, etc.</div></blockquote>
+<p><em>Extra Structures</em></p>
+<blockquote>
+<div>One may even wish to have new structures, such as <tt class="docutils literal"><span class="pre">layout</span></tt>
+with relations to other entities.  Another example of
+this may be additional full-text search data which
+may need to augment existing catalog data.</div></blockquote>
+</div>
+<div class="section" id="concerns">
+<h2>Concerns<a class="headerlink" href="#concerns" title="Permalink to this headline">¶</a></h2>
+<p><em>Refresh</em></p>
+<blockquote>
+<div>Do we have any way to update the catalog at runtime
+without restarting the server.  Perhaps you don&#8217;t need
+refresh, since this operation is the <em>primary</em> cost of
+startup and hence restarting may be sufficient.
+One problem is dynamically adding a calculation for
+a user session or global definitions incrementally.
+Ability to update catalog on fly without restarting?</div></blockquote>
+<p><em>Introspect</em></p>
+<blockquote>
+<div>Do we need to introspect on every rebuild?  So in 1.0
+we started with a two-phase process.  The first phase,
+we introspected to make a catalog configuration file
+(in YAML) and second page, we used the configuration
+file to load without doing introspection again.  With
+plugins we had other options.</div></blockquote>
+<p><em>Re-Introspection</em></p>
+<blockquote>
+<div>If you cache introspection and/or attach configuration
+data to it, what happens when you re-introspect and
+a table is renamed, etc.  For PostgreSQL, you can know
+if a rename happened, since the pg_class OID is same;
+but this shouldn&#8217;t be pg specific.</div></blockquote>
+</div>
+<div class="section" id="missing-information">
+<h2>Missing Information<a class="headerlink" href="#missing-information" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes the information in an introspected catalog lacks
+detail that a user would wish.  Perhaps it&#8217;s not setup in the
+database such as a missing foreign key constraint, or such
+information isn&#8217;t available such as MySQL&#8217;s MyISAM that
+completely lacks foreign keys.  It&#8217;s also possible that
+permissions arn&#8217;t setup or are not a database feature.</p>
+<p>HTSQL uses candidate keys to provide deterministic output,
+joining two instances of the same table for various query
+construction needs.  A candidate key is defined as the primary
+key, if it exists, of the first unique key where all columns
+are not null.  If a candidate key is not provided, there is a
+weak fallback: a listing of a table will order by all columns
+and many query constructions become errors.  If the candidate
+key is invalid (there is data that violates the constraint)
+then the HTSQL processor will not behave properly.</p>
+<p>HTSQL uses foreign keys to connect tables; where each foreign
+key creates a forward and a backward link.  If the target of a
+foreign key is a candidate key, the link is singular;
+otherwise, it is assumed to be plural.  In HTSQL, link pairs
+could also be arbitrary joins, partial associations where the
+links in both directions are plural.</p>
+</div>
+<div class="section" id="proposed-format">
+<h2>Proposed Format<a class="headerlink" href="#proposed-format" title="Permalink to this headline">¶</a></h2>
+<p>A proposed catalog format for providing missing &amp; augmented
+information (such as arbitrary non-foreign key joins).  It
+could look something like:</p>
+<div class="highlight-python"><pre>---
+catalog.missing:
+  unique-keys:
+  - schema: foo
+    table: bar
+    columns: [ a, b ]
+    is-primary: true
+  foreign-keys:
+  - origin:
+      schema: foo
+      table: source
+      columns: [c1, c2]
+    target:
+      schema: foo
+      table: dest
+      columns: [d, e]
+  not-null:
+  - schema: foo
+    table: bar
+    columns: [c1, c2]
+  restrict:
+  - schema: skip_this_schema
+  - schema: a_schema
+    table: skip_this_table
+  - schema: a_schema
+    table: *
+    columns: [_history, _last_updated]</pre>
+</div>
+<p>An issue with this format is that arbitrary link pairs that
+are either dirty, non-enforceable foreign keys or partial
+link pairs (many-to-many) would be included in the foreign
+key section, which is a bit misleading.</p>
+</div>
+<div class="section" id="naming-links">
+<h2>Naming Links<a class="headerlink" href="#naming-links" title="Permalink to this headline">¶</a></h2>
+<p>For link from root scope to a given table, using the table
+name works except in a few cases.  Trivial (and rare) case
+is where the table name is not unique after normalization due
+to collisions or two tables differing by schema.  Other cases
+are multi-column foreign keys that can&#8217;t be named after a
+particular column.  Still other cases include ambiguous
+reverse links (by default named after the target table) where
+there are two or more possible reverse links.  Finally, the
+default link names simply may not be intuitive or helpful.</p>
+<p>In these situations we need a way to provide names or override
+the auto-generated names.   It&#8217;s not clear at this point where
+these would go in the configuration file.  Should they be a
+separate section? or should they augment foreign key detail?</p>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/discuss-catalog";
+var disqus_title = "Discussion on Catalog";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

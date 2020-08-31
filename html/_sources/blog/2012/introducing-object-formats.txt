@@ -1,0 +1,118 @@
+******************************
+  Introducing Object Formats
+******************************
+
+.. blogentry::
+   :date: 2012-03-16
+   :author: cce
+
+With the forthcoming 2.3.1 release we will be adding an XML
+output and revising our default JSON format.  These output 
+formats are now designed for schema-aware applications.  
+
+Our generic formatter, for user interfaces
+handling arbitrary queries, is now called ``/:raw``.
+
+.. blogcut::
+
+Background
+----------
+
+In prior versions of HTSQL, we only supported tabular output.
+The headers were sent first, and then correlated data was
+sent as lists of tuples.  In this release, as we introduce nested
+records and segments, this structure is no longer sufficient.
+
+With our new ``/:xml`` format, field names are used for element
+tags and data is represented as element content.  The updated 
+``/:json`` format now works in a similar manner; it now uses
+table, link and column names as dictionary keys.
+
+For more background information, you could read
+:doc:`introducing-records`.  We may later reintroduce a JSON
+tabular format (``/:jsv``), similar to ``/:csv``.
+
+
+XML Format
+----------
+
+The ``/:xml`` format presents query output as XML.
+
+.. htsql:: /school /:xml
+   :plain:
+   :cut: 12
+
+Nested records are represented as nested XML elements:
+
+.. htsql:: /department{school,*} /:xml
+   :plain:
+   :cut: 12
+
+When a *tag* cannot be determined for a field, it is named
+with an underscored 1-based index:
+
+.. htsql:: /school{name, count(department), count(program)} /:xml
+   :plain:
+   :cut: 7
+
+When a *tag* cannot be determined for a top-level list, a
+single underscore is used:
+
+.. htsql:: /count(school) /:xml
+   :plain:
+   :cut: 4
+
+
+JSON Format
+-----------
+
+The ``/:json`` format presents query output as JSON.
+
+.. htsql:: /school /:json
+   :plain:
+   :cut: 12
+
+Nested records are represented as nested objects:
+
+.. htsql:: /department{school,*} /:json
+   :plain:
+   :cut: 12
+
+When a *tag* cannot be determined for a field, it is keyed
+using a numeric 0-based index:
+
+.. htsql:: /school{name, count(department), count(program)} /:json
+   :plain:
+   :cut: 7
+
+When the *tag* cannot be determined for the top-level list,
+a "0" key is used:
+
+.. htsql:: /count(school) /:json
+   :plain:
+   :cut: 4
+
+In our JSON format, the top-level dictionary will always have
+a single key.
+
+Tag Names
+---------
+
+By default, *tags* used for XML element names or JSON keys
+come from the HTSQL system catalog.  These are normalized SQL
+table and column names, or configuration overrides.  Tags can
+also be specified using the assignment (``:=``) operator:
+
+.. htsql:: /school{name, dept_count := count(department)} /:xml
+   :plain:
+   :cut: 6
+
+  
+The ``:as`` decorator could be used to specify *tags* when
+its argument is an unquoted identifier.
+
+.. htsql:: /school{name, count(department) :as dept_count} /:xml
+   :hide:
+
+.. warning::  Using ``:as`` to set tag name is not yet implemented.
+

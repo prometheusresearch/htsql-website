@@ -1,0 +1,220 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DonorsChoose : Top Ten Teachers &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Gallery" href="../index.html" />
+    <link rel="next" title="Snort Demo : Daily Overview" href="../snort/overview.html" />
+    <link rel="prev" title="DonorsChoose : Donations by Subject" href="subject.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="donorschoose-top-ten-teachers">
+<h1>DonorsChoose : Top Ten Teachers<a class="headerlink" href="#donorschoose-top-ten-teachers" title="Permalink to this headline">¶</a></h1>
+<p>Please choose a city, then a school below, and finally a teacher in
+that school to list proposed and funded projects.</p>
+<div class="demo-block compound">
+<div class="demo-area compound-first"><script type="text/javascript"
+    src="/htraf/htraf.js"
+    data-htsql-version="2"
+    data-htsql-prefix="/@donorschoose">
+</script>
+
+<h3>Top Five Cities</h3>
+<table id="city" width="100%"
+    data-hide-column-0="yes"
+    data-htsql="/city{
+                    id,
+                    city :as City,
+                    state :as State,
+                    sum(school.project.total_donations)- :as Donations
+                 }.limit(5)">
+</table>
+
+<h3>Top Five Schools</h3>
+<table id="school" width="100%"
+    data-hide-column-0="yes"
+    data-htsql="/(school?cityid=$city){
+                    _schoolid,
+                    ncesid :as NCESID,
+                    district :as District,
+                    sum(project.total_donations)- :as Donations
+                 }.limit(5)"
+    data-ref="city">
+</table>
+
+<h3>Top Ten Teachers</h3>
+<table id="teacher" width="100%"
+    data-hide-column-0="yes"
+    data-htsql="/(teacher.define(
+                    school_projects := project?_schoolid=$school)
+                  ?exists(school_projects)){
+                    _teacher_acctid,
+                    count(school_projects) :as 'No. Projects',
+                    sum(school_projects.total_donations)- :as Donations
+                 }.limit(10)"
+    data-ref="school">
+</table>
+
+<h3>Projects for that Teacher!</h3>
+<table id="project" width="100%"
+    data-htsql="/project{primary_focus_subject :as Subject,
+                         essay.title :as Title,
+                         funding_status :as 'Funding Status',
+                         total_donations- :as Donations}
+                 ?_teacher_acctid=$teacher&_schoolid=$school"
+    data-ref="teacher school">
+</table></div><tt class="demo-switch compound-middle docutils literal"><span class="pre">[-</span> <span class="pre">view</span> <span class="pre">source]</span></tt><div class="demo-source compound-last highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span>
+    <span class="na">src=</span><span class="s">&quot;/htraf/htraf.js&quot;</span>
+    <span class="na">data-htsql-version=</span><span class="s">&quot;2&quot;</span>
+    <span class="na">data-htsql-prefix=</span><span class="s">&quot;/@donorschoose&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;h3&gt;</span>Top Five Cities<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;city&quot;</span> <span class="na">width=</span><span class="s">&quot;100%&quot;</span>
+    <span class="na">data-hide-column-0=</span><span class="s">&quot;yes&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/city{</span>
+<span class="s">                    id,</span>
+<span class="s">                    city :as City,</span>
+<span class="s">                    state :as State,</span>
+<span class="s">                    sum(school.project.total_donations)- :as Donations</span>
+<span class="s">                 }.limit(5)&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+
+<span class="nt">&lt;h3&gt;</span>Top Five Schools<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;school&quot;</span> <span class="na">width=</span><span class="s">&quot;100%&quot;</span>
+    <span class="na">data-hide-column-0=</span><span class="s">&quot;yes&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/(school?cityid=$city){</span>
+<span class="s">                    _schoolid,</span>
+<span class="s">                    ncesid :as NCESID,</span>
+<span class="s">                    district :as District,</span>
+<span class="s">                    sum(project.total_donations)- :as Donations</span>
+<span class="s">                 }.limit(5)&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;city&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+
+<span class="nt">&lt;h3&gt;</span>Top Ten Teachers<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;teacher&quot;</span> <span class="na">width=</span><span class="s">&quot;100%&quot;</span>
+    <span class="na">data-hide-column-0=</span><span class="s">&quot;yes&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/(teacher.define(</span>
+<span class="s">                    school_projects := project?_schoolid=$school)</span>
+<span class="s">                  ?exists(school_projects)){</span>
+<span class="s">                    _teacher_acctid,</span>
+<span class="s">                    count(school_projects) :as &#39;No. Projects&#39;,</span>
+<span class="s">                    sum(school_projects.total_donations)- :as Donations</span>
+<span class="s">                 }.limit(10)&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;school&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+
+<span class="nt">&lt;h3&gt;</span>Projects for that Teacher!<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;project&quot;</span> <span class="na">width=</span><span class="s">&quot;100%&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/project{primary_focus_subject :as Subject,</span>
+<span class="s">                         essay.title :as Title,</span>
+<span class="s">                         funding_status :as &#39;Funding Status&#39;,</span>
+<span class="s">                         total_donations- :as Donations}</span>
+<span class="s">                 ?_teacher_acctid=$teacher&amp;_schoolid=$school&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;teacher school&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

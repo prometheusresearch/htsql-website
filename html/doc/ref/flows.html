@@ -1,0 +1,572 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Data Flows &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Reference" href="index.html" />
+    <link rel="next" title="Naming Scopes" href="scopes.html" />
+    <link rel="prev" title="Data Model" href="model.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="data-flows">
+<h1>Data Flows<a class="headerlink" href="#data-flows" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#scalar-expressions" id="id1">Scalar Expressions</a></li>
+<li><a class="reference internal" href="#navigation" id="id2">Navigation</a></li>
+<li><a class="reference internal" href="#filtering" id="id3">Filtering</a></li>
+<li><a class="reference internal" href="#aggregates" id="id4">Aggregates</a></li>
+<li><a class="reference internal" href="#projection" id="id5">Projection</a></li>
+</ul>
+</div>
+<p>A central concept in HTSQL is <em>data flow</em>, a sequence of homogeneous
+values.</p>
+<p>HTSQL is a data flow transformation language.  Every HTSQL expression
+operates on flows; that is, it accepts an <em>input flow</em> and transforms it
+into an <em>output flow</em>.</p>
+<p>(diagram: input flow -&gt; expression -&gt; output flow)</p>
+<p>The initial input flow consists of a single empty record.  HTSQL
+processor interprets the given HTSQL query as a sequence (or rather a
+directed graph) of flow operations, which it applies one by one.  The
+resulting flow is then displayed to the user in a tabular form.</p>
+<p>Different operations affect the flow in various ways: multiply it, or
+remove elements from it, apply a scalar function to each element, etc.
+In the next sections, we discuss different types of flow operations.</p>
+<div class="section" id="scalar-expressions">
+<h2><a class="toc-backref" href="#id1">Scalar Expressions</a><a class="headerlink" href="#scalar-expressions" title="Permalink to this headline">¶</a></h2>
+<p>A simplest example of a flow operation is an application of some
+expression to each value in a flow.  The output flow consists of a
+results of the expression.</p>
+<p>That kind of expression does not change the number of elements in the
+flow; we call such expressions <em>scalar</em>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(3%2B4)*6" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(3%2B4)*6" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="m">3</span><span class="o">+</span><span class="m">4</span><span class="p">)</span><span class="o">*</span><span class="m">6</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-integer-type">42</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this example, a scalar expression <tt class="docutils literal"><span class="pre">(3+4)*6</span></tt> is applied to the
+initial flow; the value of this expression forms the resulting flow.</p>
+<p>(diagram: [] -&gt; (3+4)*6 -&gt; 42)</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20count(department)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20count(department)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">count(department)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">edu</td>
+<td class="htsql-integer-type">2</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">eng</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this example, two scalar expressions <tt class="docutils literal"><span class="pre">code</span></tt> and
+<tt class="docutils literal"><span class="pre">count(department)</span></tt> are applied to the flow consisting of <em>school</em>
+records.  For each school entity, they extract the value of the
+attribute <tt class="docutils literal"><span class="pre">code</span></tt> and the number of associated departments.</p>
+<dl class="docutils">
+<dt>(diagram: [art], [bus], [edu], [eng], ...</dt>
+<dd>-&gt; {&#8216;art&#8217;,2}, {&#8216;bus&#8217;,3}, {&#8216;edu&#8217;,2}, {&#8216;eng&#8217;,4}, ...)</dd>
+</dl>
+<p>A scalar expression is an example of a <em>singular</em> expression; one which
+does not increase the number of elements in the flow, as opposed to a
+<em>plural</em> expression, which may produce more output elements than in the
+input flow.</p>
+</div>
+<div class="section" id="navigation">
+<h2><a class="toc-backref" href="#id2">Navigation</a><a class="headerlink" href="#navigation" title="Permalink to this headline">¶</a></h2>
+<p>Navigation is an operation of selecting the initial record class or
+traversing a link.</p>
+<p>When used in the root scope, a class name produces a flow of all records
+from the class.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="69%" />
+<col width="19%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">edu</td>
+<td class="htsql-text-type">College of Education</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">eng</td>
+<td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>(diagram: [] -&gt; (school) -&gt; [art], ...)</p>
+<p>In a class scope, the name of a link produces the flow consisting of
+associated records from the target class.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.department" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.department" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nb">department</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="56%" />
+<col width="28%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">stdart</td>
+<td class="htsql-text-type">Studio Art</td>
+<td class="htsql-text-type">art</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">acc</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">econ</td>
+<td class="htsql-text-type">Economics</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">mm</td>
+<td class="htsql-text-type">Management &amp; Marketing</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>(diagram: [] -&gt; (school) -&gt; [art], ... -&gt; (department) -&gt; [arthis], ...)</p>
+<p>As in the previous example, <tt class="docutils literal"><span class="pre">school</span></tt> generates a flow of <em>school</em>
+records.  Then we traverse a link <tt class="docutils literal"><span class="pre">school.department</span></tt>.  That each, for
+each school record in the input flow, we find the associated
+<em>department</em> records, the output flow consists of all <em>department</em>
+records combined.</p>
+<p>A traversal operation is singular or plural depending on whether the
+respective link is singular or plural.</p>
+</div>
+<div class="section" id="filtering">
+<h2><a class="toc-backref" href="#id3">Filtering</a><a class="headerlink" href="#filtering" title="Permalink to this headline">¶</a></h2>
+<p>A <em>sieve</em> expression filters the input flow leaving only those elements
+which satisfy the given condition.</p>
+<p>A sieve expression takes one argument: a scalar logical expression
+called the <em>filter</em>.  It applies the filter to each element of the input
+flow.  The output flow consists of those elements of the input flow for
+which the filter is evaluated to <em>TRUE</em> value.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school?count(department)&gt;3" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school?count(department)&gt;3" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">?</span><span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)</span><span class="o">&gt;</span><span class="m">3</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="74%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">eng</td>
+<td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">la</td>
+<td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">mus</td>
+<td class="htsql-text-type">School of Music &amp; Dance</td>
+<td class="htsql-text-type">south</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">ns</td>
+<td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>(diagram)</p>
+<p>In this example, the sieve expression evaluates a filter condition
+<tt class="docutils literal"><span class="pre">count(department)&gt;3</span></tt> for each record from the <em>school</em> class; those
+records for which this condition is valid generate the output of the
+query.</p>
+<p>A <em>sort</em> expression reorders elements in the flow according to a given
+argument.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.sort(name%2B)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.sort(name%2B)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="nb">name</span><span class="o">+</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="74%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">edu</td>
+<td class="htsql-text-type">College of Education</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">ph</td>
+<td class="htsql-text-type">Public Honorariums</td>
+<td class="htsql-text-type htsql-null-val"></td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">la</td>
+<td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>(diagram)</p>
+<p>In this example, the <em>school</em> records are ordered in the ascending order
+with respect to the value of <tt class="docutils literal"><span class="pre">name</span></tt> attribute.</p>
+<p>A <em>truncation</em> operation makes a slice of the input flow.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.limit(3)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.limit(3)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="69%" />
+<col width="19%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">edu</td>
+<td class="htsql-text-type">College of Education</td>
+<td class="htsql-text-type">old</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>(diagram)</p>
+<p>In this case, we take the top 3 records from the <em>school</em> class.</p>
+</div>
+<div class="section" id="aggregates">
+<h2><a class="toc-backref" href="#id4">Aggregates</a><a class="headerlink" href="#aggregates" title="Permalink to this headline">¶</a></h2>
+<p>An aggregate function converts a plural expression into a scalar.</p>
+<p>The argument of an aggregate function must be a plural expression.  Then
+for each element of the input flow, the aggregate evaluates the
+respective sub-flow and applies a set function to the result to generate
+a scalar value.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/count(school)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/count(school)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-integer-type">9</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>(diagram)</p>
+<p>In this example, <tt class="docutils literal"><span class="pre">count()</span></tt> aggregates produces the number of elements
+in the flow generated by expression <tt class="docutils literal"><span class="pre">school</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{code,%20max(course.credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{code,%20max(course.credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">max</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">max(course.credits)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">6</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">6</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">astro</td>
+<td class="htsql-integer-type">5</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">be</td>
+<td class="htsql-integer-type">8</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>(diagram)</p>
+<p>In this example, <tt class="docutils literal"><span class="pre">max(course.credits)</span></tt> starts with evaluating the flow
+<tt class="docutils literal"><span class="pre">department.course.credits</span></tt>.  Then for each <em>department</em> record of the
+input flow, <tt class="docutils literal"><span class="pre">max()</span></tt> finds the maximum value in the respective
+sub-flow.</p>
+</div>
+<div class="section" id="projection">
+<h2><a class="toc-backref" href="#id5">Projection</a><a class="headerlink" href="#projection" title="Permalink to this headline">¶</a></h2>
+<p>A projection expression takes a scalar argument called the <em>kernel</em>.
+The output flow of projection consists of all unique values of the
+kernel as it runs over the input flow.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school^campus" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school^campus" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">^</span><span class="nb">campus</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">north</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">south</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>(diagram)</p>
+<p>The output of this query consists of all distinct values of
+<tt class="xref py py-obj docutils literal"><span class="pre">school.campus</span></tt> attribute.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

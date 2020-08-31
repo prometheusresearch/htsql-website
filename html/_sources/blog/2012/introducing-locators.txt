@@ -1,0 +1,168 @@
+************************
+  Introducing Locators
+************************
+
+.. blogentry::
+   :date: 2012-06-27
+   :author: cce
+
+With HTSQL *locators*, you may easily reference a single
+record in a database table.  This feature has two parts:
+
+* an ``id()`` function to return a record ID;
+* a ``[]`` syntax for referencing a record by ID.
+
+We created locators to shorten common filtering cases and
+make it possible to access individual records without knowing
+the primary key structure of the table.
+
+Locators will be included in our HTSQL 2.3.1 release.
+
+.. blogcut::
+
+Background
+==========
+
+In database applications, one often wishes to retrieve and
+manipulate a single record by a natural key provided by a
+user.  For example, in our university database, to return the
+the "School of Natural Sciences", you could write:
+
+.. htsql:: /school?code='ns'
+
+This approach has three disadvantages.  First, you must
+remember that the primary key column for the ``school`` table
+is ``code``.  Second, even though it might be filtered to
+return at most one record, a prudent application developer
+should assert only one record is returned.  Third, if the
+natural key structure is complex, filter construction is
+unwieldy and not easy to visually inspect.
+
+For a specific database application, this could be solved by
+convention.  Each table in the schema would have an integer
+``id`` column that is always the primary key.  This solves
+these issues: filter construction is easy, you know these
+filters are singular, and the index is always simple.
+However, this approach requires schema convention and you
+have to give up on access via natural key.
+
+Since we intend HTSQL to be usable on top of any existing
+database schema, we have to solve this problem another way.
+
+Overview
+========
+
+HTSQL's *locator* mechanism uses an array index metaphor to
+provide succinct syntax for accessing individual records.
+For example, the following query returns the school with
+*code* ``ns``:
+
+.. htsql:: /school[ns]
+
+This syntax is more than a replacement for the ``?code='ns'``
+predicate.  For someone looking at the query, you know
+immediately that either zero or one records will be returned.
+Furthermore, they would know ``ns`` is the *entity ID* of the
+record requested; even if they might not know it comes from
+the ``code`` column.
+
+To list the entity IDs, you could use the ``id()`` function
+which returns the corresponding entity ID for each record.
+For the course table, ``id()`` returns an entity ID
+consisting of the department code and course number:
+
+.. htsql:: /course{id(), department_code, no, title}
+   :cut: 3
+
+In particular, ``acc.100``, locates the course that
+corresponds to "Practical Bookkeeping".   This value could
+then be parroted back to retrieve the entire record:
+
+.. htsql:: /course[acc.100]
+
+The lovely thing about locators is that the entity IDs are
+not only human readable, but act as opaque identifiers.  In
+this manner, generic applications could be written without
+needing to know the key structure of each and every table in
+the database schema.
+
+Usage
+=====
+
+Locators are particularly useful for navigating through the
+database.  For example, if you've already selected
+``/school[ns]`` you could list related departments by
+appending ``.department``.
+
+.. htsql:: /school[ns].department
+   :cut: 3
+
+In combination with the unlink ``@`` operator, you could
+include values from any arbitrary record in an expression.
+For example, you might wish to show all schools that are on
+the same campus as the "School of Natural Sciences":
+
+.. htsql:: /school?campus=@school[ns].campus
+
+This expression works because the result of a locator is
+singular.  Hence, ``@school[ns].campus`` could be thought of
+as a scalar value (``'old'``) for evaluation purposes.
+
+Details
+=======
+
+This feature set includes three core concepts:
+
+* An *entity ID* is a sequence of labels separated by a period
+  (``.``), each label is a value for an identifying field;
+
+* The *locator*, indicated with brackets (``[]``), is used
+  to return a single record from a database table indexed by
+  this entity ID; and
+
+* The *``id()``* function retrieves the entity ID for each
+  record in a table.
+
+In general, HTSQL derives the entity ID structure from
+``PRIMARY KEY``.  In cases where the ``PRIMARY KEY`` for a
+table contains a ``FOREIGN KEY`` relationship to another
+table, the locator's structure includes the ID of the
+referenced entity.
+
+For example, ``program`` IDs are composed of two parts: the
+ID of the program's school, and the value of the program's
+code column.
+
+.. htsql:: /school[ns].program{id(), *}
+   :cut: 3
+
+.. **
+
+To address a specific program by its ID, we write:
+
+.. htsql:: /program[ns.uastro]
+
+In complex database schemas, where an entity's ID may be
+composed of multiple labels, you may optionally use
+parentheses (``()``) for grouping.  For example, the
+``class`` ID is a combination of the ``course`` ID, the
+``semester`` ID and attribute ``section``.  The ``course``
+and ``semester`` entities also have composite IDs, so we use
+``()`` to visually separate them:
+
+.. htsql:: /class{id(), course{id()}, semester{id()}, section}
+   :cut: 3
+
+Locator labels are literal values and could be unquoted or
+quoted.  Unquoted labels are limited to alphanumeric
+characters and hyphen (``-``).  Quoted labels could represent
+any values:
+
+.. htsql:: /program['ns'.'uastro']
+
+In future efforts, we will add relative locations, comparison
+of ``id()`` values, and ``$reference`` substitution inside a
+locator.
+
+.. vim: set textwidth=61:
+

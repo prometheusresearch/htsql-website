@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0"><channel><title>HTSQL news</title><link>http://htsql.org/</link><description>News and tutorials for HTSQL, a database query language</description><lastBuildDate>Sun, 03 Feb 2013 08:15:05 GMT</lastBuildDate><generator>PyRSS2Gen-1.0.0</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>HTSQL 2.3.3 is released</title><link>http://htsql.org/blog/2013/htsql-2.3.3.html</link><description>&lt;div class="compound"&gt;
+&lt;p&gt;We are proud to announce a new HTSQL release in the 2.3 development series.&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2013/htsql-2.3.3.html</guid><pubDate>Fri, 01 Feb 2013 00:00:00 GMT</pubDate></item><item><title>HTSQL 2.3.2 is released</title><link>http://htsql.org/blog/2012/htsql-2.3.2.html</link><description>&lt;div class="compound"&gt;
+&lt;p&gt;We announce a minor bugfix release of HTSQL in the 2.3 development series.
+This release fixes a loading problem with HTSQL Shell.&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2012/htsql-2.3.2.html</guid><pubDate>Fri, 24 Aug 2012 00:00:00 GMT</pubDate></item><item><title>HTSQL 2.3.1 is released</title><link>http://htsql.org/blog/2012/htsql-2.3.1.html</link><description>&lt;div class="compound"&gt;
+&lt;p class="compound-first"&gt;We are proud to announce a new HTSQL release in the 2.3 development series.
+This release adds a few major features including &lt;a class="reference internal" href="introducing-records.html"&gt;&lt;em&gt;nested records&lt;/em&gt;&lt;/a&gt;, &lt;a class="reference internal" href="introducing-nested-segments.html"&gt;&lt;em&gt;nested subqueries&lt;/em&gt;&lt;/a&gt;,
+&lt;a class="reference internal" href="introducing-locators.html"&gt;&lt;em&gt;locators&lt;/em&gt;&lt;/a&gt;, &lt;a class="reference internal" href="introducing-object-formats.html"&gt;&lt;em&gt;new&lt;/em&gt;&lt;/a&gt;
+and &lt;a class="reference internal" href="improved-visual-display.html"&gt;&lt;em&gt;revamped&lt;/em&gt;&lt;/a&gt; output formats,
+&lt;a class="reference internal" href="introducing-django-gateway.html"&gt;&lt;em&gt;HTSQL-Django gateway&lt;/em&gt;&lt;/a&gt;, and more.&lt;/p&gt;
+&lt;p class="compound-last"&gt;In this release, we removed support for Python 2.5.  Currently HTSQL requires
+Python 2.6 or 2.7.&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2012/htsql-2.3.1.html</guid><pubDate>Thu, 28 Jun 2012 00:00:00 GMT</pubDate></item><item><title>Introducing Locators</title><link>http://htsql.org/blog/2012/introducing-locators.html</link><description>&lt;div class="compound"&gt;
+&lt;p class="compound-first"&gt;With HTSQL &lt;em&gt;locators&lt;/em&gt;, you may easily reference a single
+record in a database table.  This feature has two parts:&lt;/p&gt;
+&lt;ul class="compound-middle simple"&gt;
+&lt;li&gt;an &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;id()&lt;/span&gt;&lt;/tt&gt; function to return a record ID;&lt;/li&gt;
+&lt;li&gt;a &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;[]&lt;/span&gt;&lt;/tt&gt; syntax for referencing a record by ID.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p class="compound-middle"&gt;We created locators to shorten common filtering cases and
+make it possible to access individual records without knowing
+the primary key structure of the table.&lt;/p&gt;
+&lt;p class="compound-last"&gt;Locators will be included in our HTSQL 2.3.1 release.&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2012/introducing-locators.html</guid><pubDate>Wed, 27 Jun 2012 00:00:00 GMT</pubDate></item><item><title>Introducing Django Gateway</title><link>http://htsql.org/blog/2012/introducing-django-gateway.html</link><description>&lt;div class="compound"&gt;
+&lt;p&gt;The 2.3.1 release of HTSQL will allow you to easily include
+HTSQL service to your Django projects.&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2012/introducing-django-gateway.html</guid><pubDate>Thu, 14 Jun 2012 00:00:00 GMT</pubDate></item><item><title>Introducing Nested Segments</title><link>http://htsql.org/blog/2012/introducing-nested-segments.html</link><description>&lt;div class="compound"&gt;
+&lt;p&gt;HTSQL now supports nested queries!  Generation of
+multi-layered output is now trivial.&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2012/introducing-nested-segments.html</guid><pubDate>Fri, 23 Mar 2012 00:00:00 GMT</pubDate></item><item><title>Improved Visual Display</title><link>http://htsql.org/blog/2012/improved-visual-display.html</link><description>&lt;div class="compound"&gt;
+&lt;p&gt;We overhauled the visual style of HTML-based output.  The
+web-based editor and the &lt;tt class="xref py py-obj docutils literal"&gt;&lt;span class="pre"&gt;/:html&lt;/span&gt;&lt;/tt&gt; output now share the same
+formatting theme.  This theme includes row numbers and visual
+hints for missing records and empty strings.&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2012/improved-visual-display.html</guid><pubDate>Mon, 19 Mar 2012 00:00:00 GMT</pubDate></item><item><title>Introducing Object Formats</title><link>http://htsql.org/blog/2012/introducing-object-formats.html</link><description>&lt;div class="compound"&gt;
+&lt;p class="compound-first"&gt;With the forthcoming 2.3.1 release we will be adding an XML
+output and revising our default JSON format.  These output
+formats are now designed for schema-aware applications.&lt;/p&gt;
+&lt;p class="compound-last"&gt;Our generic formatter, for user interfaces
+handling arbitrary queries, is now called &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;/:raw&lt;/span&gt;&lt;/tt&gt;.&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2012/introducing-object-formats.html</guid><pubDate>Fri, 16 Mar 2012 00:00:00 GMT</pubDate></item><item><title>Introducing Records</title><link>http://htsql.org/blog/2012/introducing-records.html</link><description>&lt;div class="compound"&gt;
+&lt;p&gt;Back in October of last year, we introduced hierarchical
+headers for our HTML and TEXT output, but they were
+implemented by convention and not broadly available to other
+formatters.  With the forthcoming 2.3.1 release we add
+support for nested records to all formatters.&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2012/introducing-records.html</guid><pubDate>Thu, 15 Mar 2012 00:00:00 GMT</pubDate></item><item><title>HTSQL 2.3.0 is released</title><link>http://htsql.org/blog/2012/htsql-2.3.0.html</link><description>&lt;div class="compound"&gt;
+&lt;p class="compound-first"&gt;This is the first release in the 2.3 development series.  This release
+is focused almost exclusively on licensing and packaging changes.&lt;/p&gt;
+&lt;p class="compound-middle"&gt;With this release, HTSQL is now free and open source software under the
+terms of the AGPLv3.  That said, we&amp;#8217;re keeping our permissive license so
+that proprietary applications could use HTSQL in conjunction with open
+source databases.  For more detail, visit &lt;a class="reference external" href="http://htsql.org/license/"&gt;http://htsql.org/license/&lt;/a&gt;.&lt;/p&gt;
+&lt;p class="compound-middle"&gt;We&amp;#8217;ve re-packaged HTSQL so that each database adapter has its own source
+and binary package.  This permits us to specify dependencies, for
+example, &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;HTSQL-PGSQL&lt;/span&gt;&lt;/tt&gt; explicitly requires the &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;pyscopg2&lt;/span&gt;&lt;/tt&gt; database
+client software for PostgreSQL.  This packaging also permits us to
+clarify that adapters to proprietary databases are not free software.&lt;/p&gt;
+&lt;p class="compound-middle"&gt;Going forward, we&amp;#8217;re switching to an even/odd release numbering scheme.
+Each public release is marked by three numbers, &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;X.Y.Z&lt;/span&gt;&lt;/tt&gt;.  Here &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;X.Y&lt;/span&gt;&lt;/tt&gt;
+are the major/minor version numbers and &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;Z&lt;/span&gt;&lt;/tt&gt; is the release number.  An
+even (odd) value of &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;Y&lt;/span&gt;&lt;/tt&gt; indicates a stable (development) release
+series respectively.  Thus &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;2.3.0&lt;/span&gt;&lt;/tt&gt; starts a new series of development
+releases, which will conclude with the &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;2.4.0&lt;/span&gt;&lt;/tt&gt; stable series.  Our
+stable releases are targeted to long term support and maintain syntax,
+semantics, and API compatibility when ever possible.&lt;/p&gt;
+&lt;p class="compound-last"&gt;Finally, we&amp;#8217;ve updated our website and introduced a new mascot!&lt;/p&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2012/htsql-2.3.0.html</guid><pubDate>Wed, 07 Mar 2012 00:00:00 GMT</pubDate></item><item><title>HTSQL 2.2.1 is released</title><link>http://htsql.org/blog/2011/htsql-2.2-final.html</link><description>&lt;div class="compound"&gt;
+&lt;p class="compound-first"&gt;The final release for 2.2 series is now available.  This release
+was focused on usability improvements, metadata functionality gaps,
+and better Python integration.  In this release we include:&lt;/p&gt;
+&lt;ul class="compound-middle simple"&gt;
+&lt;li&gt;support for configuration files and plugin parameters&lt;/li&gt;
+&lt;li&gt;a web-based query editor with highlighting &amp;amp; auto-completion (&lt;tt class="xref py py-obj docutils literal"&gt;&lt;span class="pre"&gt;tweak.shell&lt;/span&gt;&lt;/tt&gt;)&lt;/li&gt;
+&lt;li&gt;a &lt;em&gt;meta&lt;/em&gt; database for querying tables, columns and links (&lt;tt class="xref py py-obj docutils literal"&gt;&lt;span class="pre"&gt;tweak.meta&lt;/span&gt;&lt;/tt&gt;)&lt;/li&gt;
+&lt;li&gt;integration with Django and SQLAlchemy (&lt;tt class="xref py py-obj docutils literal"&gt;&lt;span class="pre"&gt;tweak.django&lt;/span&gt;&lt;/tt&gt;, &lt;tt class="xref py py-obj docutils literal"&gt;&lt;span class="pre"&gt;tweak.sqlalchemy&lt;/span&gt;&lt;/tt&gt;)&lt;/li&gt;
+&lt;li&gt;an API for making parameterized queries from Python applications&lt;/li&gt;
+&lt;li&gt;improved database introspection, error messages, and usability fixes&lt;/li&gt;
+&lt;li&gt;binary packages for Debian and RHEL&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p class="compound-middle"&gt;We also added a &lt;tt class="xref py py-obj docutils literal"&gt;&lt;span class="pre"&gt;tweak.override&lt;/span&gt;&lt;/tt&gt; plugin to provide granular control
+over the introspected database catalog; this plugin allows you to:&lt;/p&gt;
+&lt;ul class="compound-last simple"&gt;
+&lt;li&gt;restrict access to particular tables and columns&lt;/li&gt;
+&lt;li&gt;provide missing unique and foreign key constraints&lt;/li&gt;
+&lt;li&gt;change table, column and link labels&lt;/li&gt;
+&lt;li&gt;define calculated fields and table methods&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</description><guid isPermaLink="true">http://htsql.org/blog/2011/htsql-2.2-final.html</guid><pubDate>Thu, 15 Dec 2011 00:00:00 GMT</pubDate></item></channel></rss>

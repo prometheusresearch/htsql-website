@@ -1,0 +1,19 @@
+*****************************
+  HTSQL 2.0.0b4 is released
+*****************************
+
+.. blogentry::
+   :date: 2010-12-05
+   :author: xi
+
+The fourth beta of the 2.0 release is now available.  Changes since the last
+beta:
+
+* Refactored collapsing and reducing of the frame tree.  Refactored
+  the SQL serializer, refined the generated SQL.
+* Refactored the internal API for defining HTSQL functions.
+* Added new syntax for infix and postfix function calls.
+* Added a :doc:`/doc/overview` section to the documentation.
+* Fixed compatibility with Python 2.5.
+* Many minor bugfixes, documentation updates, etc.
+

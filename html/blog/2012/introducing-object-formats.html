@@ -1,0 +1,371 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introducing Object Formats &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2012 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Introducing Records" href="introducing-records.html" />
+    <link rel="prev" title="Improved Visual Display" href="improved-visual-display.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introducing-object-formats">
+<h1>Introducing Object Formats<a class="headerlink" href="#introducing-object-formats" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2012-03-16</em></p>
+<p>With the forthcoming 2.3.1 release we will be adding an XML
+output and revising our default JSON format.  These output
+formats are now designed for schema-aware applications.</p>
+<p>Our generic formatter, for user interfaces
+handling arbitrary queries, is now called <tt class="docutils literal"><span class="pre">/:raw</span></tt>.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>In prior versions of HTSQL, we only supported tabular output.
+The headers were sent first, and then correlated data was
+sent as lists of tuples.  In this release, as we introduce nested
+records and segments, this structure is no longer sufficient.</p>
+<p>With our new <tt class="docutils literal"><span class="pre">/:xml</span></tt> format, field names are used for element
+tags and data is represented as element content.  The updated
+<tt class="docutils literal"><span class="pre">/:json</span></tt> format now works in a similar manner; it now uses
+table, link and column names as dictionary keys.</p>
+<p>For more background information, you could read
+<a class="reference internal" href="introducing-records.html"><em>Introducing Records</em></a>.  We may later reintroduce a JSON
+tabular format (<tt class="docutils literal"><span class="pre">/:jsv</span></tt>), similar to <tt class="docutils literal"><span class="pre">/:csv</span></tt>.</p>
+</div>
+<div class="section" id="xml-format">
+<h2>XML Format<a class="headerlink" href="#xml-format" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">/:xml</span></tt> format presents query output as XML.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school%20/:xml" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school%20/:xml" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span> <span class="o">/</span><span class="p">:</span><span class="nf">xml</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;htsql:result xmlns:htsql=&quot;http://htsql.org/2010/xml&quot;&gt;
+  &lt;school&gt;
+    &lt;code&gt;art&lt;/code&gt;
+    &lt;name&gt;School of Art &amp;amp; Design&lt;/name&gt;
+    &lt;campus&gt;old&lt;/campus&gt;
+  &lt;/school&gt;
+  &lt;school&gt;
+    &lt;code&gt;bus&lt;/code&gt;
+    &lt;name&gt;School of Business&lt;/name&gt;
+    &lt;campus&gt;south&lt;/campus&gt;
+  &lt;/school&gt;
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>Nested records are represented as nested XML elements:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school,*}%20/:xml" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school,*}%20/:xml" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">,</span><span class="o">*</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">xml</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;htsql:result xmlns:htsql=&quot;http://htsql.org/2010/xml&quot;&gt;
+  &lt;department&gt;
+    &lt;school&gt;
+      &lt;code&gt;bus&lt;/code&gt;
+      &lt;name&gt;School of Business&lt;/name&gt;
+      &lt;campus&gt;south&lt;/campus&gt;
+    &lt;/school&gt;
+    &lt;code&gt;acc&lt;/code&gt;
+    &lt;name&gt;Accounting&lt;/name&gt;
+    &lt;school_code&gt;bus&lt;/school_code&gt;
+  &lt;/department&gt;
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>When a <em>tag</em> cannot be determined for a field, it is named
+with an underscored 1-based index:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(department),%20count(program)}%20/:xml" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(department),%20count(program)}%20/:xml" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="p">)}</span> <span class="o">/</span><span class="p">:</span><span class="nf">xml</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;htsql:result xmlns:htsql=&quot;http://htsql.org/2010/xml&quot;&gt;
+  &lt;school&gt;
+    &lt;name&gt;School of Art &amp;amp; Design&lt;/name&gt;
+    &lt;_2&gt;1&lt;/_2&gt;
+    &lt;_3&gt;3&lt;/_3&gt;
+  &lt;/school&gt;
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>When a <em>tag</em> cannot be determined for a top-level list, a
+single underscore is used:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/count(school)%20/:xml" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/count(school)%20/:xml" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="p">)</span> <span class="o">/</span><span class="p">:</span><span class="nf">xml</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;htsql:result xmlns:htsql=&quot;http://htsql.org/2010/xml&quot;&gt;
+  &lt;_&gt;9&lt;/_&gt;
+&lt;/htsql:result&gt;
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="json-format">
+<h2>JSON Format<a class="headerlink" href="#json-format" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">/:json</span></tt> format presents query output as JSON.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school%20/:json" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school%20/:json" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span> <span class="o">/</span><span class="p">:</span><span class="nf">json</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>{
+  &quot;school&quot;: [
+    {
+      &quot;code&quot;: &quot;art&quot;,
+      &quot;name&quot;: &quot;School of Art &amp; Design&quot;,
+      &quot;campus&quot;: &quot;old&quot;
+    },
+    {
+      &quot;code&quot;: &quot;bus&quot;,
+      &quot;name&quot;: &quot;School of Business&quot;,
+      &quot;campus&quot;: &quot;south&quot;
+    },
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>Nested records are represented as nested objects:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school,*}%20/:json" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school,*}%20/:json" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">,</span><span class="o">*</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">json</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>{
+  &quot;department&quot;: [
+    {
+      &quot;school&quot;: {
+        &quot;code&quot;: &quot;bus&quot;,
+        &quot;name&quot;: &quot;School of Business&quot;,
+        &quot;campus&quot;: &quot;south&quot;
+      },
+      &quot;code&quot;: &quot;acc&quot;,
+      &quot;name&quot;: &quot;Accounting&quot;,
+      &quot;school_code&quot;: &quot;bus&quot;
+    },
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>When a <em>tag</em> cannot be determined for a field, it is keyed
+using a numeric 0-based index:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(department),%20count(program)}%20/:json" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(department),%20count(program)}%20/:json" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="p">)}</span> <span class="o">/</span><span class="p">:</span><span class="nf">json</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>{
+  &quot;school&quot;: [
+    {
+      &quot;name&quot;: &quot;School of Art &amp; Design&quot;,
+      &quot;1&quot;: 1,
+      &quot;2&quot;: 3
+    },
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>When the <em>tag</em> cannot be determined for the top-level list,
+a &#8220;0&#8221; key is used:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/count(school)%20/:json" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/count(school)%20/:json" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="p">)</span> <span class="o">/</span><span class="p">:</span><span class="nf">json</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>{
+  &quot;0&quot;: [
+    9
+  ]
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>In our JSON format, the top-level dictionary will always have
+a single key.</p>
+</div>
+<div class="section" id="tag-names">
+<h2>Tag Names<a class="headerlink" href="#tag-names" title="Permalink to this headline">¶</a></h2>
+<p>By default, <em>tags</em> used for XML element names or JSON keys
+come from the HTSQL system catalog.  These are normalized SQL
+table and column names, or configuration overrides.  Tags can
+also be specified using the assignment (<tt class="docutils literal"><span class="pre">:=</span></tt>) operator:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20dept_count%20:=%20count(department)}%20/:xml" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20dept_count%20:=%20count(department)}%20/:xml" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">dept_count</span> <span class="p">:=</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span> <span class="o">/</span><span class="p">:</span><span class="nf">xml</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;htsql:result xmlns:htsql=&quot;http://htsql.org/2010/xml&quot;&gt;
+  &lt;school&gt;
+    &lt;name&gt;School of Art &amp;amp; Design&lt;/name&gt;
+    &lt;dept_count&gt;1&lt;/dept_count&gt;
+  &lt;/school&gt;
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">:as</span></tt> decorator could be used to specify <em>tags</em> when
+its argument is an unquoted identifier.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(department)%20:as%20dept_count}%20/:xml" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(department)%20:as%20dept_count}%20/:xml" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">dept_count</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">xml</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Using <tt class="docutils literal"><span class="pre">:as</span></tt> to set tag name is not yet implemented.</p>
+</div>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2012/introducing-object-formats";
+var disqus_title = "Introducing Object Formats";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

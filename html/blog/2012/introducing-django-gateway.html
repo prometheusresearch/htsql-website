@@ -1,0 +1,220 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introducing Django Gateway &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2012 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Introducing Nested Segments" href="introducing-nested-segments.html" />
+    <link rel="prev" title="Introducing Locators" href="introducing-locators.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introducing-django-gateway">
+<h1>Introducing Django Gateway<a class="headerlink" href="#introducing-django-gateway" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2012-06-14</em></p>
+<p>The 2.3.1 release of HTSQL will allow you to easily include
+HTSQL service to your Django projects.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>The initial support for Django framework was added to HTSQL
+2.2.1.  It replaced standard HTSQL database introspection and
+connection management with ones based on Django model and
+transaction layers.</p>
+<p>The new release introduces Django application <tt class="xref py py-obj docutils literal"><span class="pre">htsql_django</span></tt>,
+which allows you to embed the HTSQL service into your Django
+projects.</p>
+</div>
+<div class="section" id="installation-and-usage">
+<h2>Installation and Usage<a class="headerlink" href="#installation-and-usage" title="Permalink to this headline">¶</a></h2>
+<p>To use HTSQL-Django gateway, you need to install HTSQL first.
+Using <tt class="docutils literal"><span class="pre">pip</span></tt>, you could do it with a command:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> pip install HTSQL
+</pre></div>
+</div>
+<p>Out of the box, HTSQL supports SQLite databases.  If you want
+to run HTSQL on top of other database servers, install
+additional database backends:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> pip install HTSQL-PGSQL
+<span class="gp">#</span> pip install HTSQL-MYSQL
+</pre></div>
+</div>
+<p>Now we can install HTSQL-Django gateway:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> pip install HTSQL-DJANGO
+</pre></div>
+</div>
+<p>To add HTSQL service to your Django project, open
+<tt class="docutils literal"><span class="pre">settings.py</span></tt> and add <tt class="docutils literal"><span class="pre">'htsql_django'</span></tt> to the list of
+installed applications:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="c"># ...</span>
+    <span class="s">&#39;htsql_django&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The gateway application will configure HTSQL service to serve
+against the default database of your Django project.  You
+could provide additional configuration options to the service
+using parameter <tt class="docutils literal"><span class="pre">HTSQL_CONFIG</span></tt>.  For example, a reasonable
+configuration could be:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">HTSQL_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c"># Set query timeout in seconds (currently, PostgreSQL only).</span>
+    <span class="s">&#39;tweak.timeout&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;timeout&#39;</span><span class="p">:</span> <span class="mi">600</span> <span class="p">},</span>
+    <span class="c"># Set the maximum number of output rows.</span>
+    <span class="s">&#39;tweak.autolimit&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;limit&#39;</span><span class="p">:</span> <span class="mi">10000</span> <span class="p">},</span>
+    <span class="c"># Enable the web-based query editor.</span>
+    <span class="s">&#39;tweak.shell.default&#39;</span><span class="p">:</span> <span class="p">{},</span>
+    <span class="c"># Enable meta-data queries.</span>
+    <span class="s">&#39;tweak.meta&#39;</span><span class="p">:</span> <span class="p">{},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>After HTSQL service is installed and configured, we can add
+it to the URL dispatcher.  Open <tt class="docutils literal"><span class="pre">urls.py</span></tt> and add the
+following line:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">urlpatterns</span> <span class="o">=</span> <span class="n">patterns</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+    <span class="c"># ...</span>
+    <span class="n">url</span><span class="p">(</span><span class="s">r&#39;^htsql/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s">&#39;htsql_django.urls&#39;</span><span class="p">)),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Now all requests that start with <tt class="docutils literal"><span class="pre">/htsql/</span></tt> prefix will be
+forwarded to the HTSQL service.  The service is available to
+all authenticated users.</p>
+</div>
+<div class="section" id="invoking-htsql-from-python">
+<h2>Invoking HTSQL from Python<a class="headerlink" href="#invoking-htsql-from-python" title="Permalink to this headline">¶</a></h2>
+<p>You could also execute HTSQL queries directly from your view
+functions.  Here is an example which calculates the total
+number of votes per poll for the Django tutorial project:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">htsql_django</span> <span class="kn">import</span> <span class="n">produce</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="s">&quot;/polls_poll{question, total:=sum(polls_choice.votes)}&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">produce</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">question</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">total</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">What&#39;s up?: 6</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="todo-and-limitations">
+<h2>TODO and Limitations<a class="headerlink" href="#todo-and-limitations" title="Permalink to this headline">¶</a></h2>
+<p>This is a first release of the Django gateway, so expect some
+bugs and problems to be found.  If we have sufficient demand
+for this work, future releases could bring support for fine-grained
+authorization, template customization, integration with Django
+model layer, and more.</p>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2012/introducing-django-gateway";
+var disqus_title = "Introducing Django Gateway";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

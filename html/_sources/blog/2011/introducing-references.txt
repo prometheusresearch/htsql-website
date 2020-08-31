@@ -1,0 +1,187 @@
+**************************
+  Introducing References
+**************************
+
+.. blogentry::
+   :date: 2011-05-12
+   :author: cce
+
+Recently we introduced calculated attributes and table methods.  Today
+we introduce references, denoted with a dollar-sign ``$`` to provide a
+separate aliasing mechanism that cascades through scope boundaries.
+
+.. blogcut::
+
+
+Basics
+------
+
+In HTSQL, a *scope* is set of available names, which includes column
+names, links to other tables, and calculated attributes.  Let's
+deconstruct scopes in the following example.
+
+.. htsql:: /school.filter(code='eng').department{name}
+   :hide:
+
+`/`
+    The query starts with a *scalar* scope, which contains the names of
+    all tables.
+
+`school.filter(code='art')`
+    By choosing `school`, we changed the scope to the ``school``
+    table.  Now we have access to columns such as ``code`` and table
+    links such as ``department``.  Applying ``filter()`` does not change
+    the scope.
+
+`.department{name}`
+    Traversing link `department` changes the scope again.  Now we have
+    access to columns of table ``department`` such as ``name``.  The
+    selection operator ``department{name}`` does not affect the scope,
+    and, if necessary, we could continue building the query.
+
+Whenever a new scope is introduced, it completely hides the content of
+any previous scope.  Thus, we cannot access attributes of ``school`` in
+the scope of ``department``.  It is an intentional limitation since
+otherwise attributes from different tables would pollute the namespace.
+
+However, occasionally, we may still want to fetch an attribute from a
+previous scope.  For instance, in the example above, we may need to add
+the school name to the output columns.
+
+To overcome this limitation, we introduce *references*.  A reference is
+a name that ignores scope boundaries.  A reference starts with `$`
+followed by an identifier and could be defined using the regular
+``define()`` function:
+
+.. htsql::
+
+   /school.define($school_name := name)
+          .filter(code='eng')
+          .department{$school_name, name}
+
+Of course in this example, you could use a forward link, ``school.name``
+and get the same results.
+
+.. htsql:: /school.filter(code='eng').department{school.name, name}
+   :hide:
+
+However, this isn't always the case.
+
+
+Query Parameters
+----------------
+
+Often a request may have constants which you may want to define
+separately.  For example, suppose you have a query returns all courses
+offered during a particular academic year.
+
+.. htsql::
+   :cut: 4
+
+   /course?exists(class.year=2010&class.season='fall'
+                 |class.year=2011&class.season='spring')
+
+..
+   ||
+
+The problem with this query is that it embeds a hard-coded parameter
+deep inside the query.  To move this parameter up-front, we write:
+
+.. htsql::
+   :cut: 4
+
+   /define($year:=2010)
+   .course?exists(class.year=$year&class.season='fall'
+                 |class.year=$year+1&class.season='spring')
+
+..
+   ||
+
+
+Correlated Queries
+------------------
+
+Sometimes references are needed for correlated queries.  Suppose we've
+got a business inquiry:
+
+  For each course across all engineering departments, count the number
+  of courses in those departments with a higher number of credits.
+  
+Let's build this incrementally.
+
+.. htsql::
+   :cut: 5
+
+   /course.filter(department.school.code='eng') 
+           {title, credits}
+
+This query returns courses we want, those in engineering departments,
+along with course title and number of credits.
+
+.. htsql::
+   :cut: 5
+
+   /course.filter(department.school.code='eng') 
+           {title, credits, count(fork())}
+
+In this query we add a 3rd column, ``count(fork())``.  The ``fork()``
+expression correlates each individual course with every other course
+from the school of engineering.  We then count those courses.
+
+.. htsql::
+   :cut: 5
+
+   /define($x:=3)
+   .course.filter(department.school.code='eng') 
+           {title, credits, count(fork()?credits>$x)}
+
+Remember that we need to count not all correlated courses, but only
+those with a number of credits over a given value.  To get closer to
+this goal, we filter the correlated courses to include only those with
+credits higher than ``$x``, where the value of `x` is equal to ``3``.  
+
+.. htsql::
+   :cut: 5
+
+   /course.filter(department.school.code='eng')
+          .define($x:=credits)
+           {title, credits, count(fork()?credits>$x)}
+
+Finally, we count only those correlated courses with credits greater
+than the current row's credits.  And we're done.  Alternatively, one
+could make a reference to the current record itself.
+
+.. htsql::
+   :cut: 5
+
+   /course.filter(department.school.code='eng')
+          .define($c:=this())
+           {title, credits, count(fork()?credits>$c.credits)}
+
+
+Method Arguments
+----------------
+
+The reference mechanism is also needed for certain parameterized
+calculated attributes.  Suppose we've got a business inquiry:
+
+  For each department calculate the average number of credits
+  for freshman, sophomore, junior and senior level courses.
+  
+Here it is.
+
+.. htsql::
+   :cut: 5
+
+   /department{name, avg_credits(1) :as freshman,
+                     avg_credits(2) :as sophomore,
+                     avg_credits(3) :as junior,
+                     avg_credits(4) :as senior}
+   :where department.avg_credits($level) :=
+           avg(course{credits}?no>=$level*100
+                              &no<($level+1)*100)
+
+In this query we define a calculated attribute ``avg_credits`` which
+depends upon parameter ``$level``.  This attribute produces the average
+credits over courses from the given level.  
+

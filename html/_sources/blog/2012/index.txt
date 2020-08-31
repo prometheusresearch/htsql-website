@@ -1,0 +1,15 @@
+***************************
+  2012 HTSQL News Archive
+***************************
+
+.. blogtree::
+
+   htsql-2.3.2
+   htsql-2.3.1
+   introducing-locators
+   introducing-django-gateway
+   introducing-nested-segments
+   improved-visual-display
+   introducing-object-formats
+   introducing-records
+   htsql-2.3.0

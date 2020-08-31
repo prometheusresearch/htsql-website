@@ -1,0 +1,14 @@
+*****************************
+  HTSQL 2.0.0b5 is released
+*****************************
+
+.. blogentry::
+   :date: 2010-12-14
+   :author: xi
+
+The fifth beta of the 2.0 release is now available.  Changes since the last
+beta:
+
+* Completed the SQLite backend.
+* Completed the standard library.
+

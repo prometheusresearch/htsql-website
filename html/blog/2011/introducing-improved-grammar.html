@@ -1,0 +1,254 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Improving the HTSQL Grammar &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="What is Wrong with SQL (and why HTSQL is the way to go)?" href="what-is-wrong-with-sql.html" />
+    <link rel="prev" title="HTSQL Roadmap for May, 2011" href="roadmap-2011-05.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="improving-the-htsql-grammar">
+<h1>Improving the HTSQL Grammar<a class="headerlink" href="#improving-the-htsql-grammar" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-04-30</em></p>
+<p>These past few weeks we significantly updated the grammar to reduce the
+learning curve of HTSQL by making it more regular.  The introduction of
+the tutorial and syntax reference have been updated appropriately.</p>
+<div class="section" id="selection-becomes-an-operator">
+<h2>Selection (<tt class="docutils literal"><span class="pre">{}</span></tt>) becomes an operator<a class="headerlink" href="#selection-becomes-an-operator" title="Permalink to this headline">¶</a></h2>
+<p>In earlier releases the treatment of selection was ad-hoc depending upon
+the context where it was used.  As a result, you couldn&#8217;t append
+<tt class="docutils literal"><span class="pre">.limit</span></tt> or other table expressions following the curly brackets.
+This is fixed, so you can now write:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course{title,%20credits-}.limit(3)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course{title,%20credits-}.limit(3)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="o">-</span><span class="p">}.</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>Before you had to write:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course.sort(credits-).limit(3){title,%20credits}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course.sort(credits-).limit(3){title,%20credits}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="nb">credits</span><span class="o">-</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">){</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="wildcard-expression">
+<h2>Wildcard expression<a class="headerlink" href="#wildcard-expression" title="Permalink to this headline">¶</a></h2>
+<p>Wildcard expression <tt class="docutils literal"><span class="pre">*</span></tt> is also normalized.  Now it selects all of the
+output columns in the current context.   Additionally, if <tt class="docutils literal"><span class="pre">*</span></tt> is
+followed by a number, it returns the nth output column.  For example,</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20name,%20count(department)}.{*1,*3}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20name,%20count(department)}.{*1,*3}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}.{</span><span class="o">*</span><span class="m">1</span><span class="p">,</span><span class="o">*</span><span class="m">3</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>This mechanism can be used to filter by previously selected expressions:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20count(department)}?*2&gt;3" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20count(department)}?*2&gt;3" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span><span class="o">?*</span><span class="m">2</span><span class="o">&gt;</span><span class="m">3</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="navigation-becomes-an-operator">
+<h2>Navigation (<tt class="docutils literal"><span class="pre">.</span></tt>) becomes an operator<a class="headerlink" href="#navigation-becomes-an-operator" title="Permalink to this headline">¶</a></h2>
+<p>Previously <tt class="docutils literal"><span class="pre">.</span></tt> could only be followed by an identifier or a function
+call, not a general expression.  This limitation was lifted. For
+example, the following query returns for each school distinct
+degrees for the programs in that school.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.(program^degree)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.(program^degree)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="functional-forms">
+<h2>Functional forms<a class="headerlink" href="#functional-forms" title="Permalink to this headline">¶</a></h2>
+<p>Normalizing these syntax items permitted us to introduce functional
+aliases for several operators.  For instance,</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school?code='eng'" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school?code='eng'" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">?</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/program^degree" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/program^degree" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>could now be written:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.select(name)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.select(name)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.filter(code='eng')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.filter(code='eng')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/distinct(program{degree})" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/distinct(program{degree})" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">distinct</span><span class="p">(</span><span class="nb">program</span><span class="p">{</span><span class="nb">degree</span><span class="p">})</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>The functional form may be preferable in certain contexts since it
+permits you to reduce nesting depth.  For example,</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(department?school.code='eng').limit(3)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(department?school.code='eng').limit(3)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">department</span><span class="o">?</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>could be more clearly written:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.filter(school.code='eng').limit(3)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.filter(school.code='eng').limit(3)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/introducing-improved-grammar";
+var disqus_title = "Improving the HTSQL Grammar";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

@@ -1,0 +1,687 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introducing References &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Discussion on Catalog" href="discuss-catalog.html" />
+    <link rel="prev" title="HTSQL 2.1.0b3 is released" href="htsql-2.1-beta3.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introducing-references">
+<h1>Introducing References<a class="headerlink" href="#introducing-references" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-05-12</em></p>
+<p>Recently we introduced calculated attributes and table methods.  Today
+we introduce references, denoted with a dollar-sign <tt class="docutils literal"><span class="pre">$</span></tt> to provide a
+separate aliasing mechanism that cascades through scope boundaries.</p>
+<div class="section" id="basics">
+<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
+<p>In HTSQL, a <em>scope</em> is set of available names, which includes column
+names, links to other tables, and calculated attributes.  Let&#8217;s
+deconstruct scopes in the following example.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.filter(code='eng').department{name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.filter(code='eng').department{name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">).</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">/</span></tt></dt>
+<dd>The query starts with a <em>scalar</em> scope, which contains the names of
+all tables.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">school.filter(code='art')</span></tt></dt>
+<dd>By choosing <tt class="xref py py-obj docutils literal"><span class="pre">school</span></tt>, we changed the scope to the <tt class="docutils literal"><span class="pre">school</span></tt>
+table.  Now we have access to columns such as <tt class="docutils literal"><span class="pre">code</span></tt> and table
+links such as <tt class="docutils literal"><span class="pre">department</span></tt>.  Applying <tt class="docutils literal"><span class="pre">filter()</span></tt> does not change
+the scope.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">department{name}</span></tt></dt>
+<dd>Traversing link <tt class="xref py py-obj docutils literal"><span class="pre">department</span></tt> changes the scope again.  Now we have
+access to columns of table <tt class="docutils literal"><span class="pre">department</span></tt> such as <tt class="docutils literal"><span class="pre">name</span></tt>.  The
+selection operator <tt class="docutils literal"><span class="pre">department{name}</span></tt> does not affect the scope,
+and, if necessary, we could continue building the query.</dd>
+</dl>
+<p>Whenever a new scope is introduced, it completely hides the content of
+any previous scope.  Thus, we cannot access attributes of <tt class="docutils literal"><span class="pre">school</span></tt> in
+the scope of <tt class="docutils literal"><span class="pre">department</span></tt>.  It is an intentional limitation since
+otherwise attributes from different tables would pollute the namespace.</p>
+<p>However, occasionally, we may still want to fetch an attribute from a
+previous scope.  For instance, in the example above, we may need to add
+the school name to the output columns.</p>
+<p>To overcome this limitation, we introduce <em>references</em>.  A reference is
+a name that ignores scope boundaries.  A reference starts with <tt class="xref py py-obj docutils literal"><span class="pre">$</span></tt>
+followed by an identifier and could be defined using the regular
+<tt class="docutils literal"><span class="pre">define()</span></tt> function:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.define($school_name%20:=%20name)%0A%20%20%20%20%20%20%20.filter(code='eng')%0A%20%20%20%20%20%20%20.department{$school_name,%20name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.define($school_name%20:=%20name)%0A%20%20%20%20%20%20%20.filter(code='eng')%0A%20%20%20%20%20%20%20.department{$school_name,%20name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">define</span><span class="p">($</span><span class="nb">school_name</span> <span class="p">:=</span> <span class="nb">name</span><span class="p">)</span>
+       <span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">)</span>
+       <span class="p">.</span><span class="nb">department</span><span class="p">{$</span><span class="nb">school_name</span><span class="p">,</span> <span class="nb">name</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="51%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">$school_name</th>
+<th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">Bioengineering</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">Computer Science</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">Electrical Engineering</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">Mechanical Engineering</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Of course in this example, you could use a forward link, <tt class="docutils literal"><span class="pre">school.name</span></tt>
+and get the same results.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.filter(code='eng').department{school.name,%20name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.filter(code='eng').department{school.name,%20name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">).</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">.</span><span class="nb">name</span><span class="p">,</span> <span class="nb">name</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>However, this isn&#8217;t always the case.</p>
+</div>
+<div class="section" id="query-parameters">
+<h2>Query Parameters<a class="headerlink" href="#query-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Often a request may have constants which you may want to define
+separately.  For example, suppose you have a query returns all courses
+offered during a particular academic year.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course?exists(class.year=2010&amp;class.season='fall'%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20|class.year=2011&amp;class.season='spring')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course?exists(class.year=2010&amp;class.season='fall'%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20|class.year=2011&amp;class.season='spring')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="o">?</span><span class="nf">exists</span><span class="p">(</span><span class="nb">class</span><span class="p">.</span><span class="nb">year</span><span class="o">=</span><span class="m">2010</span><span class="o">&amp;</span><span class="nb">class</span><span class="p">.</span><span class="nb">season</span><span class="o">=</span><span class="s">&#39;fall&#39;</span>
+              <span class="o">|</span><span class="nb">class</span><span class="p">.</span><span class="nb">year</span><span class="o">=</span><span class="m">2011</span><span class="o">&amp;</span><span class="nb">class</span><span class="p">.</span><span class="nb">season</span><span class="o">=</span><span class="s">&#39;spring&#39;</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="1%" />
+<col width="13%" />
+<col width="3%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">200</td>
+<td class="htsql-text-type">Introduction to Accounting</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-text-type">The initial course in the theory and practice of financial accounting. Topics emphasized include the preparation, reporting, and analysis of financial data.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">102</td>
+<td class="htsql-text-type">History of Art Criticism I</td>
+<td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">An introductory survey course of world art from Prehistoric through late-Medieval art history.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">209</td>
+<td class="htsql-text-type">Antique Art: Greece and Rome</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Visual art of antique period with emphasis on Greek and Roman art.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">224</td>
+<td class="htsql-text-type">Arts of Asia</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-text-type">An introduction to the history and criticism of Far Eastern art, including the art of China and Japan, fine and decorative arts.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The problem with this query is that it embeds a hard-coded parameter
+deep inside the query.  To move this parameter up-front, we write:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/define($year:=2010)%0A.course?exists(class.year=$year&amp;class.season='fall'%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20|class.year=$year%2B1&amp;class.season='spring')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/define($year:=2010)%0A.course?exists(class.year=$year&amp;class.season='fall'%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20|class.year=$year%2B1&amp;class.season='spring')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">define</span><span class="p">($</span><span class="nb">year</span><span class="p">:=</span><span class="m">2010</span><span class="p">)</span>
+<span class="p">.</span><span class="nb">course</span><span class="o">?</span><span class="nf">exists</span><span class="p">(</span><span class="nb">class</span><span class="p">.</span><span class="nb">year</span><span class="o">=</span><span class="p">$</span><span class="nb">year</span><span class="o">&amp;</span><span class="nb">class</span><span class="p">.</span><span class="nb">season</span><span class="o">=</span><span class="s">&#39;fall&#39;</span>
+              <span class="o">|</span><span class="nb">class</span><span class="p">.</span><span class="nb">year</span><span class="o">=</span><span class="p">$</span><span class="nb">year</span><span class="o">+</span><span class="m">1</span><span class="o">&amp;</span><span class="nb">class</span><span class="p">.</span><span class="nb">season</span><span class="o">=</span><span class="s">&#39;spring&#39;</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="1%" />
+<col width="13%" />
+<col width="3%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">200</td>
+<td class="htsql-text-type">Introduction to Accounting</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-text-type">The initial course in the theory and practice of financial accounting. Topics emphasized include the preparation, reporting, and analysis of financial data.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">102</td>
+<td class="htsql-text-type">History of Art Criticism I</td>
+<td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">An introductory survey course of world art from Prehistoric through late-Medieval art history.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">209</td>
+<td class="htsql-text-type">Antique Art: Greece and Rome</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Visual art of antique period with emphasis on Greek and Roman art.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">224</td>
+<td class="htsql-text-type">Arts of Asia</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-text-type">An introduction to the history and criticism of Far Eastern art, including the art of China and Japan, fine and decorative arts.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="correlated-queries">
+<h2>Correlated Queries<a class="headerlink" href="#correlated-queries" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes references are needed for correlated queries.  Suppose we&#8217;ve
+got a business inquiry:</p>
+<blockquote>
+<div>For each course across all engineering departments, count the number
+of courses in those departments with a higher number of credits.</div></blockquote>
+<p>Let&#8217;s build this incrementally.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course.filter(department.school.code='eng')%0A%20%20%20%20%20%20%20%20{title,%20credits}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course.filter(department.school.code='eng')%0A%20%20%20%20%20%20%20%20{title,%20credits}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">department</span><span class="p">.</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">)</span>
+        <span class="p">{</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="84%" />
+<col width="16%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">title</th>
+<th class="head">credits</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Fundamentals of Biochemistry</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Introduction to Biomedical Engineering</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Introductory Microbiology</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Introductory Toxicology</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Bioengineering Seminar</td>
+<td class="htsql-integer-type">2</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This query returns courses we want, those in engineering departments,
+along with course title and number of credits.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course.filter(department.school.code='eng')%0A%20%20%20%20%20%20%20%20{title,%20credits,%20count(fork())}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course.filter(department.school.code='eng')%0A%20%20%20%20%20%20%20%20{title,%20credits,%20count(fork())}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">department</span><span class="p">.</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">)</span>
+        <span class="p">{</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nf">fork</span><span class="p">())}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="66%" />
+<col width="12%" />
+<col width="22%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">count(fork())</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Fundamentals of Biochemistry</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">71</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Introduction to Biomedical Engineering</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">71</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Introductory Microbiology</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">71</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Introductory Toxicology</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">71</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Bioengineering Seminar</td>
+<td class="htsql-integer-type">2</td>
+<td class="htsql-integer-type">71</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this query we add a 3rd column, <tt class="docutils literal"><span class="pre">count(fork())</span></tt>.  The <tt class="docutils literal"><span class="pre">fork()</span></tt>
+expression correlates each individual course with every other course
+from the school of engineering.  We then count those courses.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/define($x:=3)%0A.course.filter(department.school.code='eng')%0A%20%20%20%20%20%20%20%20{title,%20credits,%20count(fork()?credits&gt;$x)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/define($x:=3)%0A.course.filter(department.school.code='eng')%0A%20%20%20%20%20%20%20%20{title,%20credits,%20count(fork()?credits&gt;$x)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">define</span><span class="p">($</span><span class="nb">x</span><span class="p">:=</span><span class="m">3</span><span class="p">)</span>
+<span class="p">.</span><span class="nb">course</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">department</span><span class="p">.</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">)</span>
+        <span class="p">{</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nf">fork</span><span class="p">()</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">x</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="55%" />
+<col width="10%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">count(fork()?credits&gt;$x)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Fundamentals of Biochemistry</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Introduction to Biomedical Engineering</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Introductory Microbiology</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Introductory Toxicology</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Bioengineering Seminar</td>
+<td class="htsql-integer-type">2</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Remember that we need to count not all correlated courses, but only
+those with a number of credits over a given value.  To get closer to
+this goal, we filter the correlated courses to include only those with
+credits higher than <tt class="docutils literal"><span class="pre">$x</span></tt>, where the value of <tt class="xref py py-obj docutils literal"><span class="pre">x</span></tt> is equal to <tt class="docutils literal"><span class="pre">3</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course.filter(department.school.code='eng')%0A%20%20%20%20%20%20%20.define($x:=credits)%0A%20%20%20%20%20%20%20%20{title,%20credits,%20count(fork()?credits&gt;$x)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course.filter(department.school.code='eng')%0A%20%20%20%20%20%20%20.define($x:=credits)%0A%20%20%20%20%20%20%20%20{title,%20credits,%20count(fork()?credits&gt;$x)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">department</span><span class="p">.</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">)</span>
+       <span class="p">.</span><span class="nf">define</span><span class="p">($</span><span class="nb">x</span><span class="p">:=</span><span class="nb">credits</span><span class="p">)</span>
+        <span class="p">{</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nf">fork</span><span class="p">()</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">x</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="55%" />
+<col width="10%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">count(fork()?credits&gt;$x)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Fundamentals of Biochemistry</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Introduction to Biomedical Engineering</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Introductory Microbiology</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Introductory Toxicology</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Bioengineering Seminar</td>
+<td class="htsql-integer-type">2</td>
+<td class="htsql-integer-type">64</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Finally, we count only those correlated courses with credits greater
+than the current row&#8217;s credits.  And we&#8217;re done.  Alternatively, one
+could make a reference to the current record itself.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course.filter(department.school.code='eng')%0A%20%20%20%20%20%20%20.define($c:=this())%0A%20%20%20%20%20%20%20%20{title,%20credits,%20count(fork()?credits&gt;$c.credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course.filter(department.school.code='eng')%0A%20%20%20%20%20%20%20.define($c:=this())%0A%20%20%20%20%20%20%20%20{title,%20credits,%20count(fork()?credits&gt;$c.credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">department</span><span class="p">.</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">)</span>
+       <span class="p">.</span><span class="nf">define</span><span class="p">($</span><span class="nb">c</span><span class="p">:=</span><span class="nf">this</span><span class="p">())</span>
+        <span class="p">{</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nf">fork</span><span class="p">()</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">c</span><span class="p">.</span><span class="nb">credits</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="9%" />
+<col width="42%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">count(fork()?credits&gt;$c.credits)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Fundamentals of Biochemistry</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Introduction to Biomedical Engineering</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Introductory Microbiology</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Introductory Toxicology</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">13</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Bioengineering Seminar</td>
+<td class="htsql-integer-type">2</td>
+<td class="htsql-integer-type">64</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="method-arguments">
+<h2>Method Arguments<a class="headerlink" href="#method-arguments" title="Permalink to this headline">¶</a></h2>
+<p>The reference mechanism is also needed for certain parameterized
+calculated attributes.  Suppose we&#8217;ve got a business inquiry:</p>
+<blockquote>
+<div>For each department calculate the average number of credits
+for freshman, sophomore, junior and senior level courses.</div></blockquote>
+<p>Here it is.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name,%20avg_credits(1)%20:as%20freshman,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg_credits(2)%20:as%20sophomore,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg_credits(3)%20:as%20junior,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg_credits(4)%20:as%20senior}%0A:where%20department.avg_credits($level)%20:=%0A%20%20%20%20%20%20%20%20avg(course{credits}?no&gt;=$level*100%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;no&lt;($level%2B1)*100)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name,%20avg_credits(1)%20:as%20freshman,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg_credits(2)%20:as%20sophomore,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg_credits(3)%20:as%20junior,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg_credits(4)%20:as%20senior}%0A:where%20department.avg_credits($level)%20:=%0A%20%20%20%20%20%20%20%20avg(course{credits}?no&gt;=$level*100%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;no&lt;($level%2B1)*100)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">avg_credits</span><span class="p">(</span><span class="m">1</span><span class="p">)</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">freshman</span><span class="p">,</span>
+                  <span class="nf">avg_credits</span><span class="p">(</span><span class="m">2</span><span class="p">)</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">sophomore</span><span class="p">,</span>
+                  <span class="nf">avg_credits</span><span class="p">(</span><span class="m">3</span><span class="p">)</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">junior</span><span class="p">,</span>
+                  <span class="nf">avg_credits</span><span class="p">(</span><span class="m">4</span><span class="p">)</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">senior</span><span class="p">}</span>
+<span class="p">:</span><span class="nf">where</span> <span class="nb">department</span><span class="p">.</span><span class="nf">avg_credits</span><span class="p">($</span><span class="nb">level</span><span class="p">)</span> <span class="p">:=</span>
+        <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">{</span><span class="nb">credits</span><span class="p">}</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="p">$</span><span class="nb">level</span><span class="o">*</span><span class="m">100</span>
+                           <span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="p">($</span><span class="nb">level</span><span class="o">+</span><span class="m">1</span><span class="p">)</span><span class="o">*</span><span class="m">100</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="16%" />
+<col width="18%" />
+<col width="12%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">freshman</th>
+<th class="head">sophomore</th>
+<th class="head">junior</th>
+<th class="head">senior</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Accounting</td>
+<td class="htsql-decimal-type">2.0</td>
+<td class="htsql-decimal-type">3.0</td>
+<td class="htsql-decimal-type">4.0</td>
+<td class="htsql-decimal-type">3.0</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Art History</td>
+<td class="htsql-decimal-type">3.5</td>
+<td class="htsql-decimal-type">3.8</td>
+<td class="htsql-decimal-type">3.0</td>
+<td class="htsql-decimal-type">3.66666666667</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Astronomy</td>
+<td class="htsql-decimal-type">3.2</td>
+<td class="htsql-decimal-type">3.0</td>
+<td class="htsql-decimal-type">3.0</td>
+<td class="htsql-decimal-type">2.8</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Bioengineering</td>
+<td class="htsql-decimal-type">2.8</td>
+<td class="htsql-decimal-type">3.2</td>
+<td class="htsql-decimal-type">3.0</td>
+<td class="htsql-decimal-type">5.0</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Bursar&#8217;s Office</td>
+<td class="htsql-decimal-type htsql-null-val"></td>
+<td class="htsql-decimal-type htsql-null-val"></td>
+<td class="htsql-decimal-type htsql-null-val"></td>
+<td class="htsql-decimal-type htsql-null-val"></td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-decimal-type htsql-cut"></td>
+<td class="htsql-decimal-type htsql-cut"></td>
+<td class="htsql-decimal-type htsql-cut"></td>
+<td class="htsql-decimal-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this query we define a calculated attribute <tt class="docutils literal"><span class="pre">avg_credits</span></tt> which
+depends upon parameter <tt class="docutils literal"><span class="pre">$level</span></tt>.  This attribute produces the average
+credits over courses from the given level.</p>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/introducing-references";
+var disqus_title = "Introducing References";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

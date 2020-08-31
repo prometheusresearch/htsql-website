@@ -1,0 +1,215 @@
+*************************
+  Discussion on Catalog
+*************************
+
+.. blogentry::
+   :date: 2011-08-09
+   :author: cce
+
+This is a brainstorm topic on catalog structure, extensions, and access.
+On startup, HTSQL introspects the database to find catalog information.
+Sometimes this information needs to be augmented with additional detail,
+including missing information, renaming links, providing for calculated
+attributes and custom application data.
+
+.. blogcut::
+
+Basics
+------
+
+So, by Catalog we mean both the API for access and
+internal Entities: currently Schema, Table & Column.
+
+There are two aspects.  Structurally, Plugins can add
+entities and attributes of entities.  The content of
+the Catalog structure would be db introspection,
+catalog configuration overrides, or converters from
+ORMs such.
+
+At the HTSQL level, we're assuming an unmanaged,
+product based approach with YAML configuration.  We
+are leaving it to framework adapters and higher-level
+automation tools to make it more "user friendly".
+
+The catalog that is configured & used to generate SQL
+is not the same information that is returned by an
+introspection operation.  Although they are tightly
+related.  Since you can't access SQL entities
+directly via HTSQL, it makes no point to permit them
+to be queried.
+
+Instead, the introspection model consists of nodes 
+and arcs.  In this view, a "table" is really an arc
+from the root node to an node representing the given
+table; a foreign key from a table to another table
+is also an arc, creating a unified model.  Columns
+are encapsulated as node attributes, and actual
+database type of a column is only realized via the
+HTSQL Domain. 
+  
+
+
+Example: Column Label
+---------------------
+
+For example, let's take a column label attribute that
+would be attached to the Column entity.  This would
+be kind of "entity plugin", it would override the
+construction of Column objects to add the ``label``
+attribute.  This plugin would also have its own
+configuration file that would *override* any
+"introspected" values.  We'd imagine this would
+simply be a mapping of ``schema.table.column``
+identifiers onto the actual labels.  Perhaps tedious,
+but functional and obvious.
+
+It would then be the task of any introspector plugin
+to fill in this ``label`` attribute if it knew of a
+strategy to do so.  For example a Django configurator
+that would run instead of the default introspector
+might grab the title from the corresponding ORM
+Entity objects.  We assume that there wouldn't be
+more than one configurator plugin active.
+
+
+Use Cases
+---------
+
+*Calculations*
+
+  How do we add a calculation to the server?  We
+  could have it be done via configuration only, but
+  this would limit it only to administration.  This
+  could be done via a UserCalc plugin that uses YAML
+  and/or SQLite storage; then on restart/refresh load
+  them.  How do we do this incrementally?
+
+*Extra Attributes*
+
+  User interface tools may wish to add attributes, such
+  as a column label or coordinates for layout.  How are
+  these stored, updated, queried, etc.
+
+*Extra Structures*
+
+  One may even wish to have new structures, such as ``layout``
+  with relations to other entities.  Another example of 
+  this may be additional full-text search data which 
+  may need to augment existing catalog data.
+
+
+Concerns
+--------
+
+*Refresh*
+
+   Do we have any way to update the catalog at runtime 
+   without restarting the server.  Perhaps you don't need
+   refresh, since this operation is the *primary* cost of 
+   startup and hence restarting may be sufficient.  
+   One problem is dynamically adding a calculation for
+   a user session or global definitions incrementally.
+   Ability to update catalog on fly without restarting?
+
+*Introspect*
+
+   Do we need to introspect on every rebuild?  So in 1.0
+   we started with a two-phase process.  The first phase,
+   we introspected to make a catalog configuration file
+   (in YAML) and second page, we used the configuration
+   file to load without doing introspection again.  With 
+   plugins we had other options. 
+  
+*Re-Introspection*
+
+   If you cache introspection and/or attach configuration
+   data to it, what happens when you re-introspect and
+   a table is renamed, etc.  For PostgreSQL, you can know
+   if a rename happened, since the pg_class OID is same;
+   but this shouldn't be pg specific.
+
+Missing Information
+-------------------
+
+Sometimes the information in an introspected catalog lacks
+detail that a user would wish.  Perhaps it's not setup in the
+database such as a missing foreign key constraint, or such
+information isn't available such as MySQL's MyISAM that
+completely lacks foreign keys.  It's also possible that
+permissions arn't setup or are not a database feature. 
+
+HTSQL uses candidate keys to provide deterministic output,
+joining two instances of the same table for various query
+construction needs.  A candidate key is defined as the primary
+key, if it exists, of the first unique key where all columns
+are not null.  If a candidate key is not provided, there is a
+weak fallback: a listing of a table will order by all columns
+and many query constructions become errors.  If the candidate
+key is invalid (there is data that violates the constraint)
+then the HTSQL processor will not behave properly.
+
+HTSQL uses foreign keys to connect tables; where each foreign
+key creates a forward and a backward link.  If the target of a
+foreign key is a candidate key, the link is singular;
+otherwise, it is assumed to be plural.  In HTSQL, link pairs
+could also be arbitrary joins, partial associations where the 
+links in both directions are plural.
+
+Proposed Format
+---------------
+
+A proposed catalog format for providing missing & augmented
+information (such as arbitrary non-foreign key joins).  It
+could look something like::
+
+  ---
+  catalog.missing:
+    unique-keys:
+    - schema: foo
+      table: bar
+      columns: [ a, b ]
+      is-primary: true
+    foreign-keys:
+    - origin:
+        schema: foo
+        table: source
+        columns: [c1, c2]
+      target:
+	schema: foo
+	table: dest
+	columns: [d, e]
+    not-null:
+    - schema: foo
+      table: bar
+      columns: [c1, c2]
+    restrict:
+    - schema: skip_this_schema
+    - schema: a_schema
+      table: skip_this_table
+    - schema: a_schema
+      table: *
+      columns: [_history, _last_updated]
+
+An issue with this format is that arbitrary link pairs that
+are either dirty, non-enforceable foreign keys or partial
+link pairs (many-to-many) would be included in the foreign
+key section, which is a bit misleading.
+
+Naming Links
+------------
+
+For link from root scope to a given table, using the table
+name works except in a few cases.  Trivial (and rare) case
+is where the table name is not unique after normalization due
+to collisions or two tables differing by schema.  Other cases
+are multi-column foreign keys that can't be named after a
+particular column.  Still other cases include ambiguous 
+reverse links (by default named after the target table) where
+there are two or more possible reverse links.  Finally, the
+default link names simply may not be intuitive or helpful.
+
+In these situations we need a way to provide names or override
+the auto-generated names.   It's not clear at this point where
+these would go in the configuration file.  Should they be a 
+separate section? or should they augment foreign key detail?
+

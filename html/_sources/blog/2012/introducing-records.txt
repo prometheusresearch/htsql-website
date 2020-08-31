@@ -1,0 +1,161 @@
+***********************
+  Introducing Records
+***********************
+
+.. blogentry::
+   :date: 2012-03-15
+   :author: cce
+
+Back in October of last year, we introduced hierarchical
+headers for our HTML and TEXT output, but they were
+implemented by convention and not broadly available to other
+formatters.  With the forthcoming 2.3.1 release we add
+support for nested records to all formatters.
+
+.. blogcut::
+
+
+Background
+----------
+
+Starting with the 2.3.1 release, we have completely rewritten
+our internal query output structure and corresponding
+formatters so that they provide support for nested records.
+Previously we represented query output as a pair of lists,
+one with headers and one with row tuples.  At that time, most
+of our formatters followed this same tabular structure, with
+the exception of the HTML and TEXT formatters |mdash| they 
+used an internal trick to present nested headers. 
+
+What motivates this update was a desire to have a more
+formalized mechanism to serialize records and support
+hierarchical headers.  Early ruminations on this change can be
+read in an October 2011 blog entry, :doc:`../2011/discuss-headers`.  
+
+A user now has explicit control over how their data is 
+structured for output. A user could group fields together 
+and assign decoration hints to individual fields.
+
+The new ``/:raw`` formatter faithfully reproduces this
+output structure into JSON format so that visual tools 
+could access this detail over HTTP.
+
+Output Structure
+----------------
+
+Our output structure is a parallel hierarchy: ``"meta"`` is a
+nested data type declaration, while ``"data"`` has
+corresponding instance data.  You could understand this by
+looking at the following trivial query:
+
+.. htsql:: /1/:raw
+   :plain:
+
+Since our syntax currently requires ``/`` to start every
+query, our top-level domain is *always* a ``list``.   Above,
+the structure is a ``list`` of ``integer`` items.  In the
+example following, we have a ``list`` of ``string`` 
+values instead.
+
+.. htsql:: /school.name/:raw
+   :plain:
+
+The *meta* part has a ``"header"`` attribute that a formatter 
+might use to display column headers.  This *header* attribute 
+can be changed using the ``:as`` decorator.
+
+.. htsql:: /1 :as output /:raw
+   :plain:
+
+In this case, the header applies to the output as a whole,
+not to either the *list* nor the *integer* parts.  Values
+themselves cannot be decorated in this manner.  You could
+see this with the text formatter:
+
+.. htsql:: /1 :as output /:txt
+   :plain:
+
+
+Explicit Records
+----------------
+
+Nested records can now be explicitly marked using curly
+braces ``{}``.  For example, the next query returns a ``list`` 
+of ``record`` having a single ``integer`` field:
+
+.. htsql:: /{1} /:raw
+   :hide:
+
+Slots in a record can be decorated with presentation hints.
+For example, here we decorate the 1st slot in the record as 
+``"one"`` and the output as a whole ``"output"``:
+
+.. htsql:: /{1 :as one} :as output /:raw
+   :hide:
+
+This detail can be seen using a visual formatter:
+
+.. htsql:: /{1 :as one} :as output /:txt
+   :plain:
+
+Querying a table produces a  ``list`` of ``record`` items.
+
+.. htsql:: /school /:raw
+   :hide:
+
+
+Nested Records
+--------------
+
+Records can be nested, providing very nice visual grouping
+properties.  In this next example, we have a ``list`` of
+``record`` with two slots.  The first slot is a nested
+``record`` having ``"name"`` and ``"campus"`` strings.
+The second slot is the department's ``"name"``.
+
+.. htsql:: /department{school{name,campus},name} /:raw
+   :hide:
+
+This can be seen using a visual formatter as:
+
+.. htsql:: /department{school{name,campus},name}
+   :cut: 5
+
+When a table link is used, an implicit record is created.
+For example, this request returns all columns from the
+department table and the entire corresponding school record.
+
+.. htsql:: /department{school,*} /:raw
+   :hide:
+
+.. htsql:: /department{school,*}
+   :cut: 5
+
+Notice in the text output how the nested school record is
+independently visualized.  This query is syntax sugar for
+an equivalent expression using ``{*}`` to explicitly request 
+all columns from a ``school`` record.
+
+.. htsql:: /department{school{*},*}
+   :cut: 5
+
+
+Avoiding Records
+----------------
+
+Sometimes it is useful to expand a linked record's columns
+inline without creating a nested record.  This can be done
+by using the regular navigation operator:
+
+.. htsql:: /department{school.campus, name }
+   :cut: 5
+
+The wildcard (``*``) expansion when used in combination with
+the navigation operator (``.``) does not create a nested 
+record and is instead expanded inline:
+
+.. htsql:: /department{school.*,*}
+   :cut: 5
+
+
+.. |mdash| unicode:: U+2014

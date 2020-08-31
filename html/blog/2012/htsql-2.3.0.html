@@ -1,0 +1,157 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTSQL 2.3.0 is released &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2012 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="2011 HTSQL News Archive" href="../2011/index.html" />
+    <link rel="prev" title="Introducing Records" href="introducing-records.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-2-3-0-is-released">
+<h1>HTSQL 2.3.0 is released<a class="headerlink" href="#htsql-2-3-0-is-released" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2012-03-07</em></p>
+<p>This is the first release in the 2.3 development series.  This release
+is focused almost exclusively on licensing and packaging changes.</p>
+<p>With this release, HTSQL is now free and open source software under the
+terms of the AGPLv3.  That said, we&#8217;re keeping our permissive license so
+that proprietary applications could use HTSQL in conjunction with open
+source databases.  For more detail, visit <a class="reference external" href="http://htsql.org/license/">http://htsql.org/license/</a>.</p>
+<p>We&#8217;ve re-packaged HTSQL so that each database adapter has its own source
+and binary package.  This permits us to specify dependencies, for
+example, <tt class="docutils literal"><span class="pre">HTSQL-PGSQL</span></tt> explicitly requires the <tt class="docutils literal"><span class="pre">pyscopg2</span></tt> database
+client software for PostgreSQL.  This packaging also permits us to
+clarify that adapters to proprietary databases are not free software.</p>
+<p>Going forward, we&#8217;re switching to an even/odd release numbering scheme.
+Each public release is marked by three numbers, <tt class="docutils literal"><span class="pre">X.Y.Z</span></tt>.  Here <tt class="docutils literal"><span class="pre">X.Y</span></tt>
+are the major/minor version numbers and <tt class="docutils literal"><span class="pre">Z</span></tt> is the release number.  An
+even (odd) value of <tt class="docutils literal"><span class="pre">Y</span></tt> indicates a stable (development) release
+series respectively.  Thus <tt class="docutils literal"><span class="pre">2.3.0</span></tt> starts a new series of development
+releases, which will conclude with the <tt class="docutils literal"><span class="pre">2.4.0</span></tt> stable series.  Our
+stable releases are targeted to long term support and maintain syntax,
+semantics, and API compatibility when ever possible.</p>
+<p>Finally, we&#8217;ve updated our website and introduced a new mascot!</p>
+<p>Specific changes since the 2.2 final release:</p>
+<ul class="simple">
+<li>Extracted connection pooling into a separate addon <tt class="docutils literal"><span class="pre">tweak.pool</span></tt>
+since it was causing issues with SQLite and MySQL backends.</li>
+<li>Added a quick start guide, <a class="reference internal" href="../../doc/handbook.html"><em>HTSQL Handbook</em></a>, and added a &#8220;Philosophy&#8221;
+section to our <a class="reference internal" href="../../doc/overview.html"><em>Overview of HTSQL</em></a>.</li>
+<li>Added <tt class="docutils literal"><span class="pre">describe</span></tt> command to <tt class="docutils literal"><span class="pre">htsql-ctl</span> <span class="pre">shell</span></tt>.</li>
+</ul>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2012/htsql-2.3.0";
+var disqus_title = "HTSQL 2.3.0 is released";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

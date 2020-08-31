@@ -1,0 +1,144 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTSQL 2.1.0b2 is released &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Introducing Support for Timestamps" href="introducing-datetime.html" />
+    <link rel="prev" title="HTSQL Roadmap for April, 2011" href="roadmap-2011-04.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-2-1-0b2-is-released">
+<h1>HTSQL 2.1.0b2 is released<a class="headerlink" href="#htsql-2-1-0b2-is-released" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-03-29</em></p>
+<p>A new beta of the 2.1 release is now available.  Changes since the last beta:</p>
+<ul class="simple">
+<li>Added support for <tt class="xref py py-obj docutils literal"><span class="pre">datetime</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">time</span></tt> date types; see <a class="reference internal" href="introducing-datetime.html"><em>Introducing Support for Timestamps</em></a>
+for more details.</li>
+<li>Added support for calculated attributes, <tt class="xref py py-obj docutils literal"><span class="pre">define()</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">where()</span></tt>
+macros; see <a class="reference internal" href="introducing-calculated-attributes.html"><em>Introducing Calculated Attributes</em></a> for more details.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.pgsql.catalog</span></tt>: configure primary and foreign keys
+for <tt class="xref py py-obj docutils literal"><span class="pre">pg_catalog.*</span></tt> tables.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.schema</span></tt>: allow addressing a table in a specified schema
+as <tt class="xref py py-obj docutils literal"><span class="pre">&lt;schema&gt;_</span></tt> identifier.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.autolimit</span></tt>: add <tt class="docutils literal"><span class="pre">LIMIT</span></tt> clause to each query.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.pgsql.timeout</span></tt>: set statement timeout for each query.</li>
+<li>Added Jinja integration demo.</li>
+<li>Many minor fixes and updates.</li>
+</ul>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/htsql-2.1-beta2";
+var disqus_title = "HTSQL 2.1.0b2 is released";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

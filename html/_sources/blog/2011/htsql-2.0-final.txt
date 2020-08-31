@@ -1,0 +1,21 @@
+***************************
+  HTSQL 2.0.1 is released
+***************************
+
+.. blogentry::
+   :date: 2011-02-01
+   :author: cce
+
+Today we've tagged the final release of HTSQL 2.0 --- a high-level
+query language and web service gateway for relational databases.
+This release supports SQLite and PostgreSQL.  We wrote this tool
+so that business analysts could actually use a database.
+
+We're curious what you think.
+
+Fixed since the release candidate:
+
+* Merged `/:json` and `/:jsonex` renderers; use `/:jsonex` layout
+  to avoid CSRF issues.
+* Documentation updates.
+

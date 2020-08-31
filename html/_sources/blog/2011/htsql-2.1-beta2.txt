@@ -1,0 +1,23 @@
+*****************************
+  HTSQL 2.1.0b2 is released
+*****************************
+
+.. blogentry::
+   :date: 2011-03-29
+   :author: xi
+
+A new beta of the 2.1 release is now available.  Changes since the last beta:
+
+* Added support for `datetime` and `time` date types; see :doc:`introducing-datetime`
+  for more details.
+* Added support for calculated attributes, `define()` and `where()`
+  macros; see :doc:`introducing-calculated-attributes` for more details.
+* Added addon `tweak.pgsql.catalog`: configure primary and foreign keys
+  for `pg_catalog.*` tables.
+* Added addon `tweak.schema`: allow addressing a table in a specified schema
+  as `<schema>_<table>` identifier.
+* Added addon `tweak.autolimit`: add ``LIMIT`` clause to each query.
+* Added addon `tweak.pgsql.timeout`: set statement timeout for each query.
+* Added Jinja integration demo.
+* Many minor fixes and updates.
+

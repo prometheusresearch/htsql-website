@@ -1,0 +1,465 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>What is Wrong with SQL (and why HTSQL is the way to go)? &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="HTSQL Roadmap for April, 2011" href="roadmap-2011-04.html" />
+    <link rel="prev" title="Improving the HTSQL Grammar" href="introducing-improved-grammar.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="what-is-wrong-with-sql-and-why-htsql-is-the-way-to-go">
+<h1>What is Wrong with SQL (and why HTSQL is the way to go)?<a class="headerlink" href="#what-is-wrong-with-sql-and-why-htsql-is-the-way-to-go" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-05-10</em></p>
+<p>SQL was invented with a promise of opening data access to people who
+are not professional programmers &#8211; but ended up as an arcane art
+for database experts.  This transformation didn&#8217;t go unnoticed,
+but the reason why writing SQL queries is so hard was never properly
+explained.</p>
+<p>Frustration on usage of SQL often expressed as complains about
+its bulky syntax, inconsistent semantics, and occasionally
+about SQL violating the relational model.</p>
+<p>I believe the problem of SQL, and relational model in general,
+is that it does not respect the structure of business requests.
+takes a form of complains</p>
+<p>Writing an analytical SQL query starts with a <em>business inquiry</em>,
+an textual description of the required data.  The inquiry could
+be formulated by a business user or a programmer.  The programmer
+then translated the inquiry to a query language.</p>
+<p>Often, in the process of database audit or refactoring, it is
+necessary to update existing SQL queries.  To verify correctness
+of an existing SQL query, we need to extract the original business
+inquiry from the SQL.</p>
+<p>In the examples below, we will use a fragment of a database
+for student enrollment system.  This database contains four tables:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20name,%20campus}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20name,%20campus}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nb">name</span><span class="p">,</span> <span class="nb">campus</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="69%" />
+<col width="19%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">edu</td>
+<td class="htsql-text-type">College of Education</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{code,%20name,%20school_code}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{code,%20name,%20school_code}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nb">name</span><span class="p">,</span> <span class="nb">school_code</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="39%" />
+<col width="39%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">arthis</td>
+<td class="htsql-text-type">Art History</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">astro</td>
+<td class="htsql-text-type">Astronomy</td>
+<td class="htsql-text-type">ns</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/program{school_code,%20code,%20title,%20degree,%20part_of_code}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/program{school_code,%20code,%20title,%20degree,%20part_of_code}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="p">{</span><span class="nb">school_code</span><span class="p">,</span> <span class="nb">code</span><span class="p">,</span> <span class="nb">title</span><span class="p">,</span> <span class="nb">degree</span><span class="p">,</span> <span class="nb">part_of_code</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="10%" />
+<col width="48%" />
+<col width="9%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">school_code</th>
+<th class="head">code</th>
+<th class="head">title</th>
+<th class="head">degree</th>
+<th class="head">part_of_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-text-type">gart</td>
+<td class="htsql-text-type">Post Baccalaureate in Art History</td>
+<td class="htsql-text-type">pb</td>
+<td class="htsql-text-type htsql-null-val"></td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">art</td>
+<td class="htsql-text-type">uhist</td>
+<td class="htsql-text-type">Bachelor of Arts in Art History</td>
+<td class="htsql-text-type">ba</td>
+<td class="htsql-text-type htsql-null-val"></td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-text-type">ustudio</td>
+<td class="htsql-text-type">Bachelor of Arts in Studio Art</td>
+<td class="htsql-text-type">ba</td>
+<td class="htsql-text-type htsql-null-val"></td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course{department_code,%20no,%20title,%20credits,%20description}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course{department_code,%20no,%20title,%20credits,%20description}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">department_code</span><span class="p">,</span> <span class="nb">no</span><span class="p">,</span> <span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="p">,</span> <span class="nb">description</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="1%" />
+<col width="11%" />
+<col width="3%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">100</td>
+<td class="htsql-text-type">Practical Bookkeeping</td>
+<td class="htsql-integer-type">2</td>
+<td class="htsql-text-type htsql-null-val"></td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">200</td>
+<td class="htsql-text-type">Introduction to Accounting</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-text-type">The initial course in the theory and practice of financial accounting. Topics emphasized include the preparation, reporting, and analysis of financial data.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">234</td>
+<td class="htsql-text-type">Accounting Information Systems</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-text-type">This course bridges the gap between two disciplines critical to business operations. This course of study teaches students to design and deploy information technology to improve the accounting systems of an organization.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The database contains <em>schools</em>, <em>departments</em> associated with a school,
+<em>programs</em> administered by a school, and <em>courses</em> offered by a department.</p>
+<img class="diagram align-center" height="224" src="../../_images/administrative-directory-small-schema.png" width="424" />
+<p>Against this schema, we could ask a number of business inquiries:</p>
+<ul class="simple">
+<li>List the names of all schools in the north campus.</li>
+<li>For each department, show the department name and the campus
+where it is located.</li>
+<li>Show the number of departments.</li>
+<li>For each department, show the department name and the number of courses
+having more than 2 credit hours.</li>
+<li>How many departments by school campus?</li>
+<li>For each department, show the department name and the number of offered
+100&#8217;s, 200&#8217;s, 300&#8217;s and 400&#8217;s courses.</li>
+<li>For each school with a degree program, show the name of the school
+and the average number of high-credit (&gt;3) courses its departments
+have.</li>
+</ul>
+<p>From the above examples, you can see that a well-defined business
+inquiry usually has a fixed form (or could be reduced to this form):</p>
+<div class="highlight-python"><pre>For each row of ...
+    such that ...
+give me
+    1) ...
+    2) ...</pre>
+</div>
+<p>In this form, we see a sentence of a business inquiry clearly splits into
+three parts: selection of the record set (<em>for each row of ...</em>)
+filtering on the record set (<em>such that ...</em>) and choosing columns
+to output (<em>give me 1) ..., 2) ...,</em>).  I believe SQL is confusing
+and hard to use for many people because it does not respect well
+this separation.</p>
+<p>On the first sight, it is completely wrong, and indeed a canonical
+form of a SQL query is:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="p">...</span>
+<span class="k">FROM</span> <span class="p">...</span>
+<span class="k">WHERE</span> <span class="p">...</span>
+</pre></div>
+</div>
+<p>This form shows that business request clearly separate selection of the
+row set (schools, departments, etc) and selection of the columns to
+output (school name, number of courses, etc).  I believe SQL is confusing
+and hard to use for many people because it does not respect this separation.</p>
+<p>On the first sight, it is wrong.  For instance, the request:</p>
+<blockquote>
+<div><em>List the names of all students</em></div></blockquote>
+<p>is translated to SQL:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">student</span><span class="p">.</span><span class="n">name</span>
+<span class="k">FROM</span> <span class="n">ed</span><span class="p">.</span><span class="n">student</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Indeed, one may claim that the structure of the SQL query:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="p">...</span>
+<span class="k">FROM</span> <span class="p">...</span>
+<span class="k">WHERE</span> <span class="p">...</span>
+</pre></div>
+</div>
+<p>directly reflects the respective structure of the business inquiry.</p>
+<p>However that correspondence falls apart when examples become more complicated.
+Consider an inquiry:</p>
+<blockquote>
+<div><em>For each department, show the department name and the campus
+where it is located.</em></div></blockquote>
+<p>Here are some examples using our sample database:</p>
+<ul class="simple">
+<li>For each department, give me the names of the department and the
+corresponding school.</li>
+<li>For each school, give the school name and the number of associated programs.</li>
+<li>For every program degree, give me the average number of students per
+program with this degree.</li>
+</ul>
+<p>What&#8217;s important in this form is that the business request clearly
+separates selection of the row set (students, schools, program degrees)
+and selection of the columns to output (student name, degree, number of
+programs, etc.  I believe for many people SQL is confusing and
+hard to use because it does not respect this separation.</p>
+<p>On the first sight, it is incorrect.  For instance, the request:</p>
+<blockquote>
+<div><em>&#8220;List the names of all schools in the north campus&#8221;</em></div></blockquote>
+<p>is translated to</p>
+<div class="highlight-python"><pre>SELECT school.name
+FROM ad.school
+WHERE school.campus = 'north';</pre>
+</div>
+<p>and here SQL clauses directly correspond to distinct parts of the
+request: SELECT chooses the output column and FROM specifies the row set.</p>
+<p>However when the request is changed slightly:</p>
+<blockquote>
+<div>&#8220;Give me the name and the degree of each student&#8221;</div></blockquote>
+<p>the respective SQL</p>
+<div class="highlight-python"><pre>SELECT student.name, program.degree
+FROM ed.student
+JOIN ad.program ON (student.school = program.school AND
+                    student.program = program.code)</pre>
+</div>
+<p>loses this correspondence: now the FROM clause is responsible both for
+the row set and output column selection.  Contrast this with the
+equivalent HTSQL query:</p>
+<div class="highlight-python"><pre>/student{name, program.degree}</pre>
+</div>
+<p>It is not only shorter, but also the names of the tables are located in
+semantically meaningful positions: <tt class="xref py py-obj docutils literal"><span class="pre">student</span></tt> in the leading position shows
+that every row of the output is associated with a distinct record from
+<tt class="xref py py-obj docutils literal"><span class="pre">student</span></tt> table; <tt class="xref py py-obj docutils literal"><span class="pre">iphdr</span></tt> appears in the selector to display a linked
+record from <tt class="xref py py-obj docutils literal"><span class="pre">iphdr</span></tt> table (and the link event-&gt;iphdr is singular,
+otherwise the query would produce an error).</p>
+<p>This effect becomes even more apparent in queries with aggregates.  Compare</p>
+<p>SELECT signature.sig_name, COUNT(*)
+FROM signature
+JOIN event ON (signature.sig_id = event.signature)
+GROUP BY signature.sig_id, signature.sig_name</p>
+<p>with</p>
+<p>/signature{sig_name, count(event)}</p>
+<p>Note that I could easily read back the original business request out of
+the HTSQL variant even if I don&#8217;t know the schema, but to do the same
+with SQL, I need to put some effort &#8211; because the row set of the
+request is not manifested clearly in SQL.  To determine the row set from
+SQL, I need to analyze the whole query: SELECT clause for DISTINCT
+indicator and aggregate calls, FROM clause where some tables may
+contribute to the row selection and the others may not, GROUP BY clause
+for projections.</p>
+<p>With clear distinction between row and column selection, HTSQL achieves
+the level of composability impossible in SQL.  For instance, the query</p>
+<p>/signature{sig_id, count(event)}</p>
+<p>could be easily adapted to include extra columns:</p>
+<p>/signature{sig_id, sig_name, count(event), count(sig_reference)}</p>
+<p>or to add a filter</p>
+<p>/signature{sig_id, count(event)}?sig_class.sig_class_name~&#8217;protocol&#8217;</p>
+<p>and these changes are local to the respective operations while making
+similar changes to SQL usually requires modifying the query all over the
+place.</p>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/what-is-wrong-with-sql";
+var disqus_title = "What is Wrong with SQL (and why HTSQL is the way to go)?";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

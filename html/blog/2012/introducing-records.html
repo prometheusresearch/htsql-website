@@ -1,0 +1,680 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introducing Records &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2012 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="HTSQL 2.3.0 is released" href="htsql-2.3.0.html" />
+    <link rel="prev" title="Introducing Object Formats" href="introducing-object-formats.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introducing-records">
+<h1>Introducing Records<a class="headerlink" href="#introducing-records" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2012-03-15</em></p>
+<p>Back in October of last year, we introduced hierarchical
+headers for our HTML and TEXT output, but they were
+implemented by convention and not broadly available to other
+formatters.  With the forthcoming 2.3.1 release we add
+support for nested records to all formatters.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>Starting with the 2.3.1 release, we have completely rewritten
+our internal query output structure and corresponding
+formatters so that they provide support for nested records.
+Previously we represented query output as a pair of lists,
+one with headers and one with row tuples.  At that time, most
+of our formatters followed this same tabular structure, with
+the exception of the HTML and TEXT formatters — they
+used an internal trick to present nested headers.</p>
+<p>What motivates this update was a desire to have a more
+formalized mechanism to serialize records and support
+hierarchical headers.  Early ruminations on this change can be
+read in an October 2011 blog entry, <a class="reference internal" href="../2011/discuss-headers.html"><em>Discussion of JSON/CSV Headers</em></a>.</p>
+<p>A user now has explicit control over how their data is
+structured for output. A user could group fields together
+and assign decoration hints to individual fields.</p>
+<p>The new <tt class="docutils literal"><span class="pre">/:raw</span></tt> formatter faithfully reproduces this
+output structure into JSON format so that visual tools
+could access this detail over HTTP.</p>
+</div>
+<div class="section" id="output-structure">
+<h2>Output Structure<a class="headerlink" href="#output-structure" title="Permalink to this headline">¶</a></h2>
+<p>Our output structure is a parallel hierarchy: <tt class="docutils literal"><span class="pre">&quot;meta&quot;</span></tt> is a
+nested data type declaration, while <tt class="docutils literal"><span class="pre">&quot;data&quot;</span></tt> has
+corresponding instance data.  You could understand this by
+looking at the following trivial query:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/1/:raw" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/1/:raw" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="m">1</span><span class="o">/</span><span class="p">:</span><span class="nf">raw</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>{
+  &quot;meta&quot;: {
+    &quot;domain&quot;: {
+      &quot;type&quot;: &quot;list&quot;,
+      &quot;item&quot;: {
+        &quot;domain&quot;: {
+          &quot;type&quot;: &quot;integer&quot;
+        }
+      }
+    },
+    &quot;header&quot;: &quot;1&quot;,
+    &quot;syntax&quot;: &quot;\/1&quot;
+  },
+  &quot;data&quot;: [
+    1
+  ]
+}
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since our syntax currently requires <tt class="docutils literal"><span class="pre">/</span></tt> to start every
+query, our top-level domain is <em>always</em> a <tt class="docutils literal"><span class="pre">list</span></tt>.   Above,
+the structure is a <tt class="docutils literal"><span class="pre">list</span></tt> of <tt class="docutils literal"><span class="pre">integer</span></tt> items.  In the
+example following, we have a <tt class="docutils literal"><span class="pre">list</span></tt> of <tt class="docutils literal"><span class="pre">string</span></tt>
+values instead.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.name/:raw" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.name/:raw" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nb">name</span><span class="o">/</span><span class="p">:</span><span class="nf">raw</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>{
+  &quot;meta&quot;: {
+    &quot;domain&quot;: {
+      &quot;type&quot;: &quot;list&quot;,
+      &quot;item&quot;: {
+        &quot;domain&quot;: {
+          &quot;type&quot;: &quot;text&quot;
+        }
+      }
+    },
+    &quot;header&quot;: &quot;name&quot;,
+    &quot;path&quot;: &quot;school.name&quot;,
+    &quot;syntax&quot;: &quot;\/school.name&quot;,
+    &quot;tag&quot;: &quot;name&quot;
+  },
+  &quot;data&quot;: [
+    &quot;School of Art &amp; Design&quot;,
+    &quot;School of Business&quot;,
+    &quot;College of Education&quot;,
+    &quot;School of Engineering&quot;,
+    &quot;School of Arts and Humanities&quot;,
+    &quot;School of Music &amp; Dance&quot;,
+    &quot;School of Natural Sciences&quot;,
+    &quot;Public Honorariums&quot;,
+    &quot;School of Continuing Studies&quot;
+  ]
+}
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <em>meta</em> part has a <tt class="docutils literal"><span class="pre">&quot;header&quot;</span></tt> attribute that a formatter
+might use to display column headers.  This <em>header</em> attribute
+can be changed using the <tt class="docutils literal"><span class="pre">:as</span></tt> decorator.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/1%20:as%20output%20/:raw" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/1%20:as%20output%20/:raw" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="m">1</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">output</span> <span class="o">/</span><span class="p">:</span><span class="nf">raw</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>{
+  &quot;meta&quot;: {
+    &quot;domain&quot;: {
+      &quot;type&quot;: &quot;list&quot;,
+      &quot;item&quot;: {
+        &quot;domain&quot;: {
+          &quot;type&quot;: &quot;integer&quot;
+        }
+      }
+    },
+    &quot;header&quot;: &quot;output&quot;,
+    &quot;syntax&quot;: &quot;\/1 :as output&quot;,
+    &quot;tag&quot;: &quot;output&quot;
+  },
+  &quot;data&quot;: [
+    1
+  ]
+}
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this case, the header applies to the output as a whole,
+not to either the <em>list</em> nor the <em>integer</em> parts.  Values
+themselves cannot be decorated in this manner.  You could
+see this with the text formatter:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/1%20:as%20output%20/:txt" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/1%20:as%20output%20/:txt" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="m">1</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">output</span> <span class="o">/</span><span class="p">:</span><span class="nf">txt</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre> | output |
+-+--------+-
+ |      1 |
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="explicit-records">
+<h2>Explicit Records<a class="headerlink" href="#explicit-records" title="Permalink to this headline">¶</a></h2>
+<p>Nested records can now be explicitly marked using curly
+braces <tt class="docutils literal"><span class="pre">{}</span></tt>.  For example, the next query returns a <tt class="docutils literal"><span class="pre">list</span></tt>
+of <tt class="docutils literal"><span class="pre">record</span></tt> having a single <tt class="docutils literal"><span class="pre">integer</span></tt> field:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{1}%20/:raw" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{1}%20/:raw" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="m">1</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">raw</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>Slots in a record can be decorated with presentation hints.
+For example, here we decorate the 1st slot in the record as
+<tt class="docutils literal"><span class="pre">&quot;one&quot;</span></tt> and the output as a whole <tt class="docutils literal"><span class="pre">&quot;output&quot;</span></tt>:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{1%20:as%20one}%20:as%20output%20/:raw" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{1%20:as%20one}%20:as%20output%20/:raw" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="m">1</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">one</span><span class="p">}</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">output</span> <span class="o">/</span><span class="p">:</span><span class="nf">raw</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>This detail can be seen using a visual formatter:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{1%20:as%20one}%20:as%20output%20/:txt" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{1%20:as%20one}%20:as%20output%20/:txt" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="m">1</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">one</span><span class="p">}</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">output</span> <span class="o">/</span><span class="p">:</span><span class="nf">txt</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre> | output |
+ +--------+
+ | one    |
+-+--------+-
+ |      1 |
+</pre></div>
+</div>
+</div>
+</div>
+<p>Querying a table produces a  <tt class="docutils literal"><span class="pre">list</span></tt> of <tt class="docutils literal"><span class="pre">record</span></tt> items.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school%20/:raw" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school%20/:raw" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span> <span class="o">/</span><span class="p">:</span><span class="nf">raw</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="nested-records">
+<h2>Nested Records<a class="headerlink" href="#nested-records" title="Permalink to this headline">¶</a></h2>
+<p>Records can be nested, providing very nice visual grouping
+properties.  In this next example, we have a <tt class="docutils literal"><span class="pre">list</span></tt> of
+<tt class="docutils literal"><span class="pre">record</span></tt> with two slots.  The first slot is a nested
+<tt class="docutils literal"><span class="pre">record</span></tt> having <tt class="docutils literal"><span class="pre">&quot;name&quot;</span></tt> and <tt class="docutils literal"><span class="pre">&quot;campus&quot;</span></tt> strings.
+The second slot is the department&#8217;s <tt class="docutils literal"><span class="pre">&quot;name&quot;</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school{name,campus},name}%20/:raw" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school{name,campus},name}%20/:raw" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span><span class="nb">campus</span><span class="p">},</span><span class="nb">name</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">raw</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>This can be seen using a visual formatter as:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school{name,campus},name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school{name,campus},name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span><span class="nb">campus</span><span class="p">},</span><span class="nb">name</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="58%" />
+<col width="12%" />
+<col width="30%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="2">school</th>
+<th class="head" rowspan="2">name</th>
+</tr>
+<tr class="row-even"><th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">Accounting</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Art History</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Astronomy</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+<td class="htsql-text-type">Bioengineering</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type">Bursar&#8217;s Office</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>When a table link is used, an implicit record is created.
+For example, this request returns all columns from the
+department table and the entire corresponding school record.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school,*}%20/:raw" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school,*}%20/:raw" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">,</span><span class="o">*</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">raw</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school,*}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school,*}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">,</span><span class="o">*</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="41%" />
+<col width="8%" />
+<col width="8%" />
+<col width="21%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="3">school</th>
+<th class="head" rowspan="2">code</th>
+<th class="head" rowspan="2">name</th>
+<th class="head" rowspan="2">school_code</th>
+</tr>
+<tr class="row-even"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">acc</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">la</td>
+<td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">arthis</td>
+<td class="htsql-text-type">Art History</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">ns</td>
+<td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">astro</td>
+<td class="htsql-text-type">Astronomy</td>
+<td class="htsql-text-type">ns</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">eng</td>
+<td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+<td class="htsql-text-type">be</td>
+<td class="htsql-text-type">Bioengineering</td>
+<td class="htsql-text-type">eng</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type">bursar</td>
+<td class="htsql-text-type">Bursar&#8217;s Office</td>
+<td class="htsql-text-type htsql-null-val"></td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Notice in the text output how the nested school record is
+independently visualized.  This query is syntax sugar for
+an equivalent expression using <tt class="docutils literal"><span class="pre">{*}</span></tt> to explicitly request
+all columns from a <tt class="docutils literal"><span class="pre">school</span></tt> record.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school{*},*}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school{*},*}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">{</span><span class="o">*</span><span class="p">},</span><span class="o">*</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="41%" />
+<col width="8%" />
+<col width="8%" />
+<col width="21%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="3">school</th>
+<th class="head" rowspan="2">code</th>
+<th class="head" rowspan="2">name</th>
+<th class="head" rowspan="2">school_code</th>
+</tr>
+<tr class="row-even"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">acc</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">la</td>
+<td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">arthis</td>
+<td class="htsql-text-type">Art History</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">ns</td>
+<td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">astro</td>
+<td class="htsql-text-type">Astronomy</td>
+<td class="htsql-text-type">ns</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">eng</td>
+<td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+<td class="htsql-text-type">be</td>
+<td class="htsql-text-type">Bioengineering</td>
+<td class="htsql-text-type">eng</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type">bursar</td>
+<td class="htsql-text-type">Bursar&#8217;s Office</td>
+<td class="htsql-text-type htsql-null-val"></td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="avoiding-records">
+<h2>Avoiding Records<a class="headerlink" href="#avoiding-records" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes it is useful to expand a linked record&#8217;s columns
+inline without creating a nested record.  This can be done
+by using the regular navigation operator:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school.campus,%20name%20}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school.campus,%20name%20}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">.</span><span class="nb">campus</span><span class="p">,</span> <span class="nb">name</span> <span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">campus</th>
+<th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">south</td>
+<td class="htsql-text-type">Accounting</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Art History</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Astronomy</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">north</td>
+<td class="htsql-text-type">Bioengineering</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type">Bursar&#8217;s Office</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The wildcard (<tt class="docutils literal"><span class="pre">*</span></tt>) expansion when used in combination with
+the navigation operator (<tt class="docutils literal"><span class="pre">.</span></tt>) does not create a nested
+record and is instead expanded inline:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school.*,*}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school.*,*}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">.</span><span class="o">*</span><span class="p">,</span><span class="o">*</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="41%" />
+<col width="8%" />
+<col width="8%" />
+<col width="21%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+<th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">bus</td>
+<td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">acc</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">la</td>
+<td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">arthis</td>
+<td class="htsql-text-type">Art History</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ns</td>
+<td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">astro</td>
+<td class="htsql-text-type">Astronomy</td>
+<td class="htsql-text-type">ns</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">eng</td>
+<td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+<td class="htsql-text-type">be</td>
+<td class="htsql-text-type">Bioengineering</td>
+<td class="htsql-text-type">eng</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type">bursar</td>
+<td class="htsql-text-type">Bursar&#8217;s Office</td>
+<td class="htsql-text-type htsql-null-val"></td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2012/introducing-records";
+var disqus_title = "Introducing Records";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

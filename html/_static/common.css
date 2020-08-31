@@ -1,0 +1,441 @@
+
+/* Default sphinx styles */
+
+@import url(basic.css);
+
+
+/*
+ * Colors:
+ *
+ * 90% grey: #1A1A1A
+ * regular text
+ *
+ * 33% grey: #AAAAAA
+ * table border
+ *
+ * dark blue: #0039A6
+ * logo text, inactive links, toc border
+ *
+ * green: #69BE28
+ * logo text, active links, 1st- and 2nd-level headers
+ *
+ * very light blue: #EEF1F8
+ * background for header/footer, toc, link list items,
+ * border for htsql input
+ *
+ * 5% grey: #F2F2F2
+ * background for literal/highlighted text and htsql output
+ *
+ * light red: #FFE4E4;
+ * background for warnings
+ *
+ */
+
+
+/*
+ * Common page styles
+ */
+
+body {
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  color: #1A1A1A;
+  background-color: #EEF1F8;
+}
+
+h1 {
+  font-size: 150%;
+  clear: both;
+}
+
+h2 {
+  font-size: 135%;
+  clear: both;
+}
+
+h3 {
+  font-size: 105%;
+  clear: both;
+}
+
+h4 {
+  font-size: 100%;
+  clear: both;
+}
+
+h5 {
+  font-size: 95%;
+  clear: both;
+}
+
+h6 {
+  font-size: 90%;
+  clear: both;
+}
+
+h1, h2 {
+  margin: 1em 0 0 0;
+  padding: 0;
+}
+
+h3, h4, h5, h6 {
+  margin: 1.5em 0 0 0;
+  padding: 0;
+}
+
+p, ul, dl, table, pre {
+  margin: 1em 0 0 0;
+  padding: 0;
+}
+
+li {
+  margin: 0 0 0 2em;
+  padding: 0;
+}
+
+li > ul {
+  margin: 0.5em 0;
+}
+
+dt {
+  margin: 0.5em 0 0 0;
+  padding: 0;
+}
+
+dd {
+  margin: 0.1em 0 0 0;
+  padding: 0 0 0 2em;
+}
+
+dd > p:first-child {
+  margin: 0.5em 0;
+}
+
+dd > p {
+  margin: 1em 0 0 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a img {
+  border-style: none;
+}
+
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+
+/*
+ * Header decorations
+ */
+
+.header {
+  position: relative;
+  z-index: 1;
+  background-image: url(bright-squares-pattern.png); /* by Waseem Dahman, http://subtlepatterns.com/?p=449 */
+  box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+}
+
+.header div.header-inner {
+  position: relative;
+  width: 900px;
+  margin: 0 auto;
+}
+
+.header img.header-logo {
+  margin: 0;
+}
+
+.header ul.navigation {
+  position: absolute;
+  right: 0;
+  bottom: 10px;
+  margin: 0;
+  padding: 0;
+}
+
+.header ul.navigation li {
+  display: inline;
+  font-size: 120%;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0 0 0 2em;
+}
+
+.header ul.navigation li a {
+  color: #0039A6;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.15);
+}
+
+.header ul.navigation li a:hover {
+  color: #69BE28;
+}
+
+.header div#searchbox {
+  position: absolute;
+  top: 25px;
+  right: 0;
+}
+
+.header input.search-input {
+  padding: 0.2em;
+}
+
+
+/*
+ * Footer decorations
+ */
+
+.footer {
+  position: relative;
+  z-index: 1;
+  font-size: 80%;
+  font-variant: small-caps;
+  padding: 0.5em 0 2em;
+  box-shadow: 0 -2px 2px rgba(0,0,0,0.2);
+}
+
+.footer .footer-inner {
+  width: 900px;
+  margin: 0 auto;
+  text-align: right;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer .copyright {
+  float: left;
+}
+
+.footer ul.community-links {
+  margin: 0;
+  padding: 0;
+}
+
+.footer ul.community-links li {
+  display: inline;
+  margin: 0 1em;
+}
+
+
+/*
+ * Document area decorations
+ */
+
+.document {
+  font-family: 'DejaVu Sans', 'Verdana', sans-serif;
+  background-color: #FFFFFF;
+  border: 1px solid #FFFFFF;
+}
+
+.document .documentwrapper {
+  width: 900px;
+  margin: 25px auto;
+}
+
+.document pre,
+.document tt,
+.document code,
+.document kbd,
+.document samp {
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', 'Menlo', 'Lucida Console', monospace;
+}
+
+.document .body {
+  font-size: 105%;
+  width: 740px;
+  margin: 0 auto;
+  text-align: justify;
+}
+
+.document h1 {
+  font-variant: small-caps;
+  color: #69BE28;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.document h2 {
+  color: #69BE28;
+  border-bottom: 3px solid #69BE28;
+}
+
+.document h1 a,
+.document h2 a,
+.document h3 a,
+.document h4 a,
+.document h5 a,
+.document h6 a {
+  color: inherit;
+}
+
+.document a.headerlink {
+  font-size: 80%;
+  padding: 0 4px;
+}
+
+.document a {
+  color: #0039A6;
+}
+
+.document a:hover {
+  color: #69BE28;
+}
+
+.document table.docutils tr th {
+  font-weight: normal;
+  font-variant: small-caps;
+}
+
+.document a em {
+  font-weight: bold;
+  font-style: normal;
+}
+
+.document img.align-center {
+  margin: 0.5em auto 0;
+  padding: 1em 0;
+}
+
+.document div.quick-links ul {
+  width: 90%;
+  margin: 1em auto;
+  padding: 0;
+  clear: both;
+}
+
+.document div.quick-links li {
+  float: left;
+  font-size: 90%;
+  width: 45%;
+  margin: 0.5em 0.5em;
+  padding: 0.2em;
+  background: #EEF1F8;
+  border-radius: 10px;
+  text-align: center;
+  list-style-type: none;
+}
+
+.document div.quick-links li a {
+  display: block;
+  margin: 0 auto;
+}
+
+.document div.quick-links li a em {
+  font-size: 120%;
+  font-weight: bold;
+  font-style: normal;
+}
+
+.document .highlight {
+  margin: 1em 0 0;
+  padding: 0.5em 1em;
+  background: #F2F2F2;
+  box-shadow: 0 -1px 1px #F2F2F2, 0 1px 1px #F2F2F2;
+}
+
+.document .highlight pre {
+  font-size: 95%;
+  margin: 0;
+}
+
+.document .htsql-io {
+  margin: 1em 0 0;
+  padding: 0.5em 1em;
+  background: #F2F2F2;
+  box-shadow: 0 -1px 1px #F2F2F2, 0 1px 1px #F2F2F2;
+}
+
+.document .htsql-io .highlight {
+  margin: 0;
+  padding: 0;
+  background: inherit;
+  box-shadow: none;
+}
+
+.document .htsql-io .htsql-input {
+  font-size: 95%;
+  padding: 0.2em 0.5em;
+  background: #FFFFFF;
+  border: 1px solid #EEF1F8;
+  border-radius: 5px;
+}
+
+.document .htsql-io .htsql-input pre {
+  font-size: 100%;
+}
+
+.document .htsql-io .htsql-output {
+  font-size: 90%;
+}
+
+.document .htsql-io .htsql-output .highlight pre {
+  font-size: 100%;
+  margin: 0.5em 0 0;
+}
+
+.document .htsql-io .htsql-output table {
+  margin: 0.5em 0 0;
+}
+
+.document .htsql-io .htsql-output table tbody tr:first-child td {
+  border-top: 1px solid #AAAAAA;
+}
+
+.document .topic {
+  float: right;
+  position: relative;
+  font-size: 95%;
+  width: 35%;
+  left: 10%;
+  margin: 1.5em 0 0 -5%;
+  padding: 0.5em 2em;
+  background: #EEF1F8;
+  border: solid #0039A6;
+  border-width: 1px 0;
+}
+
+.document .topic p.topic-title {
+  font-size: 100%;
+  margin: 0;
+}
+
+.document .topic ul {
+  margin: 0.2em 0 0;
+  padding: 0;
+}
+
+.document .topic ul li {
+  list-style-type: square;
+  list-style-position: inside;
+  margin: 0;
+}
+
+.document div.admonition p.admonition-title,
+.document div.admonition p.admonition-title + p {
+  display: inline;
+}
+
+.document div.admonition p.admonition-title:after {
+  content: ":";
+}
+
+.document div.warning {
+  background-color: #FFE4E4;
+  box-shadow: 0 -1px 1px #FFE4E4, 0 1px 1px #FFE4E4;
+}
+

@@ -1,0 +1,43 @@
+**************************
+  Discussion on Commands
+**************************
+
+.. blogentry::
+   :date: 2011-07-26
+   :author: cce
+
+In HTSQL, we'd like commands and functions to have the same syntax.
+How do we make this work?
+
+.. blogcut::
+
+Background
+----------
+
+Currently formatters are handled as a special case, for
+example, ``/school/:csv``.  We'd like this to be equivalent
+(using postfix syntax) to ``/csv(/school)``.  Broadly speaking,
+we'd like commands to have same syntax as functions.  The
+challenge here is how to get from the internal syntax tree to
+the WSGI output.  Is binding different?  What are the other
+translation phases to get to the formatted output.  
+
+Our previous approach (in 1.x) had a separate syntax for
+commands and each command was responsible for translating it's
+arguments into an output. We had command chaining via typed
+pipeline.  Commands had input/output interface with a set of
+types: SYNTAX (a syntax tree), PRODUCT (tabular output of an
+SQL query), RENDER (WSGI output), among others. 
+
+In this version, we need a pipeline support, but we should
+assume that they would be supported by nested commands.  For
+example, suppose we have a ``/meta()`` command that executes
+its argument on the meta-data structure for the current
+context.  Hence, ``/html(/meta(/column))`` would produce an
+HTML formatted table listing columns currently available to 
+the current user. This query could also be written in 
+postfix syntax as ``/column/:meta/:html``.
+
+So what happens after a syntax tree?  What is the result of 
+the translation and how do we convert this to final output.
+

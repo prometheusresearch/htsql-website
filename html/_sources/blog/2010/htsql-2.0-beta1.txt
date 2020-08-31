@@ -1,0 +1,20 @@
+*****************************
+  HTSQL 2.0.0b1 is released
+*****************************
+
+.. blogentry::
+   :date: 2010-09-21
+   :author: xi
+
+This is the initial beta release: not all features work as specified and some
+are not implemented yet.
+
+Two backends are supported: PostgreSQL and SQLite.  The PostgreSQL backend
+is more feature-complete.
+
+The SQL translator needs more work: term compiler, the frame assembler and
+the SQL serializer are of alpha quality.
+
+Many functions from the standard library are not yet implemented or missing
+a proper serializer, especially for the SQLite backend.
+

@@ -1,0 +1,37 @@
+***************************************
+  DonorsChoose : Donations by Subject 
+***************************************
+
+
+.. demo::
+
+    <script type="text/javascript"
+        src="/htraf/htraf.js"
+        data-htsql-version="2"
+        data-htsql-prefix="/@donorschoose">
+    </script>
+
+    <h3>Select Focus Area</h3>
+    <select id="focus" 
+        data-htsql="/project^primary_focus_area">
+    </select>
+    <div style="width: 500px; height: 350px;" 
+        data-htsql="/((project?primary_focus_area=$focus)
+                      ^primary_focus_subject)
+                     {primary_focus_subject,
+                      sum(^.total_donations)}"
+        data-ref="focus"
+        data-type="pie"
+        data-widget="chart"
+        data-title="Percent of Donations by Subject"></div>
+
+    <h3>Focus Subject</h3>
+    <table id="subject"
+        data-htsql="/((project?primary_focus_area=$focus)
+                      ^primary_focus_subject)
+                     {primary_focus_subject :as 'Subject',
+                      sum(^.total_donations) - :as 'Total Donations',
+                      sum(^.num_donors) :as 'Number of Donors'}"
+        data-ref="focus">
+    </table>
+

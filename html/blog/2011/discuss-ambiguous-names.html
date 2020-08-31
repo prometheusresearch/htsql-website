@@ -1,0 +1,236 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Open question: ambiguous names &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="HTSQL 2.0.1 is released" href="htsql-2.0-final.html" />
+    <link rel="prev" title="HTSQL 2.1 Development Update" href="htsql-2011-march.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="open-question-ambiguous-names">
+<h1>Open question: ambiguous names<a class="headerlink" href="#open-question-ambiguous-names" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-03-30</em></p>
+<p>In HTSQL, tables are addressed by name while the table schema is ignored.
+This creates an ambiguity when the same table name exists in more than
+one schema.  This article describes several workarounds and possible
+solutions.</p>
+<div class="section" id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+<p>Most relational database servers keep tables and other named entities
+in namespace objects called <em>schemas</em>.  A canonical way to address
+a table in a schema is to use a dotted notation: <tt class="docutils literal"><span class="pre">schema.table</span></tt>.
+In some cases, the schema qualifier could be omitted.  For instance,
+in PostgreSQL, any table from the schema <tt class="docutils literal"><span class="pre">public</span></tt> could be addressed
+by name only; the list schemas that permit unqualified access could
+be changed by setting <tt class="docutils literal"><span class="pre">search_path</span></tt> parameter.</p>
+<p>HTSQL has no notion of a schema.  When resolving a table name, HTSQL
+looks through all available schemas; the search succeeds if
+a unique table with the given name is found.  The search fails if
+no table with the given name exists or there are more than one
+table with the given name (which must belong to different schemas).
+The latter case is indicated by an error message:</p>
+<div class="highlight-python"><pre>$ /student
+bind error: ambiguous name:
+    /student
+     ^^^^^^^</pre>
+</div>
+<p>We are still contemplating on the best way to address this problem;
+meanwhile you can use one of several workarounds.</p>
+</div>
+<div class="section" id="workarounds">
+<h2>Workarounds<a class="headerlink" href="#workarounds" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="permissions">
+<h3>Permissions<a class="headerlink" href="#permissions" title="Permalink to this headline">¶</a></h3>
+<p>Often, one only need to address a specific schema, tables in other
+schemas are of no interest.  In this case, one may create a user
+with access restricted to the specific schema and then use this user
+credentials to connect HTSQL to the database.</p>
+<p>HTSQL respects user permissions and will not allow you to address
+any tables which the given user has no right to SELECT from.  Therefore
+the ambiguity is eliminated and you could address the desired table
+by name.</p>
+</div>
+<div class="section" id="tweak-schema">
+<h3><tt class="docutils literal"><span class="pre">tweak.schema</span></tt><a class="headerlink" href="#tweak-schema" title="Permalink to this headline">¶</a></h3>
+<p>Use addon <tt class="docutils literal"><span class="pre">tweak.schema</span></tt>, which allows you to address a table
+as <tt class="docutils literal"><span class="pre">&lt;schema&gt;_&lt;table&gt;</span></tt>.  That is, if there is a table called <tt class="docutils literal"><span class="pre">sales</span></tt>
+in the schema <tt class="docutils literal"><span class="pre">private</span></tt>, you can address it as <tt class="docutils literal"><span class="pre">private_sales</span></tt>.</p>
+<p>To use the addon, add <tt class="docutils literal"><span class="pre">-E</span> <span class="pre">tweak.schema</span></tt> option when starting
+<tt class="docutils literal"><span class="pre">htsql-ctl</span> <span class="pre">shell</span></tt> or <tt class="docutils literal"><span class="pre">htsql-ctl</span> <span class="pre">server</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>The 1.0 release, symbol <tt class="docutils literal"><span class="pre">:</span></tt> was used to indicate a namespace,
+in particular, it was used to specify the schema of a table.
+This feature was lost during transition to 2.0, and <tt class="docutils literal"><span class="pre">:</span></tt> is now
+used for infix and suffix function call.  For instance</p>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="nb">expr</span><span class="p">:</span><span class="nf">round</span><span class="p">,</span> <span class="nb">expr</span><span class="p">:</span><span class="nf">round</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>are equivalent to</p>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="nf">round</span><span class="p">(</span><span class="nb">expr</span><span class="p">),</span> <span class="nf">round</span><span class="p">(</span><span class="nb">expr</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>respectively.</p>
+<p>Here is the list of options we are considering for 2.0.</p>
+<div class="section" id="alternative-namespace-syntax">
+<h3>Alternative namespace syntax<a class="headerlink" href="#alternative-namespace-syntax" title="Permalink to this headline">¶</a></h3>
+<p>Use a different syntax to indicate namespace (for instance, <tt class="docutils literal"><span class="pre">ns::name</span></tt>).
+This syntax must be at the same time feel intuitive, not clash with
+any existing syntax and not be too line-noisy.</p>
+<p>Alternatively, we could find out a different syntax for infix function call
+(e.g. <tt class="docutils literal"><span class="pre">expr&#64;round</span></tt>) and use <tt class="docutils literal"><span class="pre">:</span></tt> for namespaces again.</p>
+</div>
+<div class="section" id="dot-notation">
+<h3>Dot notation<a class="headerlink" href="#dot-notation" title="Permalink to this headline">¶</a></h3>
+<p>Use <tt class="docutils literal"><span class="pre">.</span></tt> to indicate the namespace.  That may be technically feasible,
+but it muddles the definition of the <tt class="docutils literal"><span class="pre">.</span></tt> operator, which currently
+strongly implies &#8220;composition&#8221;.  Also, it does not work well with function
+calls: <tt class="docutils literal"><span class="pre">ns.fn(arg)</span></tt> implies that <tt class="docutils literal"><span class="pre">arg</span></tt> belongs to namespace <tt class="docutils literal"><span class="pre">ns</span></tt>,
+and permits invalid queries like <tt class="docutils literal"><span class="pre">/ns</span></tt>.</p>
+</div>
+<div class="section" id="namespace-macro">
+<h3>Namespace macro<a class="headerlink" href="#namespace-macro" title="Permalink to this headline">¶</a></h3>
+<p>Use a macro to indicate the schema.  For instance, <tt class="docutils literal"><span class="pre">from(table,schema)</span></tt>,
+or, using the infix notation <tt class="docutils literal"><span class="pre">(table</span> <span class="pre">:from</span> <span class="pre">schema)</span></tt>.</p>
+</div>
+<div class="section" id="name-mangling">
+<h3>Name mangling<a class="headerlink" href="#name-mangling" title="Permalink to this headline">¶</a></h3>
+<p>Mangle the table name using <tt class="docutils literal"><span class="pre">_</span></tt> or <tt class="docutils literal"><span class="pre">__</span></tt> as the separator
+(<tt class="docutils literal"><span class="pre">schema_table</span></tt>), that&#8217;s what addon <tt class="docutils literal"><span class="pre">tweak.schema</span></tt> does.</p>
+</div>
+<div class="section" id="explicit-configuration">
+<h3>Explicit configuration<a class="headerlink" href="#explicit-configuration" title="Permalink to this headline">¶</a></h3>
+<p>Defer the problem to configuration, allow the user to assign unique
+table names in a configuration file.</p>
+<p>There is another related problem with ambiguous links.  Suppose that one
+table has two different links to another table.  For instance, <tt class="docutils literal"><span class="pre">prerequisite</span></tt>
+has two links to <tt class="docutils literal"><span class="pre">course</span></tt>, they are called <tt class="docutils literal"><span class="pre">prerequisite.of_course</span></tt>
+and <tt class="docutils literal"><span class="pre">prerequisite.on_course</span></tt>.  However we cannot name the reverse links
+from <tt class="docutils literal"><span class="pre">course</span></tt> to <tt class="docutils literal"><span class="pre">prerequisite</span></tt>.  The usual way to name reverse links
+is to use the name of the target table, but in this case, <tt class="docutils literal"><span class="pre">course.prerequisite</span></tt>
+is ambiguous.  Another example is self-referential links: <tt class="docutils literal"><span class="pre">program.part_of</span></tt>
+links from <tt class="docutils literal"><span class="pre">program</span></tt>, to <tt class="docutils literal"><span class="pre">program</span></tt>, but there is no way to address
+the reverse link as <tt class="docutils literal"><span class="pre">program.program</span></tt> also refers to the direct link.</p>
+<p>No matter what solution is chosen to solve the problem with ambiguous schema,
+it should work for the case of ambiguous link names too.</p>
+</div>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/discuss-ambiguous-names";
+var disqus_title = "Open question: ambiguous names";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

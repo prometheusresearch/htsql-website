@@ -1,0 +1,232 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTSQL Roadmap for April, 2011 &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="HTSQL 2.1.0b2 is released" href="htsql-2.1-beta2.html" />
+    <link rel="prev" title="What is Wrong with SQL (and why HTSQL is the way to go)?" href="what-is-wrong-with-sql.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-roadmap-for-april-2011">
+<h1>HTSQL Roadmap for April, 2011<a class="headerlink" href="#htsql-roadmap-for-april-2011" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-03-31</em></p>
+<p>The HTSQL 2.1 release is scoped to deliver extended query functionality
+for advanced queries.  The previous betas of 2.1 added support for more
+backends, datetime, projections, and calculated attributes.  Here we
+discuss features yet to be implemented for the HTSQL 2.1 final release.</p>
+<div class="section" id="advanced-queries">
+<h2>Advanced Queries<a class="headerlink" href="#advanced-queries" title="Permalink to this headline">¶</a></h2>
+<p>So far we&#8217;ve implemented calculated attributes to reduce the redundancy
+found in complex expressions.  We&#8217;ve also introduced projections, so
+that results can be returned from relations that are not materialized as
+an existing table.  What&#8217;s left is some semantic cleanup, linking
+features and optimizations.</p>
+<div class="section" id="advanced-linking-connectors">
+<h3>Advanced Linking Connectors<a class="headerlink" href="#advanced-linking-connectors" title="Permalink to this headline">¶</a></h3>
+<p>Currently HTSQL limits query construction to a pre-defined set of links
+defined by foreign key relationships.  This set of features will allow
+the construction of arbitrary navigation paths.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">home()</span></tt></dt>
+<dd>We&#8217;ll introduce a virtual table <tt class="docutils literal"><span class="pre">home</span></tt> which has one row and a
+plural link to every table in the system, and a singular link back.
+The <tt class="docutils literal"><span class="pre">home()</span></tt> function will link back to this virtual table.  This
+will permit cross joins, for instance, <tt class="docutils literal"><span class="pre">course.home().program</span></tt>
+generate a cross product between course and program tables.</dd>
+<dt><tt class="docutils literal"><span class="pre">fork()</span></tt></dt>
+<dd>The <tt class="docutils literal"><span class="pre">fork()</span></tt> operation will clone the last axis of the link chain.
+In the simple case, <tt class="docutils literal"><span class="pre">course.fork()</span></tt> is equivalent to
+<tt class="docutils literal"><span class="pre">course.home().course</span></tt>.  The <tt class="docutils literal"><span class="pre">fork()</span></tt> function may accept an
+argument which indicates an extra join condition.  For example,
+<tt class="docutils literal"><span class="pre">/course?credits&gt;avg(fork().credits)</span></tt> returns courses having more
+credits than average.</dd>
+<dt><tt class="docutils literal"><span class="pre">link()</span></tt></dt>
+<dd>The <tt class="docutils literal"><span class="pre">link(chain,</span> <span class="pre">condition)</span></tt> operation generates an arbitrary link
+from the current context to the table identified by the chain,
+associating rows based on the given condition.   This is especially
+useful when a foreign key is omitted from the catalog.</dd>
+</dl>
+<p>We have reserved the <tt class="docutils literal"><span class="pre">&#64;</span></tt> character for an abbreviated link construct,
+but have yet to decide if it&#8217;ll be used for <tt class="docutils literal"><span class="pre">home()</span></tt> or <tt class="docutils literal"><span class="pre">fork()</span></tt></p>
+</div>
+<div class="section" id="functional-aliases">
+<h3>Functional Aliases<a class="headerlink" href="#functional-aliases" title="Permalink to this headline">¶</a></h3>
+<p>Currently we use <tt class="docutils literal"><span class="pre">{}</span></tt> for selection, <tt class="docutils literal"><span class="pre">?</span></tt> for filtering, and <tt class="docutils literal"><span class="pre">^</span></tt>
+for projections.  Occasionally, it&#8217;s more convenient to use a
+functional notation for these operations, therefore we want to add the
+following functions:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">select()</span></tt></dt>
+<dd>For example, <tt class="docutils literal"><span class="pre">/department.select(school,name)</span></tt> is equivalent to
+<tt class="docutils literal"><span class="pre">/department{school,name}</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">filter()</span></tt></dt>
+<dd>The query <tt class="docutils literal"><span class="pre">/school?code='ns'</span></tt> could be expresses instead as
+<tt class="docutils literal"><span class="pre">/school.filter(code='ns')</span></tt>.</dd>
+<dt><tt class="docutils literal"><span class="pre">distinct()</span></tt></dt>
+<dd>A projection, <tt class="docutils literal"><span class="pre">/(program^degree)</span></tt> could be written
+<tt class="docutils literal"><span class="pre">/distinct(program{degree})</span></tt>.</dd>
+</dl>
+<p>To implement this change, many parser internals will have to be
+revisited and selection semantics re-defined.</p>
+</div>
+<div class="section" id="name-lookup">
+<h3>Name Lookup<a class="headerlink" href="#name-lookup" title="Permalink to this headline">¶</a></h3>
+<p>Currently when you follow a table link, there&#8217;s no way to refer to the
+columns of the previous tables in the link path.  This is rather
+restricted behavior but important to preserve the principle of least
+surprise &#8211; adding a new column to a table or an expression to a macro
+shouldn&#8217;t cause existing queries to break.</p>
+<p>We want to introduce a lookup operator, <tt class="docutils literal"><span class="pre">*name</span></tt> which would look for
+the name recursively in the link path.</p>
+<p>Alternatively, if we decide not to add extra syntax at this point, we
+may introduce a special namespace <tt class="docutils literal"><span class="pre">all()</span></tt>, which includes names from
+the current and all the previous namespaces in the link path.</p>
+<p>One possible use of this feature is accessing macro arguments in a
+nested link context, e.g., <tt class="docutils literal"><span class="pre">define(cohort(y):=student?year(dob)=*y)</span></tt></p>
+<p>We also would use <tt class="docutils literal"><span class="pre">\*n</span></tt>, where <tt class="docutils literal"><span class="pre">n</span></tt> is an integer literal to refer to
+the nth element of the current selection.   This feature would make it
+easy to filter on complex expressions without repeating them.</p>
+</div>
+<div class="section" id="projection-namespace">
+<h3>Projection Namespace<a class="headerlink" href="#projection-namespace" title="Permalink to this headline">¶</a></h3>
+<p>We would like the projection operator to define a more usable namespace,
+for instance, <tt class="docutils literal"><span class="pre">program^degree</span></tt> should have a namespace with two names,
+<tt class="docutils literal"><span class="pre">degree</span></tt> which refers to the projection&#8217;s kernel and <tt class="docutils literal"><span class="pre">program</span></tt> which
+refers to the base of the projection.</p>
+<p>But, how do we define the namespace in the general case where either
+the base or the kernel are arbitrary expressions?</p>
+</div>
+<div class="section" id="schemas-ambiguous-names">
+<h3>Schemas &amp; Ambiguous Names<a class="headerlink" href="#schemas-ambiguous-names" title="Permalink to this headline">¶</a></h3>
+<p>Currently there isn&#8217;t a mechanism to refer to tables named the same but
+in different schemas.  In a similar way, if a table has more than one
+backlink to the same target, they are inaccessible.</p>
+<p>We don&#8217;t have any ideas how to fix this yet.</p>
+</div>
+<div class="section" id="aggregate-optimizations">
+<h3>Aggregate Optimizations<a class="headerlink" href="#aggregate-optimizations" title="Permalink to this headline">¶</a></h3>
+<p>We want to apply more aggressive optimizations for queries using
+aggregates to reduce the number of subselects.  For instance, an
+expression <tt class="docutils literal"><span class="pre">/{avg(course{credits}?no&gt;400),avg(course{credits}?no&lt;=400)}</span></tt>
+could be re-written as
+<tt class="docutils literal"><span class="pre">/{avg(course{if(n&gt;400,credits)}),avg(course{if(no&lt;=400,credits)}}</span></tt>
+in order to use a single SELECT frame in the generated SQL.</p>
+</div>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/roadmap-2011-04";
+var disqus_title = "HTSQL Roadmap for April, 2011";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

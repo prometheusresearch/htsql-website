@@ -1,0 +1,346 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Snort Demo : Daily Overview &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Gallery" href="../index.html" />
+    <link rel="next" title="Snort Demo : Event Detail" href="events.html" />
+    <link rel="prev" title="DonorsChoose : Top Ten Teachers" href="../donorschoose/teacher.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="snort-demo-daily-overview">
+<h1>Snort Demo : Daily Overview<a class="headerlink" href="#snort-demo-daily-overview" title="Permalink to this headline">¶</a></h1>
+<div class="demo-block compound">
+<div class="demo-area compound-first"><script type="text/javascript"
+    src="/htraf/htraf.js"
+    data-htsql-version="2"
+    data-htsql-prefix="/@snort">
+</script>
+
+<table>
+<col width="50%"><col width="50%">
+<tr>
+
+<!-- Today's Events by Hour -->
+<td>
+<div style="width: 345px; height: 275px;"
+    data-htsql="/((event?date(timestamp)=today())^{hour(timestamp)})
+                    {*1 :as Hour, count(^) :as Events}"
+    data-type="line"
+    data-widget="chart"
+    data-yint="true"
+    data-title="Today's Events by Hour">
+</div>
+</td>
+
+<!-- Today's Events by Protocol -->
+<td>
+<div style="width: 345px; height: 275px;"
+    data-htsql="/((event?date(timestamp)=today())^{date(timestamp)})
+                    {*1 :as Day,
+                     count(^.tcphdr) :as TCP,
+                     count(^.udphdr) :as UDP,
+                     count(^.icmphdr) :as ICMP}"
+    data-type="bar"
+    data-widget="chart"
+    data-yint="true"
+    data-title="Today's Events by Protocol">
+</div>
+</td>
+
+</tr>
+<tr>
+
+<!-- Today's Events by Hour and Protocol -->
+<td colspan="2">
+<div style="width: 700px; height: 325px;"
+    data-htsql="/((event?date(timestamp)=today())^{hour(timestamp)})
+                    {*1 :as Hour,
+                     count(^.tcphdr) :as TCP,
+                     count(^.udphdr) :as UDP,
+                     count(^.icmphdr) :as ICMP}"
+    data-type="line"
+    data-widget="chart"
+    data-yint="true"
+    data-title="Today's Events by Hour and Protocol">
+</div>
+</td>
+
+</tr>
+<tr>
+
+<td colspan="2">
+<h3>Today's Top 10 Signatures</h3>
+<table id="top10sig"
+    data-htsql="/((event?date(timestamp)=today())^{signature.sig_name})
+                    {*1 :as Signature,
+                     count(^)- :as '%23'}.limit(10)">
+</table>
+</td>
+
+</tr>
+<tr>
+
+<td>
+<h3>Today's Top 10 Source IPs</h3>
+<table id="top10sip"
+    data-htsql="/((event?date(timestamp)=today())^{inet(iphdr.ip_src)})
+                    {*1 :as 'Source IP',
+                     count(^)- :as '%23'}.limit(10)">
+</table>
+</td>
+
+<td>
+<h3>Today's Top 10 Destination IPs</h3>
+<table id="top10dip"
+    data-htsql="/((event?date(timestamp)=today())^{inet(iphdr.ip_dst)})
+                    {*1 :as 'Destination IP',
+                     count(^)- :as '%23'}.limit(10)">
+</table>
+</td>
+
+</tr>
+<tr>
+
+<td>
+<h3>Today's Events by Protocol</h3>
+<table id="eventcount"
+    data-htsql="/((event?date(timestamp)=today())^{date(timestamp)})
+                    {count(^.tcphdr) :as TCP,
+                     count(^.udphdr) :as UDP,
+                     count(^.icmphdr) :as ICMP}">
+</table>
+</td>
+
+<td>
+<h3>Today's Events By Severity</h3>
+<table id="hscount"
+    data-htsql="/{count(event?date(timestamp)=today()&signature.sig_priority='1')
+                    :as 'High Severity',
+                  count(event?date(timestamp)=today()&signature.sig_priority='2')
+                    :as 'Medium Severity',
+                  count(event?date(timestamp)=today()&signature.sig_priority='3')
+                    :as 'Low Severity'}">
+</table>
+</td>
+
+</tr>
+</table></div><tt class="demo-switch compound-middle docutils literal"><span class="pre">[-</span> <span class="pre">view</span> <span class="pre">source]</span></tt><div class="demo-source compound-last highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span>
+    <span class="na">src=</span><span class="s">&quot;/htraf/htraf.js&quot;</span>
+    <span class="na">data-htsql-version=</span><span class="s">&quot;2&quot;</span>
+    <span class="na">data-htsql-prefix=</span><span class="s">&quot;/@snort&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;table&gt;</span>
+<span class="nt">&lt;col</span> <span class="na">width=</span><span class="s">&quot;50%&quot;</span><span class="nt">&gt;&lt;col</span> <span class="na">width=</span><span class="s">&quot;50%&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;tr&gt;</span>
+
+<span class="c">&lt;!-- Today&#39;s Events by Hour --&gt;</span>
+<span class="nt">&lt;td&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;width: 345px; height: 275px;&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/((event?date(timestamp)=today())^{hour(timestamp)})</span>
+<span class="s">                    {*1 :as Hour, count(^) :as Events}&quot;</span>
+    <span class="na">data-type=</span><span class="s">&quot;line&quot;</span>
+    <span class="na">data-widget=</span><span class="s">&quot;chart&quot;</span>
+    <span class="na">data-yint=</span><span class="s">&quot;true&quot;</span>
+    <span class="na">data-title=</span><span class="s">&quot;Today&#39;s Events by Hour&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/td&gt;</span>
+
+<span class="c">&lt;!-- Today&#39;s Events by Protocol --&gt;</span>
+<span class="nt">&lt;td&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;width: 345px; height: 275px;&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/((event?date(timestamp)=today())^{date(timestamp)})</span>
+<span class="s">                    {*1 :as Day,</span>
+<span class="s">                     count(^.tcphdr) :as TCP,</span>
+<span class="s">                     count(^.udphdr) :as UDP,</span>
+<span class="s">                     count(^.icmphdr) :as ICMP}&quot;</span>
+    <span class="na">data-type=</span><span class="s">&quot;bar&quot;</span>
+    <span class="na">data-widget=</span><span class="s">&quot;chart&quot;</span>
+    <span class="na">data-yint=</span><span class="s">&quot;true&quot;</span>
+    <span class="na">data-title=</span><span class="s">&quot;Today&#39;s Events by Protocol&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/td&gt;</span>
+
+<span class="nt">&lt;/tr&gt;</span>
+<span class="nt">&lt;tr&gt;</span>
+
+<span class="c">&lt;!-- Today&#39;s Events by Hour and Protocol --&gt;</span>
+<span class="nt">&lt;td</span> <span class="na">colspan=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;width: 700px; height: 325px;&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/((event?date(timestamp)=today())^{hour(timestamp)})</span>
+<span class="s">                    {*1 :as Hour,</span>
+<span class="s">                     count(^.tcphdr) :as TCP,</span>
+<span class="s">                     count(^.udphdr) :as UDP,</span>
+<span class="s">                     count(^.icmphdr) :as ICMP}&quot;</span>
+    <span class="na">data-type=</span><span class="s">&quot;line&quot;</span>
+    <span class="na">data-widget=</span><span class="s">&quot;chart&quot;</span>
+    <span class="na">data-yint=</span><span class="s">&quot;true&quot;</span>
+    <span class="na">data-title=</span><span class="s">&quot;Today&#39;s Events by Hour and Protocol&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/td&gt;</span>
+
+<span class="nt">&lt;/tr&gt;</span>
+<span class="nt">&lt;tr&gt;</span>
+
+<span class="nt">&lt;td</span> <span class="na">colspan=</span><span class="s">&quot;2&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Today&#39;s Top 10 Signatures<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;top10sig&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/((event?date(timestamp)=today())^{signature.sig_name})</span>
+<span class="s">                    {*1 :as Signature,</span>
+<span class="s">                     count(^)- :as &#39;%23&#39;}.limit(10)&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;/td&gt;</span>
+
+<span class="nt">&lt;/tr&gt;</span>
+<span class="nt">&lt;tr&gt;</span>
+
+<span class="nt">&lt;td&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Today&#39;s Top 10 Source IPs<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;top10sip&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/((event?date(timestamp)=today())^{inet(iphdr.ip_src)})</span>
+<span class="s">                    {*1 :as &#39;Source IP&#39;,</span>
+<span class="s">                     count(^)- :as &#39;%23&#39;}.limit(10)&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;/td&gt;</span>
+
+<span class="nt">&lt;td&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Today&#39;s Top 10 Destination IPs<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;top10dip&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/((event?date(timestamp)=today())^{inet(iphdr.ip_dst)})</span>
+<span class="s">                    {*1 :as &#39;Destination IP&#39;,</span>
+<span class="s">                     count(^)- :as &#39;%23&#39;}.limit(10)&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;/td&gt;</span>
+
+<span class="nt">&lt;/tr&gt;</span>
+<span class="nt">&lt;tr&gt;</span>
+
+<span class="nt">&lt;td&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Today&#39;s Events by Protocol<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;eventcount&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/((event?date(timestamp)=today())^{date(timestamp)})</span>
+<span class="s">                    {count(^.tcphdr) :as TCP,</span>
+<span class="s">                     count(^.udphdr) :as UDP,</span>
+<span class="s">                     count(^.icmphdr) :as ICMP}&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;/td&gt;</span>
+
+<span class="nt">&lt;td&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Today&#39;s Events By Severity<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;hscount&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/{count(event?date(timestamp)=today()&amp;signature.sig_priority=&#39;1&#39;)</span>
+<span class="s">                    :as &#39;High Severity&#39;,</span>
+<span class="s">                  count(event?date(timestamp)=today()&amp;signature.sig_priority=&#39;2&#39;)</span>
+<span class="s">                    :as &#39;Medium Severity&#39;,</span>
+<span class="s">                  count(event?date(timestamp)=today()&amp;signature.sig_priority=&#39;3&#39;)</span>
+<span class="s">                    :as &#39;Low Severity&#39;}&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;/td&gt;</span>
+
+<span class="nt">&lt;/tr&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

@@ -1,0 +1,89 @@
+***************************
+  Discussing Manipulation
+***************************
+
+.. blogentry::
+   :date: 2012-07-17
+   :author: cce
+
+Thus far HTSQL has been limited to querying data.  In the
+next few months we'd like to expand the scope to permit both
+record and set-based data manipulations.  This is a
+discussion of our ideas and how we might accomplish it.
+
+.. blogcut::
+
+Background
+==========
+
+There are three reasons for adding mutation operations to
+HTSQL.  The first one is to enable two-tier applications
+using HTSQL as a middleware layer.  This requires a set of
+single record, CRUD, operations.  The second reason is to
+enable database level transformations, including set based
+updates, select-from/insert-into and deletes.  The third is
+to provide some way to import data into the database system.
+
+The ideal solution is one that is not just comprehensive, but
+also consistent with the rest of HTSQL.  The operators we
+choose, while they need to be implementable using modern
+relational databases, don't need to have SQL equivalents.
+Conversely, while it might be fun for a URL inspired syntax
+to be "RESTful", it isn't strictly speaking a requirement.
+HTSQL is its own language with its own inherent logic,
+what's important is that the solution solve real problems in
+a manner consistent with its own internal design.
+
+Historical
+==========
+
+Earlier versions of HTSQL had ``insert()``, ``update()``, and
+``delete()`` commands which supplemented the default
+``select()`` command.  These commands provided an alternative
+translation of the query syntax into SQL.  Insert was limited
+to a single record.  Update used ``:=`` operator for
+assignment, unwisely mixing filter criteria and assignments.
+
+We also had a ``merge()`` command, which was very popular 
+since it was idempotent.  This was a record-based command
+that first did an update, and if that returned zero records,
+it would do an insert instead. 
+
+One of the biggest usability problems with our update and
+delete operations was that they required imagination as to
+what would happen when you ran the query.  Would your query
+delete one record, or every row from the table?  As a safety,
+we added an ``expect=n`` command argument which would
+rollback the update if the number of affected records
+differed from expectation.  Since the default value was
+``1``, this approach saved countless accidental deletes.
+However, it felt more of a bandaid than a solution.
+
+A secondary problem is that we ended up having to introduce a
+redundant ``import()`` command that was essentially a variant
+of insert/update/merge that took an external data set and
+applied it row-by-row.  The primary mechanism for altering
+data sets was to download the data, change what would be
+required, and then merge the results using import.  The
+``import()`` command did also have a way to signal deleted
+records, but it was hardly used.
+
+One of the features that these commands supported was the
+convenient manipulation of "facet" tables.  A facet table is
+one where there is a zero-or-one relationship to the current
+driving table.  The assignment operator supported assignments
+to facet tables, confusing the interpretation of ``update()``
+since an assignment to a facet that didn't exist was
+implemented using an ``INSERT``.  It would be very nice to
+keep this convenience, although with better clarity as to
+what each command does.
+
+We also had a ``do()`` command which wrapped N sub commands
+into a single transaction.  Using this mechanism a client
+application could insert/update an entire hierarchy.
+
+HTSQL 2.X must have some way to address the business needs
+that drove these historical features, even if the new
+solution doesn't take the same form.
+
+

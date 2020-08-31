@@ -1,0 +1,49 @@
+*****************************
+  HTSQL 2.2.0b1 is released
+*****************************
+
+.. blogentry::
+   :date: 2011-09-20
+   :author: cce
+
+The first beta of the 2.2 release is now available.
+
+The new release brings two major features:
+
+* a mechanism to query HTSQL's system catalog
+* a query editor for the web /w syntax highlighting
+
+.. blogcut::
+
+We've tagged 2.2.0 beta #1, our first installment on the 
+road to supporting "form applications".  Here are the
+major new features we've added:
+
+* a web-based ``/shell()`` command for interactive multi-line 
+  HTSQL query editing with syntax highlighting
+
+* a ``/meta()`` command that can be used to return accessible
+  tables, links and columns
+
+* added plugin parameters and configuration file support
+
+* defined a command mechanism as a way to include 
+  functionality unrelated to SQL generation
+
+* converted formatters to use new command mechanism
+
+All of these features are enabled at http://demo.htsql.org
+
+The ``/meta()`` command changes the execution context to run
+queries on the system catalog: ``table``, ``field``, ``column``
+and ``link``.  For example,
+
+.. htsql:: /meta(/table)
+
+.. htsql:: /meta(/link?table_name='department')
+
+In addition to new features, we have one important bug
+fix.  There is a silent data truncation error that can 
+be triggered with character encoding issues (reported
+by Gordon... thank you!).  SQLite users should upgrade.
+

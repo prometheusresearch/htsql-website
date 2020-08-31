@@ -1,0 +1,927 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Naming Scopes &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Reference" href="index.html" />
+    <link rel="next" title="Data Types" href="types.html" />
+    <link rel="prev" title="Data Flows" href="flows.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="naming-scopes">
+<h1>Naming Scopes<a class="headerlink" href="#naming-scopes" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#identifiers" id="id1">Identifiers</a></li>
+<li><a class="reference internal" href="#scopes" id="id2">Scopes</a></li>
+<li><a class="reference internal" href="#resolution-rules" id="id3">Resolution Rules</a></li>
+</ul>
+</div>
+<p>An <em>identifier</em> is a sequence of characters which contains Latin
+letters, underscores (<tt class="docutils literal"><span class="pre">_</span></tt>), decimal digits and those Unicode
+characters which are classified as alphanumeric.  An identifier must not
+start with a digit.  In HTSQL, identifiers are used to refer to classes,
+attributes, links, functions, constants, predefined expressions, and
+other objects.</p>
+<p>Each identifier in the input query is <em>resolved</em> to determine the object
+denoted by it.  How an identifier is resolved depends on the form of the
+identifier itself and the position of the identifier in the input query.
+In this section, we describe in detail how HTSQL processor resolves
+identifiers.</p>
+<div class="section" id="identifiers">
+<h2><a class="toc-backref" href="#id1">Identifiers</a><a class="headerlink" href="#identifiers" title="Permalink to this headline">¶</a></h2>
+<p>In HTSQL, an identifier could be used in three different forms: plain,
+functional and referential.</p>
+<div class="section" id="plain-identifiers">
+<h3>Plain Identifiers<a class="headerlink" href="#plain-identifiers" title="Permalink to this headline">¶</a></h3>
+<p>We call an identifier <em>plain</em> when it does not appear in a function or
+a reference form.  Plain identifiers are used to refer to data model
+objects such as classes, attributes and links, and also to global
+constants.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}</span><span class="o">?</span><span class="nb">campus</span><span class="o">==</span><span class="nb">null</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Public Honorariums</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Continuing Studies</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This query contains four plain identifiers: <tt class="docutils literal"><span class="pre">school</span></tt>, <tt class="docutils literal"><span class="pre">name</span></tt>,
+<tt class="docutils literal"><span class="pre">campus</span></tt> and <tt class="docutils literal"><span class="pre">null</span></tt>, which refer respectively to a class <tt class="docutils literal"><span class="pre">school</span></tt>,
+class attributes <tt class="docutils literal"><span class="pre">school.name</span></tt> and <tt class="docutils literal"><span class="pre">school.campus</span></tt>, and a constant
+<tt class="docutils literal"><span class="pre">null</span></tt>.</p>
+</div>
+<div class="section" id="function-calls">
+<h3>Function Calls<a class="headerlink" href="#function-calls" title="Permalink to this headline">¶</a></h3>
+<p>An identifier is said to be in a <em>functional</em> form (or just a
+<em>function</em>) when it is a part of a function call expression.  HTSQL
+supports two notations for function calls: prefix (<tt class="docutils literal"><span class="pre">F(x,y,...)</span></tt>) and
+infix (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">:F</span> <span class="pre">(y,...)</span></tt>); the choice of calling notation has no effect
+on name resolution.</p>
+<p>It is convenient to treat unary and binary operators as functions with
+one or two arguments.  In HTSQL, operators use the same mechanism for
+name resolution as regular functions.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(department)%20:as%20'%23%20of%20Depts'}?campus='south'/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(department)%20:as%20'%23%20of%20Depts'}?campus='south'/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)</span> <span class="p">:</span><span class="nf">as</span> <span class="s">&#39;# of Depts&#39;</span><span class="p">}</span><span class="o">?</span><span class="nb">campus</span><span class="o">=</span><span class="s">&#39;south&#39;</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>name,# of Depts
+School of Business,3
+School of Music &amp; Dance,4
+</pre></div>
+</div>
+</div>
+</div>
+<p>This query contains:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">count()</span></tt>, <tt class="docutils literal"><span class="pre">csv()</span></tt>: functions with one argument;</li>
+<li><tt class="docutils literal"><span class="pre">as()</span></tt>: a function with two arguments;</li>
+<li><tt class="docutils literal"><span class="pre">/</span></tt>: an unary operator (two occurrences);</li>
+<li><tt class="docutils literal"><span class="pre">?</span></tt>, <tt class="docutils literal"><span class="pre">=</span></tt>: binary operators.</li>
+</ul>
+<p>The query uses both prefix and infix call notation.  Rewritten to use
+the prefix notation only, the query takes the form:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/csv(/school{name,%20as(count(department),%20'%23%20of%20Depts')}?campus='north')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/csv(/school{name,%20as(count(department),%20'%23%20of%20Depts')}?campus='north')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">csv</span><span class="p">(</span><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">as</span><span class="p">(</span><span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">),</span> <span class="s">&#39;# of Depts&#39;</span><span class="p">)}</span><span class="o">?</span><span class="nb">campus</span><span class="o">=</span><span class="s">&#39;north&#39;</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="references">
+<h3>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<p>An identifier appears in a <em>reference</em> form if it is preceded by <tt class="docutils literal"><span class="pre">$</span></tt>
+symbol.  References are used to pass values between different parts of
+the query.  Often, references serve as parameters of predefined
+expressions.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">define</span><span class="p">($</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">))</span>
+ <span class="p">.</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="2%" />
+<col width="13%" />
+<col width="4%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">315</td>
+<td class="htsql-text-type">Financial Accounting</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Integration of the conceptual and computational aspects of asset, liability and stockholders equity accounting.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">511</td>
+<td class="htsql-text-type">Audit</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">This course considers legal, procedural and ethical aspects of audit in accounting.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">620</td>
+<td class="htsql-text-type">Accounting Internship</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Supervised internship in a business or nonprofit organization on an accounting position.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Here, reference <tt class="docutils literal"><span class="pre">$avg_credits</span></tt> denotes the average number of credits
+across all courses.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define(course_with_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_with_credits(2)),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course_with_credits(3))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define(course_with_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_with_credits(2)),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course_with_credits(3))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">course_with_credits</span><span class="p">($</span><span class="nb">c</span><span class="p">)</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">=</span><span class="p">$</span><span class="nb">c</span><span class="p">)</span>
+           <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nf">course_with_credits</span><span class="p">(</span><span class="m">2</span><span class="p">)),</span>
+                  <span class="nf">count</span><span class="p">(</span><span class="nf">course_with_credits</span><span class="p">(</span><span class="m">3</span><span class="p">))}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="42%" />
+<col width="42%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">count(course_with_credits(2))</th>
+<th class="head">count(course_with_credits(3))</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Accounting</td>
+<td class="htsql-integer-type">1</td>
+<td class="htsql-integer-type">8</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Art History</td>
+<td class="htsql-integer-type">0</td>
+<td class="htsql-integer-type">14</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Astronomy</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-integer-type">11</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this query, reference <tt class="docutils literal"><span class="pre">$c</span></tt> is a parameter of a predefined
+expression <tt class="docutils literal"><span class="pre">course_with_credits()</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="scopes">
+<h2><a class="toc-backref" href="#id2">Scopes</a><a class="headerlink" href="#scopes" title="Permalink to this headline">¶</a></h2>
+<p>A <em>naming scope</em> is a mapping of names to associated objects.  HTSQL
+distinguishes two types of scopes: global and local.</p>
+<div class="section" id="global-scope">
+<h3>Global Scope<a class="headerlink" href="#global-scope" title="Permalink to this headline">¶</a></h3>
+<p>The <em>global</em> scope contains built-in functions, operators and constants.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/count(school?campus==null)/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/count(school?campus==null)/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="o">?</span><span class="nb">campus</span><span class="o">==</span><span class="nb">null</span><span class="p">)</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>count(school?campus==null)
+2
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this query, functions <tt class="docutils literal"><span class="pre">count()</span></tt> and <tt class="docutils literal"><span class="pre">csv()</span></tt>, operators <tt class="docutils literal"><span class="pre">?</span></tt> and
+<tt class="docutils literal"><span class="pre">=</span></tt>, and constant <tt class="docutils literal"><span class="pre">null</span></tt> are found in the global scope.</p>
+</div>
+<div class="section" id="local-scope">
+<h3>Local Scope<a class="headerlink" href="#local-scope" title="Permalink to this headline">¶</a></h3>
+<p>In the model graph, each node together with all outgoing arrows forms a
+<em>local</em> scope.</p>
+<p>A unit node induces a <em>unit scope</em>.  This scope contains the names of
+all classes in the database model.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{count(school),%20count(department)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{count(school),%20count(department)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">count(school)</th>
+<th class="head">count(department)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-integer-type">9</td>
+<td class="htsql-integer-type">27</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this example, identifiers <tt class="docutils literal"><span class="pre">school</span></tt> and <tt class="docutils literal"><span class="pre">department</span></tt> are found in
+the unit scope.</p>
+<p>A class node induces a <em>class scope</em>.  A class scope contains names of
+all class attributes and links.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(department)}?exists(program)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(department)}?exists(program)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span><span class="o">?</span><span class="nf">exists</span><span class="p">(</span><span class="nb">program</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="56%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">count(department)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Business</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">College of Education</td>
+<td class="htsql-integer-type">2</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this example, identifiers <tt class="docutils literal"><span class="pre">name</span></tt>, <tt class="docutils literal"><span class="pre">department</span></tt> and <tt class="docutils literal"><span class="pre">program</span></tt>
+are from the scope of class <tt class="docutils literal"><span class="pre">school</span></tt>.</p>
+<p>A domain node induces a <em>domain scope</em>, which is generally empty because
+domain nodes have no outgoing arrows.</p>
+<p>This following diagram demonstrates local scopes associated with the
+unit node and class node <tt class="docutils literal"><span class="pre">school</span></tt>.</p>
+<img class="diagram align-center" height="218" src="../../_images/local-scopes.png" width="711" />
+</div>
+<div class="section" id="quotient-scope">
+<h3>Quotient Scope<a class="headerlink" href="#quotient-scope" title="Permalink to this headline">¶</a></h3>
+<p>The <em>quotient class</em> is a special type of a node in the model graph
+formed by the projection operator (<tt class="docutils literal"><span class="pre">^</span></tt>).  The quotient class is a
+<em>derived node</em>, that is, a node which does not come from the original
+database model, but is constructed dynamically.</p>
+<p>The projection operator has the form <tt class="docutils literal"><span class="pre">T</span> <span class="pre">^</span> <span class="pre">x</span></tt>, where <tt class="docutils literal"><span class="pre">T</span></tt> is called
+the <em>base</em> of the projection and <tt class="docutils literal"><span class="pre">x</span></tt> is called the <em>kernel</em> of the
+projection.  The quotient class consists of all unique values of <tt class="docutils literal"><span class="pre">x</span></tt>
+as it runs over <tt class="docutils literal"><span class="pre">T</span></tt>.</p>
+<p>Each quotient class <tt class="docutils literal"><span class="pre">T</span> <span class="pre">^</span> <span class="pre">x</span></tt> has a natural link back to the base node
+<tt class="docutils literal"><span class="pre">T</span></tt>; it relates each kernel value to all entities of the base class
+that produced this value.  This link is called a <em>complement</em> link.
+Attributes of the quotient class are values of the kernel expression.</p>
+<img class="diagram align-center" height="151" src="../../_images/quotient-class.png" width="670" />
+<p><em>Quotient scope</em> is a local scope associated with a quotient class.
+HTSQL processor assigns the name of the base class to the complement
+link.  In cases when HTSQL is unable to deduce the link name, one may
+use a <em>complement</em> indicator <tt class="docutils literal"><span class="pre">^</span></tt>.</p>
+<p>Thus the following two queries produce identical results.  The first
+query uses explicit attribute and link names while the second one uses a
+wildcard (<tt class="docutils literal"><span class="pre">*</span></tt>) and complement (<tt class="docutils literal"><span class="pre">^</span></tt>) indicators to refer to the same
+objects:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/program^degree%20{degree,%20count(program)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/program^degree%20{degree,%20count(program)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span> <span class="p">{</span><span class="nb">degree</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">count(program)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">ba</td>
+<td class="htsql-integer-type">10</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bs</td>
+<td class="htsql-integer-type">10</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ct</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/program^degree%20{*,%20count(^)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/program^degree%20{*,%20count(^)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span> <span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="resolution-rules">
+<h2><a class="toc-backref" href="#id3">Resolution Rules</a><a class="headerlink" href="#resolution-rules" title="Permalink to this headline">¶</a></h2>
+<p>In an HTSQL query, each expression is associated with a collection of
+naming scopes, or a <em>naming context</em>.  A naming context consists of the
+global scope and a stack of local scopes.  When HTSQL processor resolves
+identifiers in an expression, it seeks for the matching name and the
+corresponding object in the naming context of the expression.</p>
+<p>The naming context of the query itself consists of just one local scope:
+the unit scope.  Some functions and operators modify the naming scope by
+adding a new local scope to the stack or augmenting the top local scope.</p>
+<div class="section" id="context-altering-operators">
+<h3>Context-Altering Operators<a class="headerlink" href="#context-altering-operators" title="Permalink to this headline">¶</a></h3>
+<p>Some operators alter the naming context before evaluating the right
+operand.  The following operators evaluate and add the left operand to
+the naming context before evaluating the right operand:</p>
+<ul class="simple">
+<li>sieve (<tt class="docutils literal"><span class="pre">T</span> <span class="pre">?</span> <span class="pre">p</span></tt>);</li>
+<li>projection (<tt class="docutils literal"><span class="pre">T</span> <span class="pre">^</span> <span class="pre">x</span></tt>);</li>
+<li>selection (<tt class="docutils literal"><span class="pre">T</span> <span class="pre">{x,y,...}</span></tt>);</li>
+<li>composition (<tt class="docutils literal"><span class="pre">T</span> <span class="pre">.</span> <span class="pre">S</span></tt>).</li>
+</ul>
+<p>The following operators adds the unit scope to the naming context before
+evaluating the right operand:</p>
+<ul class="simple">
+<li>attachment (<tt class="docutils literal"><span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">T</span></tt>);</li>
+<li>detachment (<tt class="docutils literal"><span class="pre">&#64;</span> <span class="pre">T</span></tt>).</li>
+</ul>
+</div>
+<div class="section" id="scope-augmenting-functions">
+<h3>Scope-Augmenting Functions<a class="headerlink" href="#scope-augmenting-functions" title="Permalink to this headline">¶</a></h3>
+<p>Functions <tt class="docutils literal"><span class="pre">define()</span></tt> and <tt class="docutils literal"><span class="pre">where()</span></tt> allows you to add new names to
+the current scope.</p>
+<p>Function <tt class="docutils literal"><span class="pre">define()</span></tt> takes one or more assignment and adds the names
+and associated expressions to the top local scope.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.define(num_prog%20:=%20count(program))%0A%20%20%20%20%20%20%20{name,%20num_prog}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.define(num_prog%20:=%20count(program))%0A%20%20%20%20%20%20%20{name,%20num_prog}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nb">num_prog</span> <span class="p">:=</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="p">))</span>
+       <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">num_prog</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="73%" />
+<col width="27%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">num_prog</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Business</td>
+<td class="htsql-integer-type">6</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">College of Education</td>
+<td class="htsql-integer-type">7</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this example, we add a calculated attribute <tt class="docutils literal"><span class="pre">num_prog</span></tt> to the scope
+of <tt class="docutils literal"><span class="pre">school</span></tt>.</p>
+<p>Function <tt class="docutils literal"><span class="pre">define()</span></tt> could also be used to add functions and
+references to the top local scope:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define(course_by_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_by_credits(2))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define(course_by_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_by_credits(2))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">course_by_credits</span><span class="p">($</span><span class="nb">c</span><span class="p">)</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">=</span><span class="p">$</span><span class="nb">c</span><span class="p">)</span>
+           <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nf">course_by_credits</span><span class="p">(</span><span class="m">2</span><span class="p">))}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">count(course_by_credits(2))</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Accounting</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Art History</td>
+<td class="htsql-integer-type">0</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Astronomy</td>
+<td class="htsql-integer-type">5</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">define</span><span class="p">($</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">))</span>
+ <span class="p">.</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="2%" />
+<col width="13%" />
+<col width="4%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">315</td>
+<td class="htsql-text-type">Financial Accounting</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Integration of the conceptual and computational aspects of asset, liability and stockholders equity accounting.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">511</td>
+<td class="htsql-text-type">Audit</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">This course considers legal, procedural and ethical aspects of audit in accounting.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">620</td>
+<td class="htsql-text-type">Accounting Internship</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Supervised internship in a business or nonprofit organization on an accounting position.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Function <tt class="docutils literal"><span class="pre">where()</span></tt> takes an expression as the first parameter, a list
+of assignments as subsequent parameters and evaluates the expression in
+an augmented scope.  Function <tt class="docutils literal"><span class="pre">where()</span></tt> is typically used in infix
+notation:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name,%20count(course?credits&gt;$avg_credits)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20:where%20$avg_credits%20:=%20avg(course.credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name,%20count(course?credits&gt;$avg_credits)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20:where%20$avg_credits%20:=%20avg(course.credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span><span class="p">)</span>
+                  <span class="p">:</span><span class="nf">where</span> <span class="p">$</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">count(course?credits&gt;$avg_credits)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Accounting</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Art History</td>
+<td class="htsql-integer-type">6</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Astronomy</td>
+<td class="htsql-integer-type">5</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="resolving-plain-identifiers">
+<h3>Resolving Plain Identifiers<a class="headerlink" href="#resolving-plain-identifiers" title="Permalink to this headline">¶</a></h3>
+<p>When HTSQL processor translates a plain identifier, it uses the
+following rules to find the corresponding object.</p>
+<ol class="arabic simple">
+<li>Search the top local scope for a matching name; done if found.</li>
+<li>Search the global scope for a matching name; done if found.</li>
+<li>Otherwise, report an error.</li>
+</ol>
+<p>Note that only the top scope in the local scope stack is consulted, the
+other scopes are completely shadowed.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}</span><span class="o">?</span><span class="nb">campus</span><span class="o">==</span><span class="nb">null</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Public Honorariums</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Continuing Studies</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The following table summarizes naming contexts used in the query above.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Scope</th>
+<th class="head">Content</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><em>global</em></td>
+<td><tt class="docutils literal"><span class="pre">true</span></tt>, <tt class="docutils literal"><span class="pre">false</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">null</span></tt></td>
+</tr>
+<tr class="row-odd"><td><em>unit</em></td>
+<td><tt class="xref py py-obj docutils literal"><span class="pre">school</span></tt>, <tt class="docutils literal"><span class="pre">department</span></tt>,
+<tt class="docutils literal"><span class="pre">program</span></tt>, <tt class="docutils literal"><span class="pre">course</span></tt></td>
+</tr>
+<tr class="row-even"><td>scope of <tt class="docutils literal"><span class="pre">school</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">code</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">campus</span></tt>,
+<tt class="docutils literal"><span class="pre">program</span></tt>, <tt class="docutils literal"><span class="pre">department</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>The next query shows that attribute <tt class="docutils literal"><span class="pre">campus</span></tt> from the scope of
+<tt class="docutils literal"><span class="pre">school</span></tt> is not available when <tt class="docutils literal"><span class="pre">school</span></tt> is shadowed by another
+scope.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school[ns].department{name,%20campus}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school[ns].department{name,%20campus}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">[</span><span class="s">ns</span><span class="p">].</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">campus</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>Found unknown attribute:
+    department.campus
+While translating:
+    /school[ns].department{name, campus}
+                                 ^^^^^^
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="resolving-function-calls">
+<h3>Resolving Function Calls<a class="headerlink" href="#resolving-function-calls" title="Permalink to this headline">¶</a></h3>
+<p>Rules for resolving identifiers in functional form mostly coincide with
+rules for plain identifiers.  The only difference is that both the name
+and the number of arguments must coincide.</p>
+<p>Compare the following three queries.  The first and the third queries
+match functions <tt class="docutils literal"><span class="pre">date()</span></tt> with 1 and 3 arguments respectively.  Note
+that those are different functions even though they share the same name,
+they are distinguished by the number of arguments.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/date('2010-04-15')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/date('2010-04-15')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-04-15&#39;</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-date-type">2010-04-15</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/date(2010,%204)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/date(2010,%204)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>Function &#39;date&#39; expects 1 argument; got 2
+While translating:
+    /date(2010, 4)
+     ^^^^^^^^^^^^^
+</pre></div>
+</div>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/date(2010,%204,%2015)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/date(2010,%204,%2015)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">15</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-date-type">2010-04-15</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In the example above, function <tt class="docutils literal"><span class="pre">date()</span></tt> was found in the global scope.
+You can use function <tt class="docutils literal"><span class="pre">define()</span></tt> to add a function to the top local
+scope.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.define(num_prog_by_degree($d)%20:=%20count(program?degree=$d))%0A%20%20%20%20%20%20%20{name,%20num_prog_by_degree('ba'),%20num_prog_by_degree('bs')}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.define(num_prog_by_degree($d)%20:=%20count(program?degree=$d))%0A%20%20%20%20%20%20%20{name,%20num_prog_by_degree('ba'),%20num_prog_by_degree('bs')}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">num_prog_by_degree</span><span class="p">($</span><span class="nb">d</span><span class="p">)</span> <span class="p">:=</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="o">?</span><span class="nb">degree</span><span class="o">=</span><span class="p">$</span><span class="nb">d</span><span class="p">))</span>
+       <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">num_prog_by_degree</span><span class="p">(</span><span class="s">&#39;ba&#39;</span><span class="p">),</span> <span class="nf">num_prog_by_degree</span><span class="p">(</span><span class="s">&#39;bs&#39;</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="34%" />
+<col width="34%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">num_prog_by_degree(&#8216;ba&#8217;)</th>
+<th class="head">num_prog_by_degree(&#8216;bs&#8217;)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-integer-type">2</td>
+<td class="htsql-integer-type">0</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Business</td>
+<td class="htsql-integer-type">1</td>
+<td class="htsql-integer-type">2</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">College of Education</td>
+<td class="htsql-integer-type">2</td>
+<td class="htsql-integer-type">0</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="resolving-references">
+<h3>Resolving References<a class="headerlink" href="#resolving-references" title="Permalink to this headline">¶</a></h3>
+<p>The following rules are used for resolving references:</p>
+<ol class="arabic simple">
+<li>Search for the matching name in every scope in the stack of local
+scopes; done if found.</li>
+<li>Otherwise, report an error.</li>
+</ol>
+<p>Note that as opposed to plain identifiers, reference lookup uses all
+local scopes in the current naming context.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define($avg_credits%20:=%20avg(course.credits))%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course?credits&gt;$avg_credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define($avg_credits%20:=%20avg(course.credits))%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course?credits&gt;$avg_credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">($</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">))</span>
+           <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">count(course?credits&gt;$avg_credits)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Accounting</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Art History</td>
+<td class="htsql-integer-type">6</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Astronomy</td>
+<td class="htsql-integer-type">5</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this example, reference <tt class="docutils literal"><span class="pre">$avg_credits</span></tt> is defined in the scope of
+<tt class="docutils literal"><span class="pre">department</span></tt>, but used in a nested scope of <tt class="docutils literal"><span class="pre">course</span></tt>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

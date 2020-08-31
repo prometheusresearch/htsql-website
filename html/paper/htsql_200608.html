@@ -1,0 +1,3274 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en"><head><title>HTSQL Manual: HyperText Structured Query Language</title>
+<meta http-equiv="Expires" content="Fri, 23 May 2008 13:31:24 +0000">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="description" content="HyperText Structured Query Language">
+<meta name="keywords" content="uniform resource identifier, structured query language, hypertext, SQL, HTTP, HTML, FORM, URI, HTSQL">
+<meta name="generator" content="xml2rfc v1.33 (http://xml.resource.org/)">
+<style type='text/css'><!--
+        body {
+                font-family: verdana, charcoal, helvetica, arial, sans-serif;
+                font-size: small; color: #000; background-color: #FFF;
+                margin: 2em;
+        }
+        h1, h2, h3, h4, h5, h6 {
+                font-family: helvetica, monaco, "MS Sans Serif", arial, sans-serif;
+                font-weight: bold; font-style: normal;
+        }
+        h1 { color: #900; background-color: transparent; text-align: right; }
+        h3 { color: #333; background-color: transparent; }
+
+        td.RFCbug {
+                font-size: x-small; text-decoration: none;
+                width: 30px; height: 30px; padding-top: 2px;
+                text-align: justify; vertical-align: middle;
+                background-color: #000;
+        }
+        td.RFCbug span.RFC {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: bold; color: #666;
+        }
+        td.RFCbug span.hotText {
+                font-family: charcoal, monaco, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: normal; text-align: center; color: #FFF;
+        }
+
+        table.TOCbug { width: 30px; height: 15px; }
+        td.TOCbug {
+                text-align: center; width: 30px; height: 15px;
+                color: #FFF; background-color: #900;
+        }
+        td.TOCbug a {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, sans-serif;
+                font-weight: bold; font-size: x-small; text-decoration: none;
+                color: #FFF; background-color: transparent;
+        }
+
+        td.header {
+                font-family: arial, helvetica, sans-serif; font-size: x-small;
+                vertical-align: top; width: 33%;
+                color: #FFF; background-color: #666;
+        }
+        td.author { font-weight: bold; font-size: x-small; margin-left: 4em; }
+        td.author-text { font-size: x-small; }
+
+        /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+        a.info {
+                /* This is the key. */
+                position: relative;
+                z-index: 24;
+                text-decoration: none;
+        }
+        a.info:hover {
+                z-index: 25;
+                color: #FFF; background-color: #900;
+        }
+        a.info span { display: none; }
+        a.info:hover span.info {
+                /* The span will display just on :hover state. */
+                display: block;
+                position: absolute;
+                font-size: smaller;
+                top: 2em; left: -5em; width: 15em;
+                padding: 2px; border: 1px solid #333;
+                color: #900; background-color: #EEE;
+                text-align: left;
+        }
+
+        a { font-weight: bold; }
+        a:link    { color: #900; background-color: transparent; }
+        a:visited { color: #633; background-color: transparent; }
+        a:active  { color: #633; background-color: transparent; }
+
+        p { margin-left: 2em; margin-right: 2em; }
+        p.copyright { font-size: x-small; }
+        p.toc { font-size: small; font-weight: bold; margin-left: 3em; }
+        table.toc { margin: 0 0 0 3em; padding: 0; border: 0; vertical-align: text-top; }
+        td.toc { font-size: small; font-weight: bold; vertical-align: text-top; }
+
+        ol.text { margin-left: 2em; margin-right: 2em; }
+        ul.text { margin-left: 2em; margin-right: 2em; }
+        li      { margin-left: 3em; }
+
+        /* RFC-2629 <spanx>s and <artwork>s. */
+        em     { font-style: italic; }
+        strong { font-weight: bold; }
+        dfn    { font-weight: bold; font-style: normal; }
+        cite   { font-weight: normal; font-style: normal; }
+        tt     { color: #036; }
+        tt, pre, pre dfn, pre em, pre cite, pre span {
+                font-family: "Courier New", Courier, monospace; font-size: small;
+        }
+        pre {
+                text-align: left; padding: 4px;
+                color: #000; background-color: #CCC;
+        }
+        pre dfn  { color: #900; }
+        pre em   { color: #66F; background-color: #FFC; font-weight: normal; }
+        pre .key { color: #33C; font-weight: bold; }
+        pre .id  { color: #900; }
+        pre .str { color: #000; background-color: #CFF; }
+        pre .val { color: #066; }
+        pre .rep { color: #909; }
+        pre .oth { color: #000; background-color: #FCF; }
+        pre .err { background-color: #FCC; }
+
+        /* RFC-2629 <texttable>s. */
+        table.all, table.full, table.headers, table.none {
+                font-size: small; text-align: center; border-width: 2px;
+                vertical-align: top; border-collapse: collapse;
+        }
+        table.all, table.full { border-style: solid; border-color: black; }
+        table.headers, table.none { border-style: none; }
+        th {
+                font-weight: bold; border-color: black;
+                border-width: 2px 2px 3px 2px;
+        }
+        table.all th, table.full th { border-style: solid; }
+        table.headers th { border-style: none none solid none; }
+        table.none th { border-style: none; }
+        table.all td {
+                border-style: solid; border-color: #333;
+                border-width: 1px 2px;
+        }
+        table.full td, table.headers td, table.none td { border-style: none; }
+
+        hr { height: 1px; }
+        hr.insert {
+                width: 80%; border-style: none; border-width: 0;
+                color: #CCC; background-color: #CCC;
+        }
+--></style>
+</head>
+<body>
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<table summary="layout" width="66%" border="0" cellpadding="0" cellspacing="0"><tr><td><table summary="layout" width="100%" border="0" cellpadding="2" cellspacing="1">
+<tr><td class="header">HTSQL Manual</td><td class="header">C. Evans</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header"> Simonov</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">Prometheus Research, LLC.</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">August 2006</td></tr>
+</table></td></tr></table>
+<h1><br />HyperText Structured Query Language</h1>
+
+<h3>Abstract</h3>
+
+<p>
+        HyperText Structured Query Language (HTSQL) is an extension to
+        the HTTP/1.1 protocol that allows clients to remotely access a
+        standard SQL database.  This extension provides a mapping of
+        HTTP requests into SQL statements, producing a response that
+        corresponds to the result generated by the database.
+        This document defines a URI scheme used for this mapping,
+        together with a coherent set of HTTP methods, headers, and
+        entity body formats.
+      
+</p><a name="toc"></a><br /><hr />
+<h3>Table of Contents</h3>
+<p class="toc">
+<a href="#intro">1.</a>&nbsp;
+Introduction<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#audience">1.1.</a>&nbsp;
+Audience<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#objective">1.2.</a>&nbsp;
+Objective<br />
+<a href="#preview">2.</a>&nbsp;
+Preview<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#preview-predicate">2.1.</a>&nbsp;
+Predicate Expressions<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#preview-selector">2.2.</a>&nbsp;
+Selectors and Functions<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#preview-specifier">2.3.</a>&nbsp;
+Specifiers<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#locator">2.4.</a>&nbsp;
+Locators and locations<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#preview-aggregate">2.5.</a>&nbsp;
+Aggregates<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#preview-command">2.6.</a>&nbsp;
+Commands<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#preview-context">2.7.</a>&nbsp;
+Path Contexts<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#preview-transaction">2.8.</a>&nbsp;
+Transactions and Locking<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#preview-output">2.9.</a>&nbsp;
+Resources and Formats<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#compatibility">2.10.</a>&nbsp;
+HTML FORM Compatibility<br />
+<a href="#rfc.references1">3.</a>&nbsp;
+References<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rfc.references1">3.1.</a>&nbsp;
+Normative References<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#rfc.references2">3.2.</a>&nbsp;
+Informative References<br />
+<a href="#collected-abnf">Appendix&nbsp;A.</a>&nbsp;
+Collected ABNF for URI<br />
+<a href="#sample-schema">Appendix&nbsp;B.</a>&nbsp;
+Sample Database Schema<br />
+<a href="#rfc.index">&#167;</a>&nbsp;
+Index<br />
+<a href="#rfc.authors">&#167;</a>&nbsp;
+Authors' Addresses<br />
+</p>
+<br clear="all" />
+
+<a name="intro"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1"></a><h3>1.&nbsp;
+Introduction</h3>
+
+<p>
+    HyperText Structured Query Language (HTSQL) is a mechanism for
+    accessing industry standard SQL <a class='info' href='#ISO9075-1992'>[ISO9075&#8209;1992]<span> (</span><span class='info'>International Standards Organization, &ldquo;Database Language SQL, 1992,&rdquo; July&nbsp;1992.</span><span>)</span></a>
+    data sources over HTTP <a class='info' href='#RFC2616'>[RFC2616]<span> (</span><span class='info'>Felding, R., Gettys, J., Mongul, J., Frystyk, H., Mastiner, L., Leach, P., and T. Berners-Lee, &ldquo;Hypertext Transfer Protocol -- HTTP/1.1,&rdquo; June&nbsp;1999.</span><span>)</span></a>.  This document
+    specifies a URI scheme <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifiers (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a>, HTTP methods and
+    extensions which enable database access from standard web browsers.
+    The principal advantage of HTSQL is the expression of queries in a
+    concise web-friendly syntax: for for common database tasks,
+    path-based URIs are both simple and intuitive.  A secondary
+    advantage of HTSQL is the integrated use of the HTTP protocol to
+    provide authentication, data caching, encryption, content
+    negotiation, and numerous other network operations.  This approach
+    to SQL-over-HTTP puts forth a reusable, application independent, and
+    testable middleware layer which translates HTTP requests into SQL
+    statements, returning the execution results to the user in a format
+    their user-agent can handle.
+  
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  /----------------\   HTTP Request     /-------------------------\
+  | Web Browser    |  ----------------&gt; --.                       |
+  |  * Direct URLs |    URI, headers,   |  \      .--&gt; Generated  |
+  |  * HTML / XSLT |    post/put body   |   .    /     SQL Query  |
+  |  * Javascript  |                    |   HTSQL         |       |
+  | GUI Front End  |   HTTP Response    |   /  ^          v       |
+  |  * Java / C#   |  &lt;---------------  &lt;--.    \       DATABASE  |
+  |  * Python, etc |    status code,    |    Query        |       |
+  | Excel /w Macro |    headers, and    |    Results &lt;..../       |
+  | Command Line   |    formatted       |                         |
+  \----------------/    results         \-------------------------/
+</pre></div>
+<p>
+      An HTSQL processor accepts an HTTP Request, converts this
+      request into an SQL query, executes this query against a
+      relational database, and returns the result in a file format
+      requested by the user agent.
+    
+</p>
+<a name="audience"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.1"></a><h3>1.1.&nbsp;
+Audience</h3>
+
+<p>
+      The target audience for HyperText Structured Query Language is not
+      career programmers, nor is it casual users.  HTSQL is designed for
+      technical users including screen designers, database
+      administrators, statisticians, medical researchers, and other
+      "accidental programmers".  HTSQL advances a human-friendly
+      URI-based query syntax over traditional SQL queries, and HTTP over
+      a more typical database access protocol.  HTSQL puts a relational
+      database "on the web" where it can be directly accessed by these
+      expert users without wading through an application's chrome. HTSQL
+      offers the following:
+    
+</p>
+<p>
+      </p>
+<blockquote class="text">
+<p>
+          URIs are instantly familiar to users who have been using the
+          web for many years; human-readable URIs provide direct control
+          over database information which is often lacking in
+          traditional systems.
+        
+</p>
+<p>
+          A database accessable via a web browser with persistent
+          URIs allows query results to be bookmarked and emailed to
+          collaborators; such an interface also enables easy
+          navigation using web browser controls.
+        
+</p>
+<p>
+          HTSQL offers greater flexibility than a purely graphical user
+          interface, which necessarly limits the kinds of retrievals
+          that can be specified.  With even moderate exposure, an
+          advanced user can learn to modify a URI to achieve results
+          beyond what a graphical interface may provide.
+        
+</p>
+<p>
+          HTSQL builds upon existing standards.  By using standard HTTP,
+          the database access protocol need not be burdened with
+          authentication, encryption, signatures, cache control, content
+          types, detailed audit-trails, or other network-related issues.
+        
+</p>
+<p>
+          HTSQL provides an additional layer for security policy
+          enforcement.  Since most database interactions can be
+          expressed with an HTSQL request, direct access to the database
+          is not required.  HTSQL as middleware can be used to restrict
+          access and monitor activity.  HTSQL also provides a row-level
+          permission mechanism.
+        
+</p>
+</blockquote><p>
+    
+</p>
+<p>
+      Implicit in this approach is a compromise.  While the majority of
+      common database tasks can be expressed in human-readable URI
+      format, a few will necessarly be elusive.  In those uncommon
+      cases, client-side processing or a server-side view/procedure is
+      an alternative.  While HTSQL is targeted for occassional
+      programmers, it is also allows career programmers to quickly
+      develop and deploy loosely coupled applications.
+    
+</p>
+<a name="objective"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1.2"></a><h3>1.2.&nbsp;
+Objective</h3>
+
+<p>
+      While there are many approches for database access over the web,
+      few of them directly support relational databases.  Of those, most
+      implementations are application specific, fail to achieve even basic
+      coverage of SQL constructs, or do not take URIs and HTTP protocols
+      into consideration.  HTSQL aims to be generic, documented, and
+      supportable.  By providing a hybrid that is both application
+      independent and human readable, HTSQL realizes the potential
+      synergy of HTTP and SQL, putting the database itself "on the web".
+    
+</p>
+<p>
+      </p>
+<blockquote class="text">
+<p>
+          HTSQL should support most SQL-92 operations, although full
+          coverage of SQL functionality is explicitly not a goal. HTSQL
+          will provide an extension mechanism for functions and commands
+          as well as working well with server-side triggers, stored
+          procedures and views.
+        
+</p>
+<p>
+          HTSQL must support modern relational databases such as
+          PostgreSQL, MySQL, SQLite, and even commercial offerings such
+          as Oracle, Microsoft SQL Server, and IBM's DB2.  It is not a
+          goal to provide support for every feature of those databases:
+          back-end portability across databases is desired.
+        
+</p>
+<p>
+          For all but the most complicated database interactions, the
+          corresponding URIs in HTSQL must be easy to read and
+          understand. Since HTSQL is meant to be used by casual
+          programmers, error messages must be informative and layered so
+          that casual users are not frightened and expert users are
+          given the details they need.
+        
+</p>
+<p>
+          HTSQL must use HTTP/1.1 features for well-known operations
+          such as authentication, caching, range requests and content
+          negotiation; HTSQL should extend or augment existing HTTP/1.1
+          methods only when necessary.
+        
+</p>
+<p>
+          HTSQL must allow for fine-grained access permissions as
+          allowed by SQL-92, mapping application users onto specific
+          database accounts and using database roles.  HTSQL must permit
+          further restrictions beyond those permitted by SQL and should
+          work well with server-side trigger based checks.
+        
+</p>
+<p>
+          HTSQL requests must be easily expressable from a web browser
+          via an XSLT stylesheet or a Javascript expression. Further,
+          client access libraries should be made available to make use
+          of HTSQL easy within common programming languages such as C#,
+          Python, Ruby, Perl and Java.
+        
+</p>
+<p>
+          HTSQL must support the standard <a class='info' href='#HTML'>[HTML]<span> (</span><span class='info'>, &ldquo;,&rdquo; 2004.</span><span>)</span></a> FORM
+          element for common database operations using HTTP/1.0,
+          requiring full HTTP/1.1 only when necessary.
+        
+</p>
+<p>
+          HTSQL should support a wide variety of query result formats,
+          including JavaScript Object Notation <a class='info' href='#JSON'>[JSON]<span> (</span><span class='info'>, &ldquo;,&rdquo; 2004.</span><span>)</span></a> and
+          the eXtensible Markup Language <a class='info' href='#XML'>[XML]<span> (</span><span class='info'>, &ldquo;,&rdquo; 2004.</span><span>)</span></a> for
+          standard Javascript and DOM enabled web browsers, as well as
+          Comma Separated Variable <a class='info' href='#CSV'>[CSV]<span> (</span><span class='info'>, &ldquo;,&rdquo; 2004.</span><span>)</span></a> for
+          spreadsheets and data analysis tools.
+        
+</p>
+<p>
+          HTSQL should minimize configuration using catalog detail
+          available in the database's information schema; basic
+          functionality should not require supplementary information.
+          Ideally, HTSQL should work out-of-the-box with existing
+          database system deployments.
+        
+</p>
+<p>
+          HTSQL should minimize server-side state; following as much as
+          possible the principles of representational state transfer,
+          <a class='info' href='#REST'>[REST]<span> (</span><span class='info'>Fielding, R., &ldquo;Architectural Styles and the Design of       Network-based Software Architectures.,&rdquo; 2000.</span><span>)</span></a>.  To allow usage of HTSQL from a
+          browser's location bar, database updates may be submitted with
+          the <tt>GET</tt> method; however, this relaxation can be disabled.
+        
+</p>
+<p>
+          The HTSQL specification should permit usage of SQL-99 <a class='info' href='#ISO9075-1999'>[ISO9075&#8209;1999]<span> (</span><span class='info'>International Standards Organization, &ldquo;Database Language SQL, 1999,&rdquo; September&nbsp;1999.</span><span>)</span></a> and SQL-2003 <a class='info' href='#ISO9075-2003'>[ISO9075&#8209;2003]<span> (</span><span class='info'>International Standards Organization, &ldquo;Database Language SQL, 2003,&rdquo; August&nbsp;2003.</span><span>)</span></a> constructs when possible, but
+          should not require these features for operation. HTSQL must
+          support <a class='info' href='#UNICODE'>[UNICODE]<span> (</span><span class='info'>, &ldquo;,&rdquo; 2004.</span><span>)</span></a> and use <a class='info' href='#ISO8601'>[ISO8601]<span> (</span><span class='info'>, &ldquo;,&rdquo; 2004.</span><span>)</span></a> style dates. 
+</p>
+</blockquote><p>
+    
+</p>
+<a name="preview"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2"></a><h3>2.&nbsp;
+Preview</h3>
+
+<p>
+    As a prelude to the formal specification, we provide a taste of
+    HTSQL by presenting a limited set of URIs, associating each URI with
+    an equivalent SQL expression.  We will use, in sequence, three
+    schemata that build upon each other to form a comprehensive task
+    management system.  The first example schema, <tt>op</tt>, deals with
+    organizations, projects, and people.
+    </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+  +-------------------+              +-------------------+
+  | OP.PROJECT        |              | OP.ORGANIZATION   |
+  +-------------------+              +-------------------+
+  | prj_id         PK |--\       /---| org_id         PK |---\ ---\
+  | name        NN,UK |  |       |   | name           NN |   |    |
+  | status      NN,CK |  |       |   | is_active         |   |    |
+  | client         FK |&gt;---------/   | division_of    FK |&gt;--/    |
+  | start_date        |  |    .      +-------------------+  .     |
+  | description       |  |     .                           .      |
+  +-------------------+  |   project is        an organization    |
+                        .|   related to        may be a division  |
+    a project has zero . |   at most one       of a larger        |
+    or more people who   |   organization      organization       |
+    participate in it    |                                        |
+                         |     +-------------------+              |
+  +-------------------+  |     | OP.PERSON         |              |
+  | OP.PARTICIPATION  |  |     +-------------------+              |
+  +-------------------+  |     | org_id     FK,PK1 |&gt;-------------/
+  | project    FK,PK1 |&gt;-/     | nickname   NN,PK2 |    .
+  | _ppl_seq   FK,PK2 |&gt;-------| _ppl_seq    NN,UK |   .
+  | billing_rate      |   .    | full_name      NN |  each person
+  +-------------------+  .     | email          UK |  is part of
+                        .      +-------------------+  exactly one
+    a person participates in                          organization
+    zero or more projects
+
+  PK - Primary Key      FK - Foreign Key          NN - Not NULL
+  UK - Unique Key       CK - Check Constraint
+</pre></div><p>
+
+<p>
+        This <tt>op</tt> schema supports several topological structures. We
+        have <em>trunk</em> tables, <tt>organization</tt> and <tt>project</tt>.  The
+        organization table demonstrates a <em>self-reference</em> recursion and
+        acts acts as a <em>category</em> to the project table.  The <tt>person</tt>
+        table is a <em>branch</em> of organization, often representing a
+        "part-of" relationship.  The <tt>participation</tt> table is a
+        <em>cross-product</em> of project by person. 
+      
+</p>
+  
+
+<p>
+    <a name='anchor3'></a>
+    <a name='anchor4'></a>
+    In this diagram, each table's <strong>primary key</strong> is marked with <tt>PK</tt>
+    and any <strong>unique key</strong> is marked with <tt>UK</tt>.  These <em>candidate keys</em>
+    are a combination of columns which uniquely identify each row in the
+    given table.  Relationships between tables, drawn with a line,
+    represent <strong>foreign key</strong> constraints.  A foreign key defines a
+    correspondence between rows in the source table (marked with <tt>FK</tt>)
+    and rows in the referenced table.  Mandatory columns are indicated
+    <tt>NN</tt>; primary key columns are mandatory as well.
+  
+</p>
+<a name="preview-predicate"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.1"></a><h3>2.1.&nbsp;
+Predicate Expressions</h3>
+
+<p>
+    An HTSQL <strong>request</strong> URI typically starts with a single <em>table</em>
+    (optionally prefixed by a <em>schema</em>).  Following a table expression
+    is an optional filter expression, denoted with a question mark, to
+    limit the rows returned.
+  
+</p>
+<p>
+    </p>
+<blockquote class="text">
+<p>
+        <br />
+
+        <tt>/organization</tt>
+        
+<p>
+            This request selects all rows from the <tt>organization</tt>
+            table. By default, rows are ordered by the primary key, in
+            this case, <tt>org_id</tt>. If the table name is not unique
+            within the database catalog, the schema specifier can be
+            included; since the <tt>organization</tt> table is within the
+            <tt>op</tt> schema, this request could also be written as
+            <tt>/op:organization</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM op.organization
+      ORDER BY org_id;
+
+      op:organization
+      ---------------------------------------------------------------
+      org_id      | name                    | is_active | division_of
+      ------------+-------------------------+-----------+------------
+      acorn       | Acorn Architecture      | true      |
+      lake-apts   | Lake Shore Apartments   | true      | lakeside
+      lake-carmen | Lake Carmen Towers      | true      | lakeside
+      lakeside    | Lake Side Partners, LLC |           |
+      meyers      | Meyers Construction     | true      |
+      meyers_elec | Meyers Electric         | false     | meyers
+      smith       | Rudgen, Taupe, &amp; Smith  | false     |
+</pre></div>
+        <br />
+
+      
+
+<p>
+	To provide a more traditional expression grammar, HTSQL's URI scheme
+	diverges significantly from the common quoted-printable
+	<tt>a=foo&amp;b=bar</tt> URI scheme.  Although a conjunction of key/value
+	pairs is adequate for many uses, it is too limited for general query
+	representation.  Hence, HTSQL uses quoted literals instead of
+        relying upon position and does not assume a top-level conjunction.
+      
+</p>
+<p>
+        <a name='anchor5'></a>
+        <a name='anchor6'></a>
+        <a name='anchor7'></a>
+        <br />
+
+        <tt>/person?nickname='jack'</tt>
+        
+<p>
+            This request returns rows from <tt>person</tt> with a nickname
+            of <tt>'jack'</tt>.  Following SQL conventions, string literals 
+            such as <tt>'meyers'</tt> are single-quoted to distinguish them
+            from column references, such as <tt>nickname</tt>.  Like SQL, 
+            if a single-quote occurs in a value, it is escaped by 
+            doubling up, e.g. <tt>'O''Mally'</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM op.person
+      WHERE nickname = 'jack'
+      ORDER BY org_id,  nickname
+
+      op:person
+      ------------------------------------------------------------
+      org_id | nickname | full_name      | email
+      -------+----------+----------------+------------------------
+      meyers | jack     | Jack C. Meyers | jack.meyers@example.com
+      smith  | jack     | Jack Taupe     | jack.taupe@example.com
+</pre></div>
+<p>
+	    Within a single-quoted literal value, non-printable characters
+            may be represented using <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;Uniform Resource Identifiers (URI): Generic Syntax,&rdquo; January&nbsp;2005.</span><span>)</span></a> 
+            precent-encoding.  As such, the percent sign (<tt>%</tt>) must be 
+            written as <tt>%25</tt>.   To be resilient against arbitrary 
+            percent-encoding done by a user-agent, even if encoded, a 
+            single-quote occurring in a literal value must still be escaped
+            by doubling -- simply percent encoding is not sufficient.
+            Hence, <tt>'We''re already running at 110%25 capitan!'</tt>
+          
+</p>
+      
+
+<p>
+        <a name='anchor8'></a>
+        <a name='anchor9'></a>
+        <a name='anchor10'></a>
+        <a name='anchor11'></a>
+        <br />
+
+        <tt>/project?status!='abandoned'&amp;name~'roof'</tt>
+        
+<p>
+            In HTSQL, the conjunction (boolean AND) is indicated with
+            the ampersand (<tt>&amp;</tt>).  This particular request returns
+            returns rows from <tt>project</tt> where the <tt>status</tt> does not
+	    equal <tt>'abandoned'</tt> and where the project's <tt>name</tt> matches
+            a case-insensitive <a class='info' href='#POSIX_1003.2'>[POSIX_1003.2]<span> (</span><span class='info'>, &ldquo;,&rdquo; 2004.</span><span>)</span></a> extended 
+            regular expression <tt>'roof'</tt>.  Case sensitive regular 
+            expressions are indicated by doubling-up the tilde (<tt>~~</tt>). 
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM op.project
+      WHERE status != 'abandoned'
+        AND LOWER(name) LIKE '%roof%'
+      ORDER BY prj_id;
+
+      project
+      -------------------------------------------------------+ ...
+      prj_id | name                            | status      |
+      -------+---------------------------------+-------------+ ...
+      la-334 | Siding / roof at 334 Ocean Blvd | completed   |
+      lt-802 | Toaster Re-Do and Roof Leak     | in-progress |
+</pre></div>
+<p>
+            Since comparison using SQL92's LIKE or SQL2003's SIMILAR-TO
+            is easily represented as a regular expression, HTSQL makes
+            no provision to support these operators.  For databases that
+            do not natively support regular expressions, common cases
+            can be translated into a corresponding SQL construct as
+            shown in the example above.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/project?status='planned'|status='in-progress'</tt>
+        
+<p>
+            Alternation (boolean OR) is indicated with the vertical bar
+            (<tt>|</tt>).  When typing this URL into a standard browser, 
+            the vertical bar may be converted into its percent-encoded
+            equivalent, (in this case <tt>%7C</tt>).  Although this may
+            hinder readability, it does not impact the interpretation 
+            of the URL.  More generally, any character in HTSQL may
+            be percent encoded without changing its meaning.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM op.project
+       WHERE status = 'planned'
+          OR status = 'in-progress'
+      ORDER BY proj_id
+
+      project
+      --------------------------------------------------+ ...
+      prj_id   | status      | client      | start_date |
+      ---------+-------------+-------------+------------+ ...
+      lt-711   | planned     | lake-carmen |            |
+      lt-802   | in-progress | lake-carmen | 2006-11-23 |
+      overhead | in-progress |             | 2003-06-12 |
+      ...
+</pre></div>
+<p> 
+	    The <tt>any()</tt> macro provides a syntax shorthand for applying a
+	    comparison operator over a list of values.  The example above
+            could be equivalently written:
+            <tt>/project?status=any('planned','in-progress')</tt>,
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor12'></a>
+        <br />
+
+        <tt>/organization?is_active&amp;division_of!=='meyers'</tt>
+        
+<p>
+            This particular request returns <tt>organization</tt> records
+            that are active and are not a division of <tt>'meyers'</tt>.   In
+            HTSQL, boolean valued expressions don't need a corresponding
+            comparison operator, hence <tt>is_active</tt> can be used
+            directly.  Note this result set includes rows where
+            <tt>division_of</tt> is null.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM op.organization
+      WHERE is_active
+        AND division_of IS DISTINCT FROM 'meyers'
+      ORDER BY org_id;
+
+      organization
+      ------------------------------------------------------------
+      org_id      | name                | is_active | division_of
+      ------------+---------------------+-----------+-------------
+      acorn       | Acorn Architecture  | true      |
+      lake-carmen | Lake Carmen Towers  | true      | lakeside
+      meyers      | Meyers Construction | true      |
+      shoe        | Rwyler's Shoes      | true      |
+</pre></div>
+<p>
+            Observe that the distinct (<tt>!==</tt>) and not-distinct
+            (<tt>==</tt>) operator differ from equality in that they treat
+            <tt>NULL</tt> as a comparable value.   If the example above would
+            have used not-equal, <tt>division_of!='meyers'</tt>, then only
+            one row, with <tt>lakeside</tt> would have been returned. 
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor13'></a>
+        <a name='anchor14'></a>
+        <br />
+
+        <tt>/project?client->!start_date</tt>
+        
+<p>
+            HTSQL uses implicit conversion when a non-boolean expression
+            is used in a predicate without a comparison operator. This
+            particular example returns project rows where the existence
+            of a <tt>client</tt> implies that the project has not yet
+            started.  This operator makes it easier to express
+            consequential logical operations in a clear manner.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM op.project
+       WHERE NOT (client IS NOT NULL AND client != '')
+          OR (NOT (start_date IS NOT NULL))
+      ORDER BY prj_id
+
+      project
+      -------------------------------------------------------------
+      prj_id   | client      | start_date | name
+      ---------+-------------+------------+------------------------
+      lt-711   | lake-carmen |            | Updating Fire Escape
+      overhead |             | 2003-06-12 | General Management Work
+</pre></div>
+<p>
+            Expressions which evaluate to the empty string, to a zero
+            value, or to NULL are considered <tt>false</tt>.  In the example
+            above the text-valued column <tt>client</tt> is equivalent to
+            <tt>(!isnull(client)&amp;client!='')</tt>.  This particular
+            example also has the <tt>implies</tt> operator, where <tt>a->b</tt> 
+            is syntax sugar for <tt>!a|b</tt>.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor15'></a> 
+        <br />
+
+        <tt>/project?(start_date&lt;'2004-04-01'|start_date&gt;'2006-09-01')&amp;client</tt>
+        
+<p>
+            Parentheses can be used to group boolean expressions. This
+            request returns projects that have not only been assigned to
+            a client, but also either happen before <tt>'2004-04-01'</tt> or
+            after <tt>'2006-09-01'</tt>
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM op.project
+       WHERE (start_date &lt; '2004-04-01'
+           OR start_date &gt; '2006-09-01')
+         AND (client IS NOT NULL AND client != '')
+      ORDER BY prj_id
+
+      project
+      -----------------------------------------------
+      prj_id | start_date | client      | status
+      -------+------------+-------------+------------
+      la-102 | 2004-03-27 | lake-apts   | completed
+      lt-802 | 2006-11-23 | lake-carmen | in-progress
+</pre></div>
+<p>
+            As in SQL, conjunction has higher precedence than the
+            alternation.  The parentheses above are necessary; if
+            omitted, it would return all projects before 2004-03-27
+            including ones not assigned to a client.
+          
+</p>
+      
+
+</blockquote><p>
+  
+</p>
+<p>
+    With moderate exposure to these sorts of URIs and the corresponding
+    results, the occasional programmer should be able to combine
+    operators in a generative manner without assistance.  Filter
+    expressions can be combined with boolean operators and grouped with
+    parentheses to generate arbitrarily complex predicates.
+  
+</p>
+<a name="preview-selector"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.2"></a><h3>2.2.&nbsp;
+Selectors and Functions</h3>
+
+<p>
+    <a name='anchor16'></a>
+    A sequence of expressions enclosed in curly brackets, called a
+    <strong>selector</strong>, represents a set of correlated columns from related
+    tables.  When a selector immediately follows a table reference, it
+    specifies which columns should be returned.  Each expression a
+    selector may be followed by a plus or a minus sign to indicate an
+    ascending or descending sort order.
+  
+</p>
+<p>
+    </p>
+<blockquote class="text">
+<p>
+        <br />
+
+        <tt>/project{status+,start_date-,name}</tt>
+        
+<p>
+            The selector above names three columns, ordered ascending by
+            <tt>status</tt> and then descending by <tt>start_date</tt>.  A third
+            column, <tt>name</tt>, is returned, but is not used for sorting.
+            HTSQL makes no provision to order results by columns that
+            are not returned, or to list columns in an order that
+            differs by their appearance in the sort criteria.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT status, start_date, name
+      FROM op.project
+      ORDER BY status ASC, start_date DESC, prj_id ASC
+
+      project
+      -----------------------------------------------------------
+      status      | start_date | name
+      ------------+------------+---------------------------------
+      abandoned   | 2006-08-03 | Smith Associate Window and Roof
+      completed   | 2005-08-09 | Smith Entry and Waiting Room
+      completed   | 2005-02-03 | Smith Balcony Expansion
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/{today(),null(),true(),false(),pi()}</tt>
+        
+<p>
+            In HTSQL, functions, such as <tt>today()</tt> as well as many
+            constants, such as <tt>null()</tt>, are represented in standard
+            functional notation.  In the request above, a table
+            identifier is absent, so a single row is returned with the
+            expression requested.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT CURRENT_DATE, NULL, TRUE, FALSE, PI()
+
+      ------------------------------------------------------
+      today()    | null() | true() | false() | pi()
+      ------------+--------+--------+---------+-------------
+      2008-05-22 |        | true   | false   | 3.14159265359
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/project{prj_id,string(start_date)[-5:].replace('-','/')}</tt>
+        
+<p>
+            HTSQL has full complement of string, numeric, and date 
+            functions which are translated into equivalent SQL.
+            Most are direct translations, however, some expressions 
+            such as the <em>slice</em> operator (inspired from Python), have a
+            more succinct syntax than the corresponding SQL.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT prj_id,
+        REPLACE(
+          SUBSTRING(CAST(start_date AS TEXT)
+            FROM (((- 5) + (
+               CASE WHEN (- 5) &lt; 0
+               THEN CHARACTER_LENGTH(CAST(start_date AS TEXT))
+               ELSE 0 END))+1)
+        ), '-', '/')
+      FROM op.project
+      ORDER BY prj_id
+
+      project                                                |
+      -------------------------------------------------------+-
+      prj_id   | string(start_date)[(-5):].replace('-', '/') |
+      ---------+---------------------------------------------+-
+      la-102   | 03/27                                       |
+      la-334   | 04/20                                       |
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/project{prj_id,recode(status,'completed','done')}</tt>
+        
+<p>
+            HTSQL as full support for SQL's <tt>CASE</tt> statement depending
+            upon the syntax variant.  The <tt>if()</tt> function corresponds to
+            the general form, while <tt>switch()</tt> is translated into the
+            initial expression variant. To reduce expression duplication
+            error in request construction, HTSQL introduces an additional
+            <tt>recode</tt> function that returns the initial expression in 
+            the case where it is not matched.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT prj_id,
+             (CASE status
+              WHEN 'completed' THEN 'done'
+              ELSE status END)
+      FROM op.project
+      ORDER BY prj_id
+
+      project                                          |
+      -------------------------------------------------+-
+      prj_id     | recode(status, 'completed', 'done') |
+      -----------+-------------------------------------+-
+      Bowl-Shoes | planned                             |
+      la-102     | done                                |
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/project{prj_id,start_date+time('03:30')+timedelta(365*4,1,5)}</tt>
+        
+<p>
+            Standard date/time arithmetic is supported, with direct
+            translations into the SQL equivalent.  A numeric form of
+            for timedelta is provided for convenience for use with
+            contexts requiring arithmetic operations.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT prj_id, ((start_date + TIME '03:30:00')+
+            CAST(( CAST(365 * 4 AS TEXT) || 'D '
+                || LPAD(CAST(1 AS TEXT), 2, '0') || ':'
+                || LPAD(CAST(5 AS TEXT), 2, '0') || ':'
+                || '00'
+            ) AS INTERVAL))
+      FROM op.project
+      ORDER BY prj_id
+
+      project
+      ---------------------------------------------------------------
+      prj_id  | ((start_date+time('03:30'))+timedelta((365*4), 1, 5))
+      --------+------------------------------------------------------
+      la-102  | 2008-03-26 04:35:00
+      la-334  | 2008-04-19 04:35:00
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/participation{floor(billing_rate div 2),(billing_rate mod 3)}</tt>
+        
+<p>
+            For division and modulo a syntax exception is needed. The
+            usual forward-slash (<tt>/</tt>) cannot be used since it
+            designates path segments, while the percent sign (<tt>%</tt>) is
+            inconvenient due to it's use as an escape character.  To work
+            around this syntactical inconvenience, HTSQL follows XSLT's
+            usage of using the <tt>div</tt> and <tt>mod</tt> keywords respectively.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT FLOOR(billing_rate / 3),
+             billing_rate % 3
+        FROM op.participation
+      ORDER BY ...
+
+      participation                                      |
+      ---------------------------------------------------+-
+      floor((billing_rate div 3)) | (billing_rate mod 3) |
+      ----------------------------+----------------------+-
+      18                          | 1.00                 |
+      23                          | 0.00                 |
+      ...
+</pre></div>
+<p>
+            The equivalent SQL query shown above is not completely accurate;
+            in particular, additional default outer joins are not shown and
+            the default <tt>order by</tt> clause requires additional explanation.
+          
+</p>
+      
+
+</blockquote><p>
+  
+</p>
+<a name="preview-specifier"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.3"></a><h3>2.3.&nbsp;
+Specifiers</h3>
+
+<p>
+    <a name='anchor17'></a>
+    HTSQL provides a mechanism for referencing columns not only in the
+    current table, as seen in prior examples, but also columns from
+    related tables.  In SQL, relationships between tables are declared
+    with a foreign key constraint; a <strong>specifier</strong> associates rows from
+    related tables by joining on these constraints.  Specifiers are
+    written as sequence of column and/or table names separated by
+    periods, each period representing a join.  Specifiers with two or
+    more periods reflect a transitive join, forming a path from one
+    table to another through intermediates.
+  
+</p>
+<p>
+    </p>
+<blockquote class="text">
+<p>
+        <a name='anchor18'></a>
+        <br />
+
+        <tt>/project?client.is_active</tt>
+        
+<p>
+            This request returns project rows that are assigned to an
+            active client.  Because there is a foreign key reference
+            from <tt>client</tt> in the <tt>project</tt> table to <tt>org_id</tt> of
+            the <tt>organization</tt> table, the HTSQL processor
+            automatically constructs the appropriate join logic.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT p.* FROM op.project AS p
+        LEFT OUTER JOIN op.organization AS o
+          ON (p.client = o.org_id)
+       WHERE o.is_active IS TRUE
+      ORDER BY prj_id
+
+      project
+      ------------------------------------------------- ...
+      prj_id | status      | client      | start_date |
+      -------+-------------+-------------+------------+ ...
+      lt-711 | planned     | lake-carmen |            |
+      lt-802 | in-progress | lake-carmen | 2006-11-23 |
+</pre></div>
+<p>
+            In HTSQL, these joins are <em>singular</em>, meaning that for every
+            row of the driving table <tt>project</tt> there is at most one
+            row  from the linked table, <tt>organization</tt>.  With the
+            default HTSQL meta-data configurator, when only one foreign
+            key reference exists to a table, the name of the referenced
+            table (<tt>organization</tt>) can be used as well as the
+            referencing column (<tt>client</tt>), e.g.,
+            <tt>/op:project?organization.is_active</tt>.  
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor19'></a>
+        <br />
+
+        <tt>/participation?person.organization.is_active</tt>
+        
+<p>
+            This request returns participation records for people who
+            are in active organizations. This is accomplished by a
+            transitive application of two joins, one from
+            <tt>participation</tt> to <tt>person</tt>, and then onto
+            <tt>organization</tt>. The resulting link chain is also
+            <em>singular</em> since both sub-links are singular.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT x.* FROM op.participation AS x
+        LEFT OUTER JOIN op.person AS p
+          ON (x._ppl_seq = p._ppl_seq)
+        LEFT OUTER JOIN op.organization AS o
+          ON (p.org_id = o.org_id)
+       WHERE o.is_active IS TRUE
+      ORDER BY t.project, o.org_id, p.nickname
+
+      participation
+      -------------------------------------
+      project  | person      | billing_rate
+      ---------+-------------+-------------
+      la-102   | meyers.hill | 55.00
+      la-102   | meyers.jack | 69.00
+      ...
+</pre></div>
+<p>
+            The equivalent SQL query and result set shown above are not
+            completely accurate; in particular, the <tt>person</tt> column
+            and the <tt>order by</tt> clause require additional explanation
+            covered in the next section.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/person?organization.division_of.org_id='lakeside'</tt>
+        
+<p>
+            Of course, a transitive join to the same table is possible.
+            This request returns people who are in an organization that
+            is a division of <tt>'lakeside'</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT p.* FROM op.person AS p
+        LEFT OUTER JOIN op.organization AS o1
+          ON (p.org_id = o1.org_id)
+        LEFT OUTER JOIN op.organization AS o2
+          ON (o1.org_id = o2.org_id)
+       WHERE o2.is_active IS TRUE
+       ORDER BY p.org_id, p.nickname
+
+      person
+      ---------------------------------------------+-
+      org_id    | nickname | full_name     | email |
+      ----------+----------+---------------+-------+-
+      lake-apts | tom      | Tommy O'Mally |       |
+      ...
+</pre></div>
+<p>
+            A future expansion for HTSQL may provide a syntax and
+            corresponding translation for recursive queries, as
+            implemented by SQL's <tt>WITH</tt> clause.  Suggestions are
+            welcome since this is a particularly useful, but very
+            complicated construct to specify.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor20'></a>
+        <br />
+
+        <tt>/project{*,client.*}</tt>
+        
+<p>
+            In a manner like SQL, all columns can be requested in a
+            selector using the asterix (<tt>*</tt>).  In this case, the
+            columns returned are prefixed using the specifier of
+            the join construct.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT p.*,
+             o.org_id AS "organization.empl_code",
+             e.name AS "organization.name",
+             e.is_active AS "organization.is_active",
+             e.division_of AS "organization.division_of"
+        FROM op.project AS p
+             LEFT OUTER JOIN op.organization AS o
+               ON (o.org_id = p.client)
+      ORDER BY p.prj_id
+
+      project
+      ------------------------ . --------------------- ...
+      prj_id   | status      | . |organization.org_id  ...
+      ---------+-------------+ . +-------------------- ...
+      la-102   | completed   | . |lake-apts            ...
+      la-334   | completed   | . |lake-apts            ...
+      lt-711   | planned     | . |lake-carmen          ...
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor21'></a>
+        <br />
+
+        <tt>/project{prj_id,status,client{name,is_active}}</tt>
+        
+<p>
+            In this example, both the <tt>name</tt> and <tt>is_active</tt>
+            columns from the <tt>organization</tt> table are requested. Using a
+            nested selector in this manner avoids duplicating table
+            references.  The selector <tt>client{name,is_active}</tt>
+            is short-hand for <tt>client.name,client.is_active</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT p.prj_id, p.status,
+             o.name AS "client.name",
+             o.is_active AS "client.is_active"
+        FROM op.project AS p
+             LEFT OUTER JOIN op.organization AS o
+               ON (p.client = o.org_id)
+      ORDER BY p.prj_id
+
+      project
+      ---------------------------------------------------------------
+      prj_id   | status      | client.name        | client.is_active
+      ---------+-------------+--------------------+------------------
+      lt-711   | planned     | Lake Carmen Towers | true
+      lt-802   | in-progress | Lake Carmen Towers | true
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor22'></a>
+        <br />
+
+        <tt>/organization?project.status='completed'</tt>
+        
+<p>
+            This request returns organizations that are associated with
+            at least one completed project.  Since there may be more
+            than one project for a given organization, HTSQL interprets
+            the this request as an implied existence test.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT o.* FROM op.organization AS o
+       WHERE EXISTS
+         (SELECT * FROM op.project AS p
+           WHERE p.client = o.org_id
+             AND p.status = 'completed')
+      ORDER BY e.org_id
+
+      organization
+      ------------------------------------------------------------
+      org_id    | name                   | is_active | division_of
+      ----------+------------------------+-----------+------------
+      lake-apts | Lake Shore Apartments  | false     | lakeside
+      smith     | Rudgen, Taupe, &amp; Smith | false     |
+      ...
+</pre></div>
+<p>
+            Unlike the previous examples, the cardinality of this join is
+            <em>plural</em>: there may be more than one project associated with
+            given organization.  When used in this manner, such a specifier
+            is called plural and it checks for existence of at least one
+            matching row.
+          
+</p>
+      
+
+</blockquote><p>
+  
+</p>
+<p>
+    HTSQL's specifier mechanism enables intuitive construction of
+    complicated join criteria.  Not only are <em>singular</em> (one-to-one or
+    many-to-one) joins allowed, but <em>plural</em> (one-to-many) joins are
+    also supported.
+  
+</p>
+<a name="locator"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.4"></a><h3>2.4.&nbsp;
+Locators and locations</h3>
+
+<p>
+    <a name='anchor23'></a>
+    HTSQL provides explicit support for selecting particular rows of a
+    given table using primary key columns.  When using this syntax, each
+    value associated with a primary key column is called a <strong>label</strong>, and
+    a dotted sequence of labels is called an <strong>location</strong>.  Labels are
+    compared via <em>usual equality</em> as described above.  HTSQL uses square
+    brackets to enclose a comma-separated list of locations that
+    locate rows within the database.  A sequence of locations enclosed
+    in square brackets is called a <strong>locator</strong>.
+  
+</p>
+<p>
+    </p>
+<blockquote class="text">
+<p>
+        <br />
+
+        <tt>/organization[meyers]</tt>
+        
+<p>
+            This request returns the <tt>meyers</tt> organization.  This
+            locator syntax form provides a short-hand for filtering by
+            primary key and is indentical to the more formal
+            <tt>/op:organization?org_id='meyers'</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM op.organization
+      WHERE org_id = 'meyers'
+      ORDER BY org_id
+
+      proj_id  | name               | description
+      ---------+--------------------+-----------------------------
+      MEYERS   | Meyers' Residence  | insulation and winterizing
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/person[meyers.jim]</tt>
+        
+<p>
+            The full-stop (<tt>.</tt>) is used used to separate labels in
+            cases where the primary key includes more than one column.
+            This example is identical to
+            <tt>/op:person?organization.org_id='meyers'
+            &amp;nickname='jim'</tt>
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT p.* FROM op.person AS p
+       WHERE p.org_id = 'meyers'
+         AND p.nickname='jim'
+       ORDER BY p.org_id, p.nickname
+
+      person
+      -------------------------------------------------------
+      org_id | nickname | full_name  | email
+      -------+----------+------------+-----------------------
+      meyers | jim      | Jim Meyers | jim.meyers@example.com
+
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/person[meyers.jim,meyers.hill]</tt>
+        
+<p>
+            A comma (<tt>.</tt>) may be used to separate additional locators
+            The example above is identical to,
+            <tt>/op:person?organization.org_id='meyers'&amp;
+            (nickname='jim'|nickname='hill')</tt> and could also be
+            expressed a bit shorter as <tt>/person[meyers.(jim,hill)]</tt>
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT p.* FROM op.person AS p
+       WHERE p.org_id = 'meyers'
+         AND p.nickname IN ('jim','hill')
+      ORDER BY p.org_id, p.nickname
+
+      person
+      --------------------------------------------------------------+-
+      org_id | nickname | full_name        | email                  |
+      -------+----------+------------------+------------------------+-
+      meyers | hill     | Mark Thomas Hill | mark.hill@example.com  |
+      meyers | jim      | Jim Meyers       | jim.meyers@example.com |
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/person[meyers.*]</tt>
+        
+<p>
+            Components in an identifier may be unknown, replaced instead
+            with the wildcard (<tt>*</tt>).  Any component in a location may
+            be set to a wildcard.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT p.* FROM op.person AS p
+       WHERE p.org_id = 'meyers'
+      ORDER BY p.org_id, p.nickname
+
+      person                                                         |
+      ---------------------------------------------------------------+-
+      org_id | nickname | full_name        | email                   |
+      -------+----------+------------------+-------------------------+-
+      meyers | hill     | Mark Thomas Hill | mark.hill@example.com   |
+      meyers | jack     | Jack C. Meyers   | jack.meyers@example.com |
+      meyers | jim      | Jim Meyers       | jim.meyers@example.com  |
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor24'></a>
+        <br />
+
+        <tt>/person{id(),*}</tt>
+        
+<p>
+            This row locator can returned using a built-in function,
+            <tt>id()</tt> which does the appropriate construction.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT (p.org_id || '.' || p.nickname) AS "id()", p.*
+        FROM op.person AS p
+      ORDER BY p.org_id, p.nickname
+
+      person
+      --------------------------------------------------------- ...
+      id()          | org_id    | nickname | full_name        |
+      --------------+-----------+----------+------------------+ ...
+      acorn.hideo   | acorn     | hideo    | WATANABE Hideo   |
+      lake-apts.tom | lake-apts | tom      | Tommy O'Mally    |
+      ...
+</pre></div>
+<p>
+            The <tt>id()</tt> function is a bit more complicated than this
+            since the locator production is limited to word characters
+            and the dash (<tt>-</tt>) and underscore (<tt>_</tt>).  Labels which
+            do not match this production must be single-quoted.
+          
+</p>
+        <br />
+
+      
+
+</blockquote><p>
+  
+</p>
+<p>
+    Identifiers provide a handy notation for resource location: they are
+    concise and unique.  Identifiers can be explicitly requested in the
+    selector using <tt>id()</tt>; furthermore, they can be used within a
+    locator to return exactly one row.
+  
+</p>
+<a name="preview-aggregate"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.5"></a><h3>2.5.&nbsp;
+Aggregates</h3>
+
+<p>
+    In HTSQL, a command denoted by parentheses may be used in the last
+    (right most) path-segment of the URI to invoke a specific database
+    operation or extension function.  In the previous examples, the
+    command <tt>select()</tt> was implicit.
+  
+</p>
+<p>
+    </p>
+<blockquote class="text">
+<p>
+        <br />
+
+        <tt>/op:project{proj_id,task.task_no}</tt>
+        
+<p>
+            If a plural specifier (which causes a one-to-many join) is
+            used within a selector, an ARRAY is returned.  This example
+            returns a row for each project, and for each row, an array
+            of associated task numbers.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT p.proj_id,
+             ARRAY(SELECT t.task_no
+                     FROM tm.task t
+                    WHERE t.proj_id = p.proj_id
+                    ORDER BY t.proj_id, t.task_no)
+                      AS "task{task_no}"
+        FROM op.project AS p
+      ORDER BY p.proj_id;
+
+      proj_id  | task{task_no}
+      ---------+-----------------------------
+      MEYERS   | {1,2,3}
+      SSMall   | {1}
+      THOM-LLP | {}
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor25'></a>
+        <br />
+
+        <tt>/tm:employee{full_name,isnull(email),count(task)}</tt>
+        
+<p>
+            Functions may be used in the context of a selector.  In this
+            example, <tt>isnull()</tt> is a <em>scalar</em> function while <tt>count()</tt>
+            is an <em>aggregate</em> function.  Aggregate functions may be
+            applied to plural specifiers, such as <tt>task</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT e.full_name,
+             (e.email is null) AS "isnull(email)",
+             count(t.*) AS "count(task)"
+        FROM tm.employee AS e
+             LEFT OUTER JOIN tm.task AS t
+             ON (t.assigned_to = e.empl_code)
+      GROUP BY e.empl_code, e.full_name, (e.email is null)
+      ORDER BY e.empl_code;
+
+      full_name       | isnull(email) | count(task)
+      ----------------+---------------+-------------
+      Adam O'Brien    | FALSE         | 23
+      ...
+      Alfred Smith    | TRUE          | 0
+      ...
+</pre></div>
+<p>
+            In general, most SQL operations such as IS NULL are
+            available in HTSQL.  However, we use a simplified function
+            notation that is more familiar to occasional programmers;
+            our syntax includes sequential argument passing an optional
+            keyword parameters.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor26'></a>
+        <br />
+
+        <tt>/tm:task{assigned_to,@status|count(*)}</tt>
+        
+<p>
+            Data pivoting can be requested using the asterix (<tt>@</tt>)
+            immediately preceding a column, such as <tt>status</tt>. In this
+            case, distinct values in that column become the headers in
+            the result set, and remaining columns become the values
+            within respective buckets.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>:
+      SELECT t.assigned_to,
+         SUM(CASE WHEN t.status = 'done' THEN 1
+                  ELSE 0 END) AS "done",
+                  ...
+         SUM(CASE WHEN t.status = 'review' THEN 1
+                  ELSE 0 END) AS "review",
+        FROM tm.task AS t
+      GROUP BY t.assigned_to
+      ORDER BY t.assigned_to;
+
+      assigned_to | done | . | review
+      ------------+------+ . +--------
+      ADAM        |    0 | . |  1
+      ARONSON     |    4 | . |  2
+      ...
+      (NULL)      |    0 | . |  0
+</pre></div>
+<p>
+            This translation need not be done in SQL as shown above,
+            since a pivot operation is strictly a visualization
+            mechanism.  The equivalent SQL above reflects an idiom for
+            this sort of item.  If more than one summary calculation or
+            pivot is requested, there may be 2 or more header rows.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor27'></a>
+        <br />
+
+        <tt>/tm:employee{empl_code,task}</tt>
+        
+<p>
+            If a plural specifier naming a table is mentioned in a
+            selector, then an ARRAY of associated identifiers is
+            generated.  In this example, a row for each employee is
+            returned, and for each row, an array of associated task
+            identifiers is listed.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT e.empl_code,
+             ARRAY(SELECT (t.proj_id || '.' || t.task_no)
+                     FROM tm.task t
+                    WHERE t.assigned_to = e.empl_code
+                   ORDER BY t.proj_id, t.task_no) AS "task"
+        FROM tm.employee AS e
+      ORDER BY e.empl_code
+
+      empl_code | task
+      ----------+-----------------------------
+      ADAM      | {ssmall.1, ... }
+      ARONSON   | {meyers.1, meyers.5, ... }
+      ...
+      SMITH-A   | {}
+      ...
+</pre></div>
+      
+
+</blockquote><p>
+  
+</p>
+<p>
+    Identifiers provide a handy notation for resource location: they are
+    concise and unique.  Identifiers can be explicitly requested in the
+    selector using <tt>id()</tt>; furthermore, they can be used within a
+    locator to return exactly one row.
+  
+</p>
+<a name="preview-command"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.6"></a><h3>2.6.&nbsp;
+Commands</h3>
+
+<p>
+    In HTSQL, a command denoted by parentheses may be used in the last
+    (right most) path-segment of the URI to invoke a specific database
+    operation or extension function.  In the previous examples, the
+    command <tt>select()</tt> was implicit.
+  
+</p>
+<p>
+    </p>
+<blockquote class="text">
+<p>
+        <a name='anchor28'></a>
+        <br />
+
+        <tt>/tm:employee/select(offset=10,limit=2)</tt>
+        
+<p>
+            The explicit <tt>select()</tt> command has two optional
+            keyword/value arguments which can be used to return a
+            sliding window over a result set.  For this particular
+            example, the result set starts at the 11th row and
+            returns <tt>2</tt> rows.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM tm.employee
+      ORDER BY empl_code
+      OFFSET 10 LIMIT 2               /* PostgreSQL Syntax */
+
+      empl_code | full_name     | is_contractor | email
+      ----------+---------------+---------------+-------------
+      HUCK      | Ed Huckington | TRUE          | huck@example.com
+      JACK      | Jack Winters  | FALSE         | jack@example.com
+</pre></div>
+<p>
+            Unfortunately, ISO SQL does not have a provision for
+            offset/limit as implemented by PostgreSQL and other
+            databases.  However, the comments section in the SQL2003
+            hints that this feature is forthcoming.  Since this feature
+            is extremely useful and has implementations in just about
+            every database, it is included in the HTSQL specification.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor29'></a>
+        <a name='anchor30'></a>
+        <br />
+
+        <tt>/op:project/insert()?proj_id:='ALBE'&amp;name:='Alberca'</tt>
+        
+<p>
+            Other commands for insert, update, and delete follow a
+            similar syntax, using colon-equal (<tt>:=</tt>) to indicate an
+            assignment. The result from an insert statement is a "201
+            Created" with a content body containing the URI(s) of the
+            objects inserted.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      INSERT INTO op.project (proj_id, name)
+        VALUES ('ALBE','Alberca');
+
+      201 Created
+      /op:project[albe@1]
+</pre></div>
+<p>
+            For RESTful behavior, the POST method with query arguments
+            in a standard entity body format will also work; the GET
+            method is permitted so that standard features can be used
+            directly in a web browser's location bar.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor31'></a>
+        <br />
+
+        <tt>/op:project/update()?proj_id='ALBE'&amp;description:='Leaky Pool'</tt>
+        
+<p>
+            This request updates the <tt>description</tt> of the 'ALBE'
+            project.  Note that only columns using the assignment
+            operator (<tt>:=</tt>) are changed; the remaining column
+            references are used to limit the rows affected.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      UPDATE op.project
+         SET description = 'Leaky Pool'
+       WHERE htsql_normalize(proj_id) = 'albe'
+
+      201 Created
+      /op:project[albe@2]
+</pre></div>
+<p>
+            Like the insert() operation, update() returns a "201 Created"
+            when successful, listing the URIs of the affected resources.
+            Even though the affected rows are actually modified, they
+            constitute a new resource: implementations could permit
+            access to previous versions of the modified row.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor32'></a>
+        <a name='anchor33'></a>
+        <br />
+
+        <tt>/op:project/delete(expect=3)?description~'pool'</tt>
+        
+<p>
+            If a data modification request would change more than one
+            row (or less than one row), an <tt>expect</tt> keyword argument
+            is needed.  In this example, the request expects exactly 3
+            rows to be deleted.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      DELETE FROM op.project
+       WHERE LOWER(description) LIKE '%pool%';
+
+      204 No Content
+</pre></div>
+<p>
+            Deleting a row does not return content. If any more or fewer
+            rows would be affected, a "417 Expectation Failed" is
+            returned and the data modification request is aborted.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor34'></a>
+        <br />
+
+        <tt>/op:project[able]/merge()?name:='SouthWest%20Alberca'</tt>
+        
+<p>
+            The <tt>merge</tt> operation provides a succinct syntax for
+            adding or updating a resource based on its identifier. If
+            the row already exists, it is updated, otherwise it is
+            created.  The result of this command is a "201 Created" when
+            the corresponding insert or update succeeds.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      MERGE INTO op.project
+      USING op.project ON htsql_normalize(proj_id) = 'albe'
+      WHEN MATCHED THEN UPDATE
+        SET name = 'SouthWest Alberca'
+      WHEN NOT MATCHED THEN INSERT
+        (proj_id, name) VALUES
+        ('albe', 'SouthWest Alberca');
+
+      201 Created
+      /op:project[albe@3]
+</pre></div>
+<p>
+            The MERGE syntax above comes from SQL2003.  However, the
+            concept is so useful in a web setting that the corresponding
+            SQL1992 transaction can be simulated if this feature is not
+            natively supported.  While HTSQL does not require spaces to
+            be encoded as <tt>%20</tt>, many user-agents do.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor35'></a>
+        <a name='anchor36'></a>
+        <br />
+
+        <tt>/tm:task{task_no,status}/parse()?employee='adam'</tt>
+        
+<p>
+            The <tt>parse()</tt> command returns a parse tree representing
+            the request.  It is useful for clients which provide a
+            graphical query builder.  This command is also helpful when
+            debugging because it shows how the HTSQL server is
+            interpreting a given URI.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+
+      &lt;parse xmlns="http://htsql.org/2006/"&gt;
+        &lt;context schema="tm" table="task"&gt;
+          &lt;selector&gt;
+            &lt;specifier column="task_no" /&gt;
+            &lt;specifier column="status" /&gt;
+          &lt;/selector&gt;
+        &lt;/context&gt;
+        &lt;operation name="parse" /&gt;
+        &lt;query&gt;
+          &lt;comparison type="equality"&gt;
+            &lt;specifier table="employee"&gt;
+            &lt;literal value="adam" /&gt;
+          &lt;/comparison&gt;
+        &lt;/query&gt;
+      &lt;/parse&gt;
+
+</pre></div>
+      
+
+</blockquote><p>
+  
+</p>
+<p>
+    HTSQL provides the standard SQL commands, <tt>insert()</tt>, <tt>update()</tt>
+    and <tt>delete()</tt>.  The <tt>merge()</tt> function is particularly useful
+    in a web environment where the status of an object is being "reset"
+    regardless of its previous state.
+  
+</p>
+<a name="preview-context"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.7"></a><h3>2.7.&nbsp;
+Path Contexts</h3>
+
+<p>
+    In HTSQL, more than one table can be directly mentioned in a
+    request, provided that the tables are related (perhaps transitively)
+    by a foreign-key relationship.  Each table, together with associated
+    selectors and parameters is called a <strong>context</strong>.
+  
+</p>
+<p>
+    </p>
+<blockquote class="text">
+<p>
+        <a name='anchor37'></a>
+        <br />
+
+        <tt>/tm:employee/task</tt>
+        
+<p>
+            This request returns tasks, grouping by assigned employee.
+            This particular result is possible since there is an
+            <tt>assigned_to</tt> foreign key from <tt>task</tt> to <tt>employee</tt>.
+            Employees which do not have corresponding tasks, or tasks
+            which are not assigned to an employee are not returned.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT e.empl_code     AS "employee{empl_code}",
+             e.full_name     AS "employee{full_name}",
+             e.is_contractor AS "employee{is_contractor}",
+             e.email         AS "employee{email}",
+             t.proj_id       AS "task{proj_id}",
+             t.task_no       AS "task{task_no}",
+             t.assigned_to   AS "task{assigned_to}",
+             t.status        AS "task{status}",
+             t.name          AS "task{name}"
+        FROM tm.task AS t
+             JOIN tm.employee AS e
+               ON (t.assigned_to = e.empl_code)
+      ORDER BY e.empl_code, t.proj_id, t.task_no;
+
+
+      employee{empl_code} | . | task{proj_id} | task{task_no} | .
+      --------------------+ . +---------------+---------------+
+      ADAM                | . | MEYERS        |       7       | .
+      ADAM                | . | SSMall        |       2       | .
+      ARONSON             | . | MEYERS        |       1       | .
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor38'></a>
+        <br />
+
+        <tt>/tm:employee[aronson]/task</tt>
+        
+<p>
+            The example above returns tasks that have been assigned to
+            the employee <tt>aronson</tt>; duplicating information about this
+            employee for each row.  While this query is similar to
+            <tt>/tm:task?assigned_to='aronson'</tt>, it asserts that exactly
+            one employee with identifier <tt>aronson</tt> is matched.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT &lt;all columns from employee and task&gt;
+        FROM tm.task AS t
+             JOIN tm.employee AS e
+               ON (t.assigned_to = e.empl_code)
+       WHERE htsql_normalize(e.empl_code) = 'aronson'
+      ORDER BY e.empl_code, t.proj_id, t.task_no
+
+      employee{empl_code} | . | task{proj_id} | task{task_no} | .
+      --------------------+ . +---------------+---------------+
+      ARONSON             | . | MEYERS        |       1       | .
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor39'></a>
+        <br />
+
+        <tt>/tm:employee?restricted_info.billing_rate>20</tt>
+        
+<p>
+            This request returns employees who have a billing rate of
+            more than 20.  The automatic join here is possible since the
+            <tt>restricted_info</tt> table has a foreign key which refers to
+            the <tt>employee</tt> table.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT e.*
+        FROM tm.employee AS e
+             JOIN tm.restricted_info AS r
+             ON (r.empl_code = e.empl_code)
+       WHERE r.billing_rate &gt; 20
+      ORDER BY e.empl_code
+
+      empl_code |  full_name   | is_contractor |       email
+      ----------+--------------+---------------+-------------------
+      ARONSON   | Mary Aronson | FALSE         | mary2@example.com
+      SMITH     | Ron Smith    | TRUE          | john@example.com
+      ...
+</pre></div>
+<p>
+            Tables, such as <tt>restricted_info</tt>, that have an optional
+            one-to-one relationship with a primary table, like
+            <tt>employee</tt>, are called <em>facets</em>.  Facets allow the
+            handling of sparse data sets and cases where particular sets
+            of information must have additional security constraints.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor40'></a>
+        <br />
+
+        <tt>/op:project[meyers]/task[1]</tt>
+        
+<p>
+            Identifiers may be shortened when the context can be used to
+            fully-qualify them.  In this example, the identifier for the
+            requested task is <tt>meyers.1</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT &lt;all columns from project and task&gt;
+        FROM op.project AS p
+             JOIN tm.task AS t
+               ON (t.proj_id = p.proj_id)
+       WHERE htsql_normalize(p.proj_id) = 'meyers'
+         AND htsql_normalize(t.task_no) = '1'
+      ORDER BY p.proj_id, t.proj_id, t.task_no
+
+      project{proj_id} | . | task{proj_id} | task{task_no} | .
+      -----------------+ . +---------------+---------------+ .
+      MEYERS           | . | MEYERS        |       1       | .
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor41'></a>
+        <br />
+
+        <tt>/op:project[meyers]/employee[aronson]/task/insert()?</tt>
+          <br />
+
+        <tt>task_no=4&amp;name='Clean Up'</tt>
+        
+<p>
+            When more than one table is provided for an <tt>insert()</tt>
+            statement, un-ambiguous links to the rows identified in the
+            context are assumed.  In this case, the new task will be
+            part of the <tt>meyers</tt> project and will be assigned to
+            <tt>aronson</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      INSERT INTO tm.task (proj_id, assigned_to, task_no, name)
+      VALUES ((SELECT proj_id FROM op.project
+                WHERE htsql_normalize(proj_id) = 'meyers'),
+              (SELECT empl_code FROM tm.employee
+                WHERE htsql_normalize(empl_code) = 'aronson'),
+                '4', 'Clean Up')
+</pre></div>
+<p>
+            In HTSQL, whitespace between tokens (but not within single
+            or double quotes) is not significant.  To enhance
+            readability, we broke the request above onto two lines.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/tm:employee{full_name}/task{project.name,task_no}?status='done'</tt>
+        
+<p>
+            This request returns tasks that are <tt>'done'</tt> together with
+            detail regarding the assigned employee's full name, the
+            project's name, and the task number.  That tasks that are
+            not assigned are not returned with this request.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT e.full_name AS "employee{full_name}",
+             p.name      AS "task{project.name}",
+             t.task_no   AS "task{task_no}"
+        FROM tm.task AS t
+             JOIN tm.employee AS e
+               ON (t.assigned_to = e.empl_code)
+             JOIN op.project AS p
+               ON (p.proj_id = t.proj_id)
+       WHERE htsql_normalize(t.status) = 'done'
+      ORDER BY e.empl_code, t.proj_id, t.task_no
+
+      employee{full_name} | task{project.name}  | task{task_no}
+      --------------------+---------------------+--------------
+      Mary Aronson        | Meyers' Residence   |       1
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor42'></a>
+        <br />
+
+        <tt>/tm:employee//task</tt>
+        
+<p>
+            To suppress the automatic joins, a double-slash (<tt>//</tt>) may
+            be used; the result is a cross product. In this example, the
+            usual join using the foreign key <tt>assigned_to</tt> is explicitly
+            suppressed to return all permutations of employee and task.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT &lt;all columns from employee and task&gt;
+        FROM tm.task AS t,
+             tm.employee AS e
+      ORDER BY e.empl_code, t.proj_id, t.task_no;
+
+      employee{empl_code} | . | task{proj_id} | task{task_no} | .
+      --------------------+ . +---------------+---------------+
+      ADAM                | . | MEYERS        |       1       | .
+      ADAM                | . | MEYERS        |       2       | .
+      ..
+      ARONSON             | . | MEYERS        |       1       | .
+      ...
+</pre></div>
+      
+
+<p>
+        <a name='anchor43'></a>
+        <br />
+
+        <tt>/tm:$a:=project//$b=:project?a.proj_id[0]==b.proj_id[0]</tt>
+        
+<p>
+            When using more than one copy of a table, a table alias
+            created by <tt>$var:=</tt> is required. Once aliased, subsequent
+            usage of the table is then referenced with <tt>var</tt>. This
+            contrived example returns pairs of projects which have the
+            same first letter in their project identifier.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT a.proj_id     AS "a{proj_id}",
+             a.name        AS "a{name}",
+             a.description AS "a{description}",
+             b.proj_id     AS "a{proj_id}",
+             b.name        AS "a{name}",
+             b.description AS "a{description}"
+        FROM op.project AS a,
+             op.project AS b
+        WHERE SUBSTRING(a.proj_id FROM 1 FOR 1) =
+              SUBSTRING(b.proj_id FROM 1 FOR 1)
+       ORDER BY a.proj_id, b.proj_id;
+
+      a{proj_id} | . | b{proj_id} | .
+      -----------+ . +------------+ .
+      MEYERS     | . | MEYERS     | .
+      MEYERS     | . | MIVDA      | .
+      MIVDA      | . | MEYERS     | .
+      ...
+</pre></div>
+      
+
+<p>
+        <a name='anchor44'></a>
+        <br />
+
+        <tt>/tm:(+)employee/task</tt>
+        
+<p>
+            In HTSQL, an <em>outer join</em> is indicated with a plus (<tt>(+)</tt>)
+            surrounded by parenthesis preceding the table name. The
+            above request, for example, returns tasks even if they have
+            not been assigned an employee.  In these cases, the employee
+            columns are NULL.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT &lt;all columns from employee and task&gt;
+        FROM tm.task AS t
+             LEFT OUTER JOIN tm.employee AS e
+               ON (t.assigned_to = e.empl_code)
+      ORDER BY e.empl_code, t.proj_id, t.task_no;
+
+
+      employee{empl_code} | . | task{proj_id} | task{task_no} | .
+      --------------------+ . +---------------+---------------+
+      ADAM                | . | SSMall        |       2       | .
+      ARONSON             | . | MEYERS        |       1       | .
+      ...
+      (NULL)              | . | MEYERS        |       3       | .
+      ...
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor45'></a>
+        <br />
+
+        <tt>/tm:employee{full_name};is_contractor/(+)task{project.name,task_no}</tt>
+        
+<p>
+            This request returns each contractor in the <tt>employee</tt>
+            table and their associated tasks, if any.  Filters on a
+            particular context are indicated with a semi-colon (<tt>;</tt>),
+            the context's <strong>parameters</strong>. In this case, the
+            <tt>is_contractor</tt> filter applies to the <tt>employee</tt> table.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT e.full_name AS "employee{full_name}",
+             p.name      AS "task{project.name}",
+             t.task_no   AS "task{task_no}"
+        FROM tm.employee e
+             LEFT OUTER JOIN tm.task AS t
+               ON (t.assigned_to = e.empl_code)
+             LEFT OUTER JOIN op.project AS p
+               ON (p.proj_id = t.proj_id)
+       WHERE e.is_contractor IS TRUE
+      ORDER BY e.empl_code, t.proj_id, t.task_no
+
+      employee{full_name} | task{project.name} | task{task_no}
+      --------------------+--------------------+---------------
+      Ron Smith           | Meyer's Residence  |             2
+      Alfred Smith        | (NULL)             |  (NULL)
+      ...
+</pre></div>
+        <br />
+
+      
+
+</blockquote><p>
+  
+</p>
+<p>
+    This set of examples illustrates the large difference in readability
+    between HTSQL URIs and the corresponding SQL.  While SQL may be more
+    expressive, for common needs, HTSQL is more succinct and
+    understandable.  The "path" based metaphor of URIs, together with
+    the parameter syntax using the semi-colon, allows relatively common
+    joins to be easily specified.
+  
+</p>
+<a name="preview-transaction"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.8"></a><h3>2.8.&nbsp;
+Transactions and Locking</h3>
+
+<p>
+    HTSQL supports database transactions and record locking.  Besides
+    explicit row locking, bulk updates and <em>optimistic locking</em> are
+    possible.  Optimistic locking is accomplished by returning a row
+    version; and then updating a row only when this version matches.
+    Pessimistic locking requires either a <em>session</em> mechanism as
+    provided by the application or its transaction is limited to the
+    scope of the current HTTP connection (using "Connection: Keep-Alive"
+    for HTTP/1.0 clients).
+  
+</p>
+<p>
+    </p>
+<blockquote class="text">
+<p>
+        <a name='anchor46'></a>
+        <a name='anchor47'></a>
+        <a name='anchor48'></a>
+        <br />
+
+        <tt>/tm:task{id(),tag(),idtag(),name}</tt>
+        
+<p>
+            The <tt>tag()</tt> function returns, for each row, a string value
+            that can be used to test when an update has occurred.  In a
+            subsequent request, if the value of <tt>tag()</tt> changes, then
+            the row has been updated.   The return value of <tt>tag()</tt> is
+            usually a row version number or a timestamp that is changed
+            on each update.  The <tt>idtag()</tt> function returns a row's
+            identifier and tag as a single value, separated with an
+            at-sign (<tt>@</tt>).
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT (t.proj_id || '.' || t.task_no) AS "id()",
+             &lt;tag&gt; AS "tag()",
+             (t.proj_id || '.' || t.task_no ||
+              '@' || &lt;tag&gt;) AS "idtag()",
+             t.name AS "name"
+        FROM tm.task AS t
+      ORDER BY t.proj_id, t.task_no;;
+
+      id()     | tag() | idtag()    | name
+      ---------+-------+------------+-------------------
+      MEYERS.1 | 3     | MEYERS.1@3 | Purchase Materials
+      MEYERS.2 | 7     | MEYERS.2@7 | Strip Wall Paint
+      ...
+</pre></div>
+<p>
+            Since the notion of a <em>tag</em> is not specified by SQL92, its
+            implementation may be dependent upon the specific database,
+            schema, and configuration used.  The only constraint placed
+            upon <tt>tag()</tt> is that all future versions of updated rows
+            must return a different value.  If the HTSQL processor is
+            unable to fulfill these requirements, it must respond with
+            "501 Not Implemented".
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor49'></a>
+        <br />
+
+        <tt>/tm:task[meyers.2@7]</tt>
+        
+<p>
+            This request attempts to return version <tt>7</tt> of the task
+            identified by <tt>meyers.2</tt>.  As above, if the task does
+            not exist, then a "404 Not Found" is returned.  If the
+            <tt>tag()</tt> of the requested row has since changed, a
+            "301 Moved Permanently" is issued, giving the location of
+            the current version.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      301 Moved Permanently
+      /tm:task[meyers.2@8]
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor50'></a>
+        <br />
+
+        <tt>/op:project[meyers@2]/update()?name:='Changed%20Name'</tt>
+        
+<p>
+            If an update or delete operation is applied to an object
+            that has the incorrect version, then the update request
+            would fail with a "409 Conflict".  This message will include
+            a reference to the most recent version, as well as a body
+            with the change history (if available) since the version
+            requested.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      409 Conflict
+      /op:project[albe@3]
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor51'></a>
+        <br />
+
+        <tt>/interaction()</tt>
+        
+<p>
+            The <tt>interaction()</tt> operation takes a POST body of type
+            "text/htsql", each line being an  HTSQL request.   The
+            requests are executed together as part of a single
+            transaction; if any request fails with a 4xx or 5xx result
+            code, then the entire transaction is rolled back.  Following
+            is an example request body which inserts a project and three
+            tasks as a single transaction.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      /op:project[waterfall]/insert()?name:='Waterfall Example'
+      /op:project[waterfall]/task[1]/insert()?name:='Feasibility'
+      /tm:task[waterfall.2]/insert()?name:='Analysis Work'
+      /tm:task[$(project).3]/insert()?name:='Design Phase'
+</pre></div>
+<p>
+            Within text/htsql document, variables like <tt>$(table)</tt>
+            resolves to the identifier for the most recent insert or
+            merge statement of the given table.  Hence, <tt>$(project)</tt>
+            in this example is <tt>waterfall</tt>.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/op:project[waterfall]/task/insert()</tt>
+        
+<p>
+            Bulk inserts can also be performed using a CSV file
+            in the POST body.  The first line of the file gives the
+            columns, and remaining lines correspond to each row being
+            insert.  In this case, the project, <tt>waterfall</tt> is
+            obtained from the parent context and doesn't need to be
+            repeated in the CSV file.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      task_no,status,name
+      4,planned,Implementation
+      5,planned,Testing
+      6,planned,Deployment
+</pre></div>
+<p>
+            A similar file can be provided for <tt>update()</tt> or
+            <tt>merge()</tt>, however, these actions require at least one
+            <tt>id()</tt> or <tt>idtag()</tt> column to uniquely locate the row
+            being affected.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor52'></a>
+        <br />
+
+        <tt>/begin()</tt>
+        
+<p>
+            This starts a transaction. An active transaction can be
+            finished with either <tt>commit()</tt> or <tt>rollback()</tt>.  The
+            transaction is automatically abandoned if the current HTTP
+            connection or the active session ends.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      BEGIN TRANSACTION
+
+      204 No Content
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor53'></a>
+        <a name='anchor54'></a>
+        <br />
+
+        <tt>/op:project/select(lock='update nowait')</tt>
+        
+<p>
+            This select parameter places a row lock on the returned
+            rows.  If a lock cannot be obtained, it immediately returns
+            a "408 Request Timeout" error.  This command must be
+            preceded with a <tt>begin()</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT *
+      FROM op.project
+      FOR UPDATE NO WAIT
+      ORDER BY proj_id
+
+      408 Request Timeout
+</pre></div>
+<p>
+            Locking for <tt>update</tt> is assumed when either
+            <tt>lock="wait"</tt> or <tt>lock="nowait"</tt>.  An explicit lock is
+            dropped after an explicit <tt>commit()</tt> or <tt>rollback()</tt>.
+          
+</p>
+        <br />
+
+      
+
+</blockquote><p>
+  
+</p>
+<p>
+    HTSQL provides for standard optimistic locking, bulk transaction
+    operations, as well as standard transactions with explicit locking.
+  
+</p>
+<a name="preview-output"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.9"></a><h3>2.9.&nbsp;
+Resources and Formats</h3>
+<a name='anchor55'></a>
+<p>
+    Normally, when a web browser makes a request, it provides a list of
+    result formats it will accept.  HTSQL provides mechanisms to
+    override this content negotiation and explicitly request a
+    particular result format. When a table (with optional locator and
+    selector) is followed by an extension, the output format is
+    determined via typical association to well-known MIME types.  If the
+    extension is not known, it is assumed to be <tt>text/ext</tt> where
+    <tt>ext</tt> is the extension provided in the URI.
+  
+</p>
+<p>
+    Further, a path segment starting with the resource indicator (<tt>~</tt>)
+    means that the request is not to be processed by HTSQL, but instead
+    should be delegated to an underlying application.
+  
+</p>
+<p>
+    </p>
+<blockquote class="text">
+<p>
+        <a name='anchor56'></a>
+        <br />
+
+        <tt>/op:project[meyers]{id(),name}.csv</tt>
+        
+<p>
+            The result format can be specified as an argument to
+            <tt>select</tt> or other operations.  In this case, the standard
+            comma-separated variable format is chosen.  The output
+            format can also be provided as an argument to the
+            <tt>select(format='text/csv')</tt> command.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      id(),name
+      MEYERS,Meyers' Residence
+</pre></div>
+<p>
+            In the CSV format, results exactly match the SQL query (and
+            are appropriately de-normalized).  The double-quote is a
+            delimiter used if a column value contains a comma; two
+            adjacent double-quotes are used to escape a double-quote
+            occurring in the query results.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor57'></a>
+        <br />
+
+        <tt>/op:project{name}/employee{}/task{task_no,status}.xml</tt>
+        
+<p>
+            In the eXtensible Markup Language ("XML") format, result
+            elements are named after the table they represent.  For each
+            path context, a hierarchical relation is established,
+            duplicating intermediate nodes (such as "aronson" above) as
+            required.  If a given table or column is not a valid element
+            or attribute name, there are work-arounds using the
+            <tt>htsql</tt> namespace.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+
+      &lt;?xml version="1.0" encoding="utf-8"?&gt;
+      &lt;htsql:result xmlns:htsql="http://htsql.org/2006/"
+                    htsql:schema="tm"&gt;
+        &lt;project htsql:id="meyers@3"
+                 name="Meyer's Residence"&gt;
+          &lt;employee htsql:id="aronson@11"&gt;
+            &lt;task htsql:id="meyers.1@1"
+                  task_no="      01" status="done" /&gt;
+            &lt;task htsql:id="meyers.23@1"
+                  task_no="      23" status="review" /&gt;
+            &lt;!-- ... --&gt;
+          &lt;/employee&gt;
+          &lt;employee htsql:id="adam@5"&gt;
+            &lt;task htsql:id="meyers.11@4"
+                  task_no="      11" status="done" /&gt;
+            &lt;!-- ... --&gt;
+          &lt;/employee&gt;
+          &lt;!-- ... --&gt;
+        &lt;/project&gt;
+        &lt;project htsql:id="ssmall@9"
+                 name="South Square Mall"&gt;
+          &lt;employee htsql:id="aronson@11"&gt;
+            &lt;task htsql:id="ssmall.13@1"
+                  task_no="      01" status="started" /&gt;
+            &lt;!-- ... --&gt;
+          &lt;/employee&gt;
+          &lt;!-- ... --&gt;
+        &lt;/project&gt;
+        &lt;!-- ... --&gt;
+      &lt;/htsql:result&gt;
+
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor58'></a>
+        <br />
+
+        <tt>/op:project{name}/employee{}/task{task_no,status}.yaml</tt>
+        
+<p>
+            The YAML format for HTSQL consists of two sections: a
+            context and an assembly.  For each table mentioned in the
+            request, the context lists each row returned for that table.
+            The assembly then represents the drill-down relationships
+            between these rows.  For large results, the content returned
+            by YAML is much smaller than the equivalent XML, since each
+            row occurs only once in the context rather than being
+            duplicated for each occurrence in the hierarchical assembly.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+
+      %YAML 1.1
+      ---
+      schema: tm
+      context:
+        project:
+        - !project &amp;1
+          =: meyers@3
+          name: Meyer's Residence
+        - !project &amp;2
+          =: ssmall@9
+          name: South Square Mall
+        #...
+        employee:
+        - !employee &amp;3
+          =: aronson@1
+        - !employee &amp;4
+          =: adam@5
+        #...
+        task:
+        - !task &amp;5
+          =: meyers.1@1
+          task_no: 01
+          status: done
+          project: *1
+          employee: *3
+        - !task &amp;6
+          =: meyers.23@1
+          task_no: 23
+          status: review
+          project: *1
+          employee: *3
+          # ...
+        - !task &amp;7
+          =: meyers.11@4
+          task_no: 23
+          status: done
+          project: *1
+          employee: *4
+          # ...
+        - !task &amp;8
+          =: ssmall.13@1
+          task_no: 13
+          status: started.
+          project: *2
+          employee: *3
+        #...
+      assembly: [*1: [*3: [*5, *6],
+                    *4: [*7]],
+                 *2: [*3: [*8]]]
+      ...
+
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor59'></a>
+        <br />
+
+        <tt>/op:project{name}/task{task_no,status}/~some+resource</tt>
+        
+<p>
+            Whenever a path segment starts with a tilde <tt>~</tt>, it
+            indicates a user resource.  Once found, the entire URI is
+            not processed by HTSQL, but is instead passed on to the
+            application.  The application can then choose to return a
+            resource specific to the path, or what ever it wishes.  Note
+            that relative paths work as expected, even for "static"
+            resources.  For example, a relative <tt>./select()</tt> reference
+            in the resource above would produce a list of tasks.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      (application defined resource for "some+resource")
+</pre></div>
+        <br />
+
+      
+
+<p>
+        <a name='anchor60'></a>
+        <a name='anchor61'></a>
+        <br />
+
+        <tt>/op:project{name}/task{task_no,status}.html~bing</tt>
+        
+<p>
+            Following a request for XML or HTML output, a style-sheet can
+            be requested as shown above. If the style-sheet lacks an
+            extension (such as "xsl"), then "css" is assumed.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+
+      &lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd"&gt;
+      &lt;HTML&gt;
+        &lt;HEAD&gt;
+          &lt;LINK type="text/css" rel="stylesheet"
+           href="/op:project{name}/task{task_no,status}/~bing.css"&gt;
+        &lt;/HEAD&gt;
+        &lt;BODY&gt;
+          &lt;TABLE&gt;
+            &lt;COLGROUP ID="project"&gt;
+              &lt;COL CLASS="project project_name" ID="project:name"&gt;
+            &lt;/COLGROUP&gt;
+            &lt;COLGROUP ID="task"&gt;
+              &lt;COL CLASS="task task_task_no" ID="task:task_no"&gt;
+              &lt;COL CLASS="task task_status" ID="task:status"&gt;
+            &lt;/COLGROUP&gt;
+            &lt;THEAD&gt;
+              &lt;TR&gt;
+                &lt;TH COLSPAN="1" SCOPE="colgroup"
+                    CLASS="project"&gt;Project&lt;/TH&gt;
+                &lt;TH COLSPAN="2" SCOPE="colgroup"
+                    CLASS="task"&gt;Task&lt;/TH&gt;
+              &lt;/TR&gt;
+              &lt;TR&gt;
+                &lt;TH&gt;Name&lt;/TH&gt;
+                &lt;TH&gt;Task No&lt;/TH&gt;
+                &lt;TH&gt;Status&lt;/TH&gt;
+              &lt;/TR&gt;
+            &lt;/THEAD&gt;
+            &lt;TBODY&gt;
+              &lt;TR ID="task:meyers.1"&gt;
+                &lt;TD ROWSPAN="2" SCOPE="rowgroup" VALIGN="top"&gt;
+                  Meyers' Residence&lt;/TD&gt;
+                &lt;TD&gt;      01&lt;/TD&gt;
+                &lt;TD&gt;done&lt;/TD&gt;
+              &lt;/TR&gt;
+              &lt;TR ID="task:meyers.2"&gt;
+                &lt;TD&gt;      02&lt;/TD&gt;
+                &lt;TD&gt;done&lt;/TD&gt;
+              &lt;/TR&gt;
+              &lt;!-- ... --&gt;
+              &lt;TR ID="task:ssmall.1"&gt;
+                &lt;TD&gt;South Square Mall&lt;/TD&gt;
+                &lt;TD&gt;      01&lt;/TD&gt;
+                &lt;TD&gt;review&lt;/TD&gt;
+              &lt;/TR&gt;
+              &lt;!-- ... --&gt;
+            &lt;/TBODY&gt;
+          &lt;/TABLE&gt;
+        &lt;/BODY&gt;
+      &lt;/HTML&gt;
+
+</pre></div>
+        <br />
+
+      
+
+</blockquote><p>
+  
+</p>
+<p>
+    The varied output formats and customizable resources, together with
+    stylesheet linkage, create a flexible mechanism for constructing
+    user interfaces.
+  
+</p>
+<a name="compatibility"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2.10"></a><h3>2.10.&nbsp;
+HTML FORM Compatibility</h3>
+
+<p>
+    Standard HTML form encoding presents several challenges to HTSQL.
+    While it is possible to provide almost any name (such as one
+    corresponding to a specifier) for an INPUT control, user-provided
+    values are always percent-encoded instead of being single-quoted as
+    HTSQL requires.  Further, HTML only supports a flat expression
+    structure, conflating the ampersand's meaning of conjunction with
+    simply implying that additional form elements are provided. HTSQL
+    defines a <strong>literal value</strong> syntax and <strong>variable</strong> substitution to
+    provide direct support for HTML forms without requiring client-side
+    processing.
+  
+</p>
+<p>
+    </p>
+<blockquote class="text">
+<p>
+        <br />
+
+        <tt>/op:project?name@~south+square</tt>
+        
+<p>
+            Any operator may be preceded by the at-sign (<tt>@</tt>) to
+            indicate that the right-hand side is a percent-encoded
+            value.  A literal value provided in this syntax terminates
+            at the next ampersand character or at the end of the request
+            string.  This request is equivalent to
+            <tt>/op:project?name~'south square'</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM op.project
+       WHERE LOWER(name) LIKE '%south square%'
+      ORDER BY proj_id
+
+      proj_id  | name               | description
+      ---------+--------------------+-----------------------------
+      SSMall   | South Square Mall  | two new store fronts
+      ...
+</pre></div>
+<p>
+            This literal value syntax permits values to be included
+            according to standard web usage without requiring cumbersome
+            single-quotes.  In this syntax, the plus sign is used to
+            encode the space (<tt>%20</tt>) and reserved characters must be
+            percent-encoded.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/tm:task?status@=done&amp;status@=review</tt>
+        
+<p>
+            When using the literal value syntax, multiple items joined
+            by an ampersand are treated as a simple alternation.  This
+            is an ugly exception to the normal grammar, however it is
+            needed to meet the expectations of standard HTML form usage.
+            The request above is equivalent to
+            <tt>/tm:task?status='done','review'</tt>.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM tm.task
+       WHERE htsql_normalize(status) in ('done','review')
+      ORDER BY proj_id, task_no
+
+      proj_id | task_no | assigned_to | status  | name
+      --------+-----------------------+---------+-------------------
+      MEYERS  |       1 | ARONSON     | done    | Purchase Materials
+      ...
+</pre></div>
+<p>
+            Since the comma is a reserved character, this syntax also
+            allows expressions such as <tt>/tm:task?status@=done,review</tt>
+            with an identical interpretation.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>/tm:task?status='done',other&amp;$other@:=review</tt>
+        
+<p>
+            In HTSQL, variables are declared with a dollar-sign. This
+            example uses variable substitution to return tasks that are
+            either done or ready for review.  The variable <tt>other</tt> is
+            first referenced as part of the filter on the <tt>status</tt>
+            column.  Following the ampersand, this variable is defined
+            with the value "review", using the assignment operator.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM tm.task
+       WHERE htsql_normalize(status) in ('done','review')
+      ORDER BY proj_id, task_no
+
+      proj_id | task_no | assigned_to | status  | name
+      --------+-----------------------+---------+-------------------
+      MEYERS  |       1 | ARONSON     | done    | Purchase Materials
+      ...
+</pre></div>
+<p>
+            This query could be submitted via a HTML form with a hidden
+            input <tt>status</tt> having value <tt>'done',other</tt>, and another
+            input named <tt>$other@:</tt> with user-provided value
+            <tt>review</tt>.  After variable resolution, this request is
+            equivalent to <tt>/tm:task?status='done','review'</tt>.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <br />
+
+        <tt>POST /tm:task?assigned_to=='ARONSON'</tt>
+        <br />
+
+        with URL-encoded post body <tt>status@=review&amp;status@=done</tt>
+        
+<p>
+            When POST is used with a "multipart/form-data" or
+            "application/x-www-form-urlencoded" MIME types, key/value
+            pairs are integrated as if they used an ampersand.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT * FROM tm.task
+       WHERE htsql_normalize(status) in ('done','review')
+         AND assigned_to = 'ARONSON'
+      ORDER BY proj_id, task_no
+
+      proj_id | task_no | assigned_to | status  | name
+      --------+-----------------------+---------+-------------------
+      MEYERS  |       1 | ARONSON     | done    | Purchase Materials
+      ...
+</pre></div>
+<p>
+            The request above is equivalent to
+            <tt>/tm:task?assigned_to=='ARONSON'&amp;status='done','review'</tt>.
+          
+</p>
+      
+
+<p>
+        <a name='anchor62'></a>
+        <br />
+
+        <tt>/person?organization.is_active&amp;private_info.tax_ident~'3'</tt>
+        
+<p>
+            This request returns people who are members of an active
+            organization, and who's tax identifier contains <tt>'3'</tt>.
+            Tables such as <tt>private_info</tt> are called <em>facets</em>, since
+            the join cardnality from the driving table <tt>person</tt> to the
+            target is _0/1-to-1_.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+      SELECT p.*
+        FROM op.person AS p
+             LEFT OUTER JOIN op.organizationn AS o
+             ON (p.org_id = o.org_id)
+             LEFT OUTER JOIN hr.private_info AS f
+             ON (p._ppl_seq = f._ppl_id)
+       WHERE o.is_active IS TRUE
+         AND LOWER(f.tax_ident) LIKE '%3%'
+      ORDER BY p.org_id,  p.nickname
+
+      person
+      ---------------------------------------------------------------
+      org_id | nickname | full_name      | email
+      -------+----------+----------------+---------------------------
+      acorn  | hideo    | WATANABE Hideo | hideo.watanabe@example.com
+      meyers | jim      | Jim Meyers     | jim.meyers@example.com
+</pre></div>
+<p>
+            With the default HTSQL meta-data configurator, when only one
+            foreign key reference exists to a table, the name of the
+            referenced table (<tt>organizatione</tt>) can be used as well as
+            the referencing column (<tt>client</tt>), i.e.
+            <tt>/op:project?organization.is_active</tt>.
+          
+</p>
+        <br />
+
+      
+
+<p>
+        <a name='anchor63'></a>
+        <br />
+
+        <tt>/tm:employee?count(task;status='done')&gt;4</tt>
+        
+<p>
+            This request returns employees who have been assigned more
+            than <tt>4</tt> completed tasks.  The <strong>parameter</strong> filter (<tt>;</tt>)
+            limits the related tasks, and the <tt>count()</tt> <em>aggregate</em>
+            function converts this correlated sub-query into a <em>scalar</em>
+            value for comparison.
+          
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+       SELECT e.empl_code, e.full_name, e.is_contractor,
+               e.email
+        FROM tm.employee AS e
+       WHERE
+         (SELECT count(*)
+            FROM tm.task AS t
+           WHERE t.assigned_to = e.empl_code
+             AND htsql_normalize(t.status) = 'done') &gt; 4
+      ORDER BY e.empl_code
+</pre></div><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+       SELECT e.empl_code, e.full_name, e.is_contractor,
+               e.email
+        FROM tm.employee AS e
+       WHERE
+         (SELECT count(*)
+            FROM tm.task AS t
+           WHERE t.assigned_to = e.empl_code
+             AND htsql_normalize(t.status) = 'done') &gt; 4
+      ORDER BY e.empl_code
+</pre></div>
+      
+
+</blockquote><p>
+  
+</p>
+<p>
+    By merging POST arguments with a URI using literal-value syntax
+    and with clever use of variable substitution, it should be possible to
+    send just about any HTSQL query using standard HTML form submission.
+  
+</p>
+<a name="rfc.references"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3"></a><h3>3.&nbsp;
+References</h3>
+
+<a name="rfc.references1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>3.1.&nbsp;Normative References</h3>
+<table width="99%" border="0">
+<tr><td class="author-text" valign="top"><a name="ISO9075-1992">[ISO9075-1992]</a></td>
+<td class="author-text">International Standards Organization, &ldquo;Database Language SQL, 1992,&rdquo; ISO/EIC&nbsp;9075:1992, July&nbsp;1992.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2234">[RFC2234]</a></td>
+<td class="author-text">Crocker, D. and P. Overell, &ldquo;<a href="http://tools.ietf.org/html/rfc2234">Augmented BNF for Syntax Specifications: ABNF</a>,&rdquo; RFC&nbsp;2234, November&nbsp;1997 (<a href="http://www.ietf.org/rfc/rfc2234.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2616">[RFC2616]</a></td>
+<td class="author-text">Felding, R., Gettys, J., Mongul, J., Frystyk, H., Mastiner, L., Leach, P., and T. Berners-Lee, &ldquo;<a href="http://tools.ietf.org/html/rfc2616">Hypertext Transfer Protocol -- HTTP/1.1</a>,&rdquo; RFC&nbsp;2616, June&nbsp;1999 (<a href="http://www.ietf.org/rfc/rfc2616.txt">TXT</a>).</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC3986">[RFC3986]</a></td>
+<td class="author-text">Berners-Lee, T., Fielding, R., and L. Masinter, &ldquo;<a href="http://tools.ietf.org/html/rfc3986">Uniform Resource Identifiers (URI): Generic Syntax</a>,&rdquo; RFC&nbsp;3986, January&nbsp;2005 (<a href="http://www.ietf.org/rfc/rfc3986.txt">TXT</a>).</td></tr>
+</table>
+
+<a name="rfc.references2"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>3.2.&nbsp;Informative References</h3>
+<table width="99%" border="0">
+<tr><td class="author-text" valign="top"><a name="CSV">[CSV]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="HTML">[HTML]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="HTML4">[HTML4]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="ISO8601">[ISO8601]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="ISO9075-1999">[ISO9075-1999]</a></td>
+<td class="author-text">International Standards Organization, &ldquo;Database Language SQL, 1999,&rdquo; ISO/EIC&nbsp;9075:1999, September&nbsp;1999.</td></tr>
+<tr><td class="author-text" valign="top"><a name="ISO9075-2003">[ISO9075-2003]</a></td>
+<td class="author-text">International Standards Organization, &ldquo;Database Language SQL, 2003,&rdquo; ISO/EIC&nbsp;9075:2003, August&nbsp;2003.</td></tr>
+<tr><td class="author-text" valign="top"><a name="JSON">[JSON]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="PGSQL">[PGSQL]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="POSIX_1003.2">[POSIX_1003.2]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="REC-XML">[REC-XML]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="REST">[REST]</a></td>
+<td class="author-text">Fielding, R., &ldquo;Architectural Styles and the Design of
+      Network-based Software Architectures.,&rdquo; 2000.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC1738">[RFC1738]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC1808">[RFC1808]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2086">[RFC2086]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2396">[RFC2396]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2396BIS">[RFC2396BIS]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2732">[RFC2732]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="SQL98">[SQL98]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="UNICODE">[UNICODE]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="XML">[XML]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="XSL">[XSL]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+<tr><td class="author-text" valign="top"><a name="YAML">[YAML]</a></td>
+<td class="author-text">&ldquo;,&rdquo; 2004.</td></tr>
+</table>
+
+<a name="collected-abnf"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A"></a><h3>Appendix A.&nbsp;
+Collected ABNF for URI</h3>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+</pre></div>
+<a name="sample-schema"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B"></a><h3>Appendix B.&nbsp;
+Sample Database Schema</h3>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+--
+-- SAMPLE SCHEMA, SQL-92 CONSTRUCTS ONLY
+--
+DROP SCHEMA tm CASCADE;
+CREATE SCHEMA tm;
+
+-- PostgreSQL, not SQL99, Syntax
+CREATE OR REPLACE FUNCTION htsql_normalize(text)
+  RETURNS text
+  AS 'SELECT COALESCE(NULLIF(
+              TRANSLATE(LOWER(
+                TRIM(LEADING ''0'' FROM
+                  TRIM(BOTH '' '' FROM
+                    CAST($1 AS TEXT)
+                  ))),
+              ''- '',''__''),
+           ''''),''0'');
+  ' LANGUAGE SQL IMMUTABLE STRICT;
+
+CREATE TABLE tm.project (
+    proj_id        VARCHAR(16),
+    name           VARCHAR(64) NOT NULL,
+    description    VARCHAR(2000),
+    CONSTRAINT project_pk
+      PRIMARY KEY (proj_id)
+);
+
+CREATE TABLE tm.employee (
+    empl_code      VARCHAR(16),
+    full_name      VARCHAR(64) NOT NULL,
+    is_contractor  BOOLEAN,
+    email          VARCHAR(64),
+    CONSTRAINT employee_pk
+      PRIMARY KEY (empl_code)
+);
+
+CREATE DOMAIN tm.status AS VARCHAR(8);
+ALTER DOMAIN  tm.status
+   ADD CONSTRAINT status_check
+     CHECK (VALUE IN ('done','review','planned'));
+
+CREATE TABLE tm.task (
+    proj_id        VARCHAR(16)
+      REFERENCES tm.project(proj_id),
+    task_no        INTEGER,
+    assigned_to    VARCHAR(16)
+      REFERENCES tm.employee(empl_code),
+    status         tm.status,
+    name          VARCHAR(64) NOT NULL,
+    CONSTRAINT task_pk
+      PRIMARY KEY (proj_id, task_no)
+);
+
+CREATE TABLE tm.restricted_info (
+    empl_code      VARCHAR(16)
+      REFERENCES tm.employee(empl_code),
+    billing_rate   INTEGER NOT NULL,
+    tax_id         VARCHAR(16) UNIQUE,
+    birth_date     DATE,
+    CONSTRAINT restricted_info_pk
+      PRIMARY KEY (empl_code)
+);
+
+INSERT INTO tm.project VALUES ('MEYERS',
+  'Meyer''s Residence', 'insulation and winterizing');
+INSERT INTO tm.project VALUES ('SSMall',
+  'South Square Mall', 'two new store fronts');
+INSERT INTO tm.project VALUES ('THOM-LLP',
+  'Tom Thompson, LLP.', 'fix up room for new associate');
+
+INSERT INTO tm.employee VALUES ('ADAM',
+  'Adam O''Brian', FALSE, 'adam@example.com');
+INSERT INTO tm.employee VALUES ('ARONSON',
+  'Mary Aronson', FALSE, 'mary2@example.com');
+INSERT INTO tm.employee VALUES ('SMITH',
+  'Ron Smith', TRUE, 'john@example.com');
+INSERT INTO tm.employee VALUES ('SMITH-A',
+  'Alfred Smith', TRUE, NULL);
+
+INSERT INTO tm.task VALUES ('MEYERS',1,
+  'ARONSON','done','Purchase Materials');
+INSERT INTO tm.task VALUES ('MEYERS',2,
+  'SMITH','review','Strip Wall Paint');
+INSERT INTO tm.task VALUES ('MEYERS',3,
+  NULL,'planned','Remove Refuse');
+INSERT INTO tm.task VALUES ('SSMall',1,
+  'ADAM','review','Install Slider Door');
+
+INSERT INTO tm.restricted_info VALUES ('ARONSON',
+  26, '222-22-1492', '03-01-1961');
+INSERT INTO tm.restricted_info VALUES ('SMITH',
+  22, '444-44-4444', '08-15-1965');
+
+</pre></div><a name="rfc.index"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>Index</h3>
+<table>
+<tr><td><strong>C</strong></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>command</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor52">begin transaction</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor33">delete</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor29">insert</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor51">interaction</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor34">merge</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor35">parse</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor36">query</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor28">select</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor31">update</a></td></tr>
+<tr><td>&nbsp;</td><td><a href="#anchor55">content negotiation</a></td></tr>
+<tr><td>&nbsp;</td><td>context  <a href="#anchor37">1</a>, <a href="#anchor44">2</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;cross products  <a href="#anchor42">1</a>, <a href="#anchor43">2</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor38">locators in</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor45">parameters</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor40">relative identifiers</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor41">relative inserts</a></td></tr>
+<tr><td><strong>E</strong></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>error</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor49">301 Moved Permanently</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor53">408 Request Timeout</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor50">409 Conflict</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor32">417 Expectation Failed</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor48">501 Not Implemented</a></td></tr>
+<tr><td><strong>F</strong></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td><a href="#anchor39">facet</a></td></tr>
+<tr><td>&nbsp;</td><td>filter</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;preview  <a href="#anchor5">1</a>, <a href="#anchor8">2</a></td></tr>
+<tr><td>&nbsp;</td><td>function</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor24">id()</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor47">tag()</a></td></tr>
+<tr><td><strong>I</strong></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td><a href="#anchor13">implicit conversion</a></td></tr>
+<tr><td><strong>L</strong></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td><a href="#anchor23">locator</a></td></tr>
+<tr><td>&nbsp;</td><td>locking</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor54">explicit</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor46">optimistic</a></td></tr>
+<tr><td><strong>M</strong></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>meta data</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor3">candidate key</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor4">foreign key</a></td></tr>
+<tr><td><strong>O</strong></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>operator</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor30">assignment</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor10">conjunction</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor12">distinct-from</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor6">equality</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor14">implies</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor11">negation</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor9">regex</a></td></tr>
+<tr><td>&nbsp;</td><td><a href="#anchor15">operator precedence</a></td></tr>
+<tr><td>&nbsp;</td><td>output format</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor56">Comma Separated Variable</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor57">eXtensible Markup Language</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor60">HyperText Markup Language</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor58">YAML Ain't Markup Language </a></td></tr>
+<tr><td><strong>P</strong></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td><a href="#anchor63">parameter filter</a></td></tr>
+<tr><td>&nbsp;</td><td>percent encoding</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor7">preview</a></td></tr>
+<tr><td><strong>R</strong></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td>resources</td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor59">application defined</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor61">style sheets</a></td></tr>
+<tr><td><strong>S</strong></td><td>&nbsp;</td></tr>
+<tr><td>&nbsp;</td><td><a href="#anchor16">selector</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor26">column pivot</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor25">functions in</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor21">nested</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor20">wild</a></td></tr>
+<tr><td>&nbsp;</td><td><a href="#anchor17">specifier</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor62">facet</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;plural  <a href="#anchor22">1</a>, <a href="#anchor27">2</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor18">singular</a></td></tr>
+<tr><td>&nbsp;</td><td>&nbsp;&nbsp;<a href="#anchor19">transitive</a></td></tr>
+</table>
+
+<a name="rfc.authors"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>Authors' Addresses</h3>
+<table width="99%" border="0" cellpadding="0" cellspacing="0">
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Clark C. Evans</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Prometheus Research, LLC.</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">315 Whitney Ave.</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">New Haven, CT  06511</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">US</td></tr>
+<tr><td class="author" align="right">Phone:&nbsp;</td>
+<td class="author-text">+1 734 418 8644</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text">info@clarkevans.com</td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://clarkevans.com">http://clarkevans.com</a></td></tr>
+<tr cellpadding="3"><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Kirill Simonov</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Prometheus Research, LLC.</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">18A, Tamanskiy pr.</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">Donetsk, CT  83048</td></tr>
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">UA</td></tr>
+<tr><td class="author" align="right">Phone:&nbsp;</td>
+<td class="author-text">+380.622.583571</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text">xi@resolvent.net</td></tr>
+<tr><td class="author" align="right">URI:&nbsp;</td>
+<td class="author-text"><a href="http://resolvent.net">http://resolvent.net</a></td></tr>
+</table>
+</body></html>

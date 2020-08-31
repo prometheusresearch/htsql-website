@@ -1,0 +1,11 @@
+***************************
+  HTSQL 2.3.2 is released
+***************************
+
+.. blogentry::
+   :date: 2012-08-24
+   :author: xi
+
+We announce a minor bugfix release of HTSQL in the 2.3 development series.
+This release fixes a loading problem with HTSQL Shell.
+

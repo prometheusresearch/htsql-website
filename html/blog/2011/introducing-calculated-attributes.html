@@ -1,0 +1,314 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introducing Calculated Attributes &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="HTSQL 2.1.0b1 is released" href="htsql-2.1-beta1.html" />
+    <link rel="prev" title="Introducing Support for Timestamps" href="introducing-datetime.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introducing-calculated-attributes">
+<h1>Introducing Calculated Attributes<a class="headerlink" href="#introducing-calculated-attributes" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-03-14</em></p>
+<p>During our work converting SQL queries to HTSQL, we found a need for
+re-usable query fragments.  This week we introduce <tt class="docutils literal"><span class="pre">define()</span></tt> which
+names a calculated column or parameterized expression.</p>
+<div class="section" id="basic-usage">
+<h2>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<p>Often during query construction, a query fragment may be copied and
+pasted many times, frequently with minor changes.  For example, suppose
+you want to collect some statistics over a set of courses for each
+department.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name,%20count(course?no&gt;=200&amp;no&lt;400),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=200&amp;no&lt;400).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=200&amp;no&lt;400).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=200&amp;no&lt;400).credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name,%20count(course?no&gt;=200&amp;no&lt;400),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=200&amp;no&lt;400).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=200&amp;no&lt;400).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=200&amp;no&lt;400).credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">),</span>
+                  <span class="nf">max</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">min</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">avg</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">).</span><span class="nb">credits</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>This query has a repeated expression, <tt class="docutils literal"><span class="pre">(course?no&gt;=200&amp;no&lt;400)</span></tt>
+which represents courses typically taken by sophomores.  The query
+above can be rewritten with <tt class="docutils literal"><span class="pre">define()</span></tt> to remove this redundancy.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define(sophomore%20:=%20course?no&gt;=200&amp;no&lt;400)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(sophomore),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(sophomore.credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define(sophomore%20:=%20course?no&gt;=200&amp;no&lt;400)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(sophomore),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(sophomore.credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nb">sophomore</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">)</span>
+           <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">),</span>
+                  <span class="nf">max</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">min</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">avg</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">.</span><span class="nb">credits</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>In this equivalent, <tt class="docutils literal"><span class="pre">department.define(...)</span></tt> introduces a calculated
+attribute <tt class="docutils literal"><span class="pre">sophomore</span></tt> of department.  This attribute is then used in
+the subsequent selector.  An intended side benefit is that the column
+header better reflects the content of the column.</p>
+</div>
+<div class="section" id="in-place-declaration">
+<h2>In-Place Declaration<a class="headerlink" href="#in-place-declaration" title="Permalink to this headline">¶</a></h2>
+<p>Occasionally you want to define a calculated attribute within a local
+context.  The <tt class="docutils literal"><span class="pre">where()</span></tt> function takes two or more arguments.  The
+first argument is the expression to return, the remaining arguments are
+local attributes.  In this manner the example above could be written:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name,%0A%20%20%20%20%20%20%20%20%20%20%20%20{count(sophomore),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20max(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20min(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20avg(sophomore.credits)}%0A%20%20%20%20%20%20%20%20%20%20%20%20:where%20sophomore%20:=%20course?no&gt;=200&amp;no&lt;400}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name,%0A%20%20%20%20%20%20%20%20%20%20%20%20{count(sophomore),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20max(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20min(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20avg(sophomore.credits)}%0A%20%20%20%20%20%20%20%20%20%20%20%20:where%20sophomore%20:=%20course?no&gt;=200&amp;no&lt;400}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span>
+            <span class="p">{</span><span class="nf">count</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">),</span>
+             <span class="nf">max</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+             <span class="nf">min</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+             <span class="nf">avg</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">.</span><span class="nb">credits</span><span class="p">)}</span>
+            <span class="p">:</span><span class="nf">where</span> <span class="nb">sophomore</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>For this case, a nested selection context is created defining the
+local attribute <tt class="docutils literal"><span class="pre">sophomore</span></tt> after it is used across 4 aggregates.</p>
+<p>Here we use infix notation to call the <tt class="docutils literal"><span class="pre">where()</span></tt> function.
+In HTSQL, any function call <tt class="docutils literal"><span class="pre">f(x,y)</span></tt> could be written <tt class="docutils literal"><span class="pre">x</span> <span class="pre">:f</span> <span class="pre">y</span></tt>.</p>
+</div>
+<div class="section" id="parameterized-attributes">
+<h2>Parameterized Attributes<a class="headerlink" href="#parameterized-attributes" title="Permalink to this headline">¶</a></h2>
+<p>Suppose that one wants to calculate the same 4 statistics
+for several different types of courses.  A naive query would be written:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name,count(course?no&gt;=100&amp;no&lt;300),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=100&amp;no&lt;300).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=100&amp;no&lt;300).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=100&amp;no&lt;300).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course?no&gt;=200&amp;no&lt;400),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=200&amp;no&lt;400).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=200&amp;no&lt;400).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=200&amp;no&lt;400).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course?no&gt;=300&amp;no&lt;500),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=300&amp;no&lt;500).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=300&amp;no&lt;500).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=300&amp;no&lt;500).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course?no&gt;=400&amp;no&lt;500),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=400&amp;no&lt;500).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=400&amp;no&lt;500).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=400&amp;no&lt;500).credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name,count(course?no&gt;=100&amp;no&lt;300),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=100&amp;no&lt;300).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=100&amp;no&lt;300).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=100&amp;no&lt;300).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course?no&gt;=200&amp;no&lt;400),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=200&amp;no&lt;400).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=200&amp;no&lt;400).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=200&amp;no&lt;400).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course?no&gt;=300&amp;no&lt;500),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=300&amp;no&lt;500).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=300&amp;no&lt;500).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=300&amp;no&lt;500).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course?no&gt;=400&amp;no&lt;500),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=400&amp;no&lt;500).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=400&amp;no&lt;500).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=400&amp;no&lt;500).credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span><span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">100</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">300</span><span class="p">),</span>
+                 <span class="nf">max</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">100</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">300</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">min</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">100</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">300</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">avg</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">100</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">300</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">),</span>
+                 <span class="nf">max</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">min</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">avg</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">300</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">),</span>
+                 <span class="nf">max</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">300</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">min</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">300</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">avg</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">300</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">400</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">),</span>
+                 <span class="nf">max</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">400</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">min</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">400</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                 <span class="nf">avg</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">400</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">).</span><span class="nb">credits</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>In this query we calculate 4 statistical evaluations (count, max, min,
+avg) across 4 sets of courses (freshman, sophomore, junior and senior).
+Using the <tt class="docutils literal"><span class="pre">define()</span></tt> function to add calculated attributes, this
+query could be rewritten as:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define(freshman%20:=%20course?no&gt;=100&amp;no&lt;300,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sophomore%20:=%20course?no&gt;=200&amp;no&lt;400,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20junior%20:=%20course?no&gt;=300&amp;no&lt;500,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20senior%20:=%20course?no&gt;=400&amp;no&lt;500)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(freshman),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(freshman.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(freshman.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(freshman.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(sophomore),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(junior),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(junior.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(junior.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(junior.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(senior),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(senior.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(senior.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(senior.credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define(freshman%20:=%20course?no&gt;=100&amp;no&lt;300,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sophomore%20:=%20course?no&gt;=200&amp;no&lt;400,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20junior%20:=%20course?no&gt;=300&amp;no&lt;500,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20senior%20:=%20course?no&gt;=400&amp;no&lt;500)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(freshman),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(freshman.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(freshman.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(freshman.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(sophomore),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(sophomore.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(junior),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(junior.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(junior.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(junior.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(senior),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(senior.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(senior.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(senior.credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nb">freshman</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">100</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">300</span><span class="p">,</span>
+                   <span class="nb">sophomore</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">,</span>
+                   <span class="nb">junior</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">300</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">,</span>
+                   <span class="nb">senior</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">400</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">)</span>
+           <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">freshman</span><span class="p">),</span>
+                  <span class="nf">max</span><span class="p">(</span><span class="nb">freshman</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">min</span><span class="p">(</span><span class="nb">freshman</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">avg</span><span class="p">(</span><span class="nb">freshman</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">count</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">),</span>
+                  <span class="nf">max</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">min</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">avg</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">count</span><span class="p">(</span><span class="nb">junior</span><span class="p">),</span>
+                  <span class="nf">max</span><span class="p">(</span><span class="nb">junior</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">min</span><span class="p">(</span><span class="nb">junior</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">avg</span><span class="p">(</span><span class="nb">junior</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">count</span><span class="p">(</span><span class="nb">senior</span><span class="p">),</span>
+                  <span class="nf">max</span><span class="p">(</span><span class="nb">senior</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">min</span><span class="p">(</span><span class="nb">senior</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                  <span class="nf">avg</span><span class="p">(</span><span class="nb">senior</span><span class="p">.</span><span class="nb">credits</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>However, there is still redundancy &#8211; we call the same set of
+four functions several times.  This can be addressed with a
+parameterized attribute, <tt class="docutils literal"><span class="pre">stats</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define(freshman%20:=%20course?no&gt;=100&amp;no&lt;300,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sophomore%20:=%20course?no&gt;=200&amp;no&lt;400,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20junior%20:=%20course?no&gt;=300&amp;no&lt;500,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20senior%20:=%20course?no&gt;=400&amp;no&lt;500,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(set)%20:=%20{count(set),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(set.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(set.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(set.credits)})%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20stats(freshman),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(sophomore),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(junior),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(senior)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define(freshman%20:=%20course?no&gt;=100&amp;no&lt;300,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20sophomore%20:=%20course?no&gt;=200&amp;no&lt;400,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20junior%20:=%20course?no&gt;=300&amp;no&lt;500,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20senior%20:=%20course?no&gt;=400&amp;no&lt;500,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(set)%20:=%20{count(set),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max(set.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min(set.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg(set.credits)})%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20stats(freshman),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(sophomore),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(junior),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(senior)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nb">freshman</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">100</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">300</span><span class="p">,</span>
+                   <span class="nb">sophomore</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">200</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">400</span><span class="p">,</span>
+                   <span class="nb">junior</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">300</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">,</span>
+                   <span class="nb">senior</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="m">400</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="m">500</span><span class="p">,</span>
+                   <span class="nf">stats</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span> <span class="p">:=</span> <span class="p">{</span><span class="nf">count</span><span class="p">(</span><span class="nb">set</span><span class="p">),</span>
+                                  <span class="nf">max</span><span class="p">(</span><span class="nb">set</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                                  <span class="nf">min</span><span class="p">(</span><span class="nb">set</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+                                  <span class="nf">avg</span><span class="p">(</span><span class="nb">set</span><span class="p">.</span><span class="nb">credits</span><span class="p">)})</span>
+           <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">stats</span><span class="p">(</span><span class="nb">freshman</span><span class="p">),</span>
+                  <span class="nf">stats</span><span class="p">(</span><span class="nb">sophomore</span><span class="p">),</span>
+                  <span class="nf">stats</span><span class="p">(</span><span class="nb">junior</span><span class="p">),</span>
+                  <span class="nf">stats</span><span class="p">(</span><span class="nb">senior</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>One really doesn&#8217;t need to define attributes for the 4 subsets of
+courses, however, it helps readability.  Currently, the output
+headers logic hasn&#8217;t been updated to handle this construct.</p>
+</div>
+<div class="section" id="open-questions">
+<h2>Open Questions<a class="headerlink" href="#open-questions" title="Permalink to this headline">¶</a></h2>
+<p>You may want to define <tt class="docutils literal"><span class="pre">stats</span></tt> differently, instead of passing in
+a table expression, you may want pass two arguments, the start and
+end of the course number range.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define(stats(start,finish)%20:=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20{count(course?no&gt;=start&amp;no&lt;finish),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=start&amp;no&lt;finish).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=start&amp;no&lt;finish).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=start&amp;no&lt;finish).credits)})%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20stats(100,300),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(200,400),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(300,500),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(400,500)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define(stats(start,finish)%20:=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20{count(course?no&gt;=start&amp;no&lt;finish),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=start&amp;no&lt;finish).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=start&amp;no&lt;finish).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=start&amp;no&lt;finish).credits)})%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20stats(100,300),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(200,400),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(300,500),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(400,500)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">stats</span><span class="p">(</span><span class="nb">start</span><span class="p">,</span><span class="nb">finish</span><span class="p">)</span> <span class="p">:=</span>
+                     <span class="p">{</span><span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="nb">start</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="nb">finish</span><span class="p">),</span>
+                      <span class="nf">max</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="nb">start</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="nb">finish</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                      <span class="nf">min</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="nb">start</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="nb">finish</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                      <span class="nf">avg</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=</span><span class="nb">start</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;</span><span class="nb">finish</span><span class="p">).</span><span class="nb">credits</span><span class="p">)})</span>
+           <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">stats</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="m">300</span><span class="p">),</span>
+                  <span class="nf">stats</span><span class="p">(</span><span class="m">200</span><span class="p">,</span><span class="m">400</span><span class="p">),</span>
+                  <span class="nf">stats</span><span class="p">(</span><span class="m">300</span><span class="p">,</span><span class="m">500</span><span class="p">),</span>
+                  <span class="nf">stats</span><span class="p">(</span><span class="m">400</span><span class="p">,</span><span class="m">500</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>However, this query will complain about an unknown attribute <tt class="docutils literal"><span class="pre">start</span></tt>
+in the expression <tt class="docutils literal"><span class="pre">?course?no&gt;=start</span></tt>.  This happens since there isn&#8217;t
+a column <tt class="docutils literal"><span class="pre">start</span></tt> in the table <tt class="docutils literal"><span class="pre">course</span></tt>.  The attributes <tt class="docutils literal"><span class="pre">start</span></tt>
+and <tt class="docutils literal"><span class="pre">finish</span></tt> are available in the top-level namespace of the <tt class="docutils literal"><span class="pre">stats</span></tt>
+definition, but are not accessible in the <tt class="docutils literal"><span class="pre">course</span></tt> namespace.</p>
+<p>Our provisional plan is to add a way to search previous namespaces, in
+which case the query above would be written:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define(stats(start,finish)%20:=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20{count(course?no&gt;=*start&amp;no&lt;*finish),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=*start&amp;no&lt;*finish).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=*start&amp;no&lt;*finish).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=*start&amp;no&lt;*finish).credits)})%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20stats(100,300),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(200,400),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(300,500),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(400,500)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define(stats(start,finish)%20:=%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20{count(course?no&gt;=*start&amp;no&lt;*finish),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20max((course?no&gt;=*start&amp;no&lt;*finish).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20min((course?no&gt;=*start&amp;no&lt;*finish).credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20avg((course?no&gt;=*start&amp;no&lt;*finish).credits)})%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20stats(100,300),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(200,400),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(300,500),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20stats(400,500)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">stats</span><span class="p">(</span><span class="nb">start</span><span class="p">,</span><span class="nb">finish</span><span class="p">)</span> <span class="p">:=</span>
+                     <span class="p">{</span><span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=*</span><span class="nb">start</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;*</span><span class="nb">finish</span><span class="p">),</span>
+                      <span class="nf">max</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=*</span><span class="nb">start</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;*</span><span class="nb">finish</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                      <span class="nf">min</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=*</span><span class="nb">start</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;*</span><span class="nb">finish</span><span class="p">).</span><span class="nb">credits</span><span class="p">),</span>
+                      <span class="nf">avg</span><span class="p">((</span><span class="nb">course</span><span class="o">?</span><span class="nb">no</span><span class="o">&gt;=*</span><span class="nb">start</span><span class="o">&amp;</span><span class="nb">no</span><span class="o">&lt;*</span><span class="nb">finish</span><span class="p">).</span><span class="nb">credits</span><span class="p">)})</span>
+           <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">stats</span><span class="p">(</span><span class="m">100</span><span class="p">,</span><span class="m">300</span><span class="p">),</span>
+                  <span class="nf">stats</span><span class="p">(</span><span class="m">200</span><span class="p">,</span><span class="m">400</span><span class="p">),</span>
+                  <span class="nf">stats</span><span class="p">(</span><span class="m">300</span><span class="p">,</span><span class="m">500</span><span class="p">),</span>
+                  <span class="nf">stats</span><span class="p">(</span><span class="m">400</span><span class="p">,</span><span class="m">500</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/introducing-calculated-attributes";
+var disqus_title = "Introducing Calculated Attributes";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

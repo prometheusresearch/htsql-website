@@ -1,0 +1,156 @@
+*****************************
+  Discussion on Link Chains
+*****************************
+
+.. blogentry::
+   :date: 2011-04-22
+   :author: cce
+
+In HTSQL, linking expressions are generalized so that they can occur in
+several contexts.   A top-level expression is one of the places where
+this could be a bit confusing.  This note attempts to explain a bit.
+
+.. blogcut::
+
+Link Chains
+-----------
+
+Broadly speaking, in any case where you can link from one table to
+another, you can link through a chain.  For example, the query below
+returns, for each course, the name of the school it is associated with.
+
+.. htsql:: /course{department_code,no,department.school.name}
+   :cut: 3
+
+For an inverse (plural) link, the opposite is possible.  The following
+request returns, for each school, the number of courses across its
+departments.
+
+.. htsql:: /school{name,count(department.course)}
+   :cut: 3
+
+This is a bit more general than it may seem.
+
+Table Expressions
+-----------------
+
+In the following request rows returned correspond to records in the
+``department`` table where the ``school`` column is not null.
+
+.. htsql:: /department?school
+   :cut: 3
+
+It's possible to return the same result set using a completely differnet
+mechanism.  The following request returns rows from the ``department``
+table, after joining through ``school``.  
+
+.. htsql:: /school.department
+   :cut: 3
+
+This query returns the same results as the following, but through a
+different mechanism.  The former returns ``department`` rows where the
+``school`` column was not null.      
+
+
+
+
+
+For example, consider the following:
+
+  /course?credits>department.avg(course.credits)
+
+
+
+.. htsql:: /department{name, school.name, count(course)}
+   :hide:
+
+
+
+Previously we have introduced calculated attributes using
+``define()`` with the same scoping rules.
+
+each query typically starts with a driving table such that
+rows in the output correspond to records from the driving table. For
+example, ``/department`` returns one row per record in the department
+table.  Links from this driving table are either singular or plural,
+where a plural link requires an aggregate function.  In the example
+below, we have two links: a singular link from department to school, 
+and a plural link from department to course.
+
+.. htsql:: /department{name, school.name, count(course)}
+   :hide:
+
+Projections
+-----------
+
+The projection feature creates virtual table where each record in the
+table corresponds to distinct values for a particular set of
+expressions.  For instance, the following query returns distinct degree
+values from the program table.
+
+.. htsql:: /(program^degree)
+
+This virtual table has one plural link which leads back to seed table;
+this link is represented by the caret ``^``.  For example, the following
+query shows the number of programs for each distinct degree.
+
+.. htsql:: /(program^degree){*, count(^)}
+
+.. **
+
+Here the asterisk ``*`` returns all columns from the projected table,
+which is ``degree``.  The caret ``^`` indicates a link to the underlying
+seed table, in this case ``program``.  Hence, ``count(^)`` returns the
+number of programs corresponding to each degree.
+
+For projections, we introduce several terms.  The set of distinct
+expressions is called the *kernel* .  The original table is called
+the *seed*.  The plural link from the projected table back to the
+seed table is called the *complement*. 
+
+Additional Examples
+-------------------
+
+In the following example, we return schools and for each school,
+the count of distinct degrees offered by that school.
+
+.. htsql:: /school{name, count(program^degree)}
+   :hide:
+
+This query returns distinct values of (year of birth, gender) 
+combinations.  For each combination, the number of students
+and the average number of enrollments.
+
+.. htsql:: /(student^{year(dob),gender}){*, count(^), avg(^.count(enrollment))}
+   :hide:
+
+.. **
+
+This last query returns distinct degrees, but only for programs
+in the school of art.  For each distinct degree, the count of
+those programs and count of associated students.
+
+.. htsql:: /((program?school.code='art')^degree){*, count(^), count(^.student)}
+   :hide:
+
+.. **
+
+Open Questions
+--------------
+
+The use of ``^`` and ``*`` may be less than intuitive.  Currently you
+can not refer to the kernel nor the complement  by name.  But, it seems
+natural that an expression like ``(program^degree)`` should have two
+fields, ``program`` which refers to the complement and ``degree`` which
+refers to the kernel.  Finally, it may be helpful to have a functional
+form for the projection operator, called ``distinct()``. 
+
+With these changes, ``/(program^degree){*,count(^)}`` could be written::
+
+  /distinct(program{degree}) {degree, count(program)}
+
+We are also considering a short-cut syntax::
+
+  /program{^degree, count(^)}
+
+

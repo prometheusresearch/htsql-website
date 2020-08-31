@@ -1,0 +1,166 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTSQL 2.1.0b3 is released &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Introducing References" href="introducing-references.html" />
+    <link rel="prev" title="HTSQL Roadmap for June, 2011" href="roadmap-2011-06.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-2-1-0b3-is-released">
+<h1>HTSQL 2.1.0b3 is released<a class="headerlink" href="#htsql-2-1-0b3-is-released" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-05-13</em></p>
+<p>A new beta of the 2.1 release is now available.</p>
+<p>Changes since the last beta:</p>
+<ul class="simple">
+<li>Added a fiber linking operator; see <a class="reference internal" href="roadmap-2011-05.html#roadmap-linking-operator"><em>Linking Operator</em></a>.</li>
+<li>Provide named attributes for kernel expressions and the complement
+link in a quotient scope; for more details, see
+<a class="reference internal" href="roadmap-2011-05.html#roadmap-projection-namespace"><em>Projection Namespace</em></a>.</li>
+<li>Added in-selector definitions; see <a class="reference internal" href="roadmap-2011-05.html#roadmap-selector-shortcuts"><em>Selector Shortcuts</em></a>.</li>
+<li>Added <tt class="xref py py-obj docutils literal"><span class="pre">$reference</span></tt> syntax for inter-scope references; for more
+details and rationale, see <a class="reference internal" href="roadmap-2011-05.html#roadmap-references"><em>References</em></a>.</li>
+<li>Added flow method <tt class="xref py py-obj docutils literal"><span class="pre">fork()</span></tt>: clone the last node in the flow, e.g.
+<tt class="xref py py-obj docutils literal"><span class="pre">/course?credits=max(fork().credits)</span></tt>.</li>
+<li>Added flow methods <tt class="xref py py-obj docutils literal"><span class="pre">filter()</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">select()</span></tt> as aliases to <tt class="xref py py-obj docutils literal"><span class="pre">?</span></tt>
+and <tt class="xref py py-obj docutils literal"><span class="pre">{}</span></tt> operators.</li>
+<li>Added method <tt class="xref py py-obj docutils literal"><span class="pre">distinct()</span></tt>: <tt class="xref py py-obj docutils literal"><span class="pre">distinct(table{kernel})</span></tt> produces
+a flow of unique values of <tt class="xref py py-obj docutils literal"><span class="pre">kernel</span></tt> as it runs over <tt class="xref py py-obj docutils literal"><span class="pre">table</span></tt>;
+it is equivalent to <tt class="xref py py-obj docutils literal"><span class="pre">table^kernel</span></tt>.  <tt class="xref py py-obj docutils literal"><span class="pre">distinct()</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">^</span></tt> operators
+now filter out NULL values in the kernel.</li>
+<li>Changed semantics of <tt class="xref py py-obj docutils literal"></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">{}</span></tt> expressions: specifier (<tt class="xref py py-obj docutils literal"></tt>)
+now allows arbitrary expressions on both sides, selector (<tt class="xref py py-obj docutils literal"><span class="pre">{}</span></tt>)
+now sets the output columns in the current scope.</li>
+<li>Added syntax <tt class="xref py py-obj docutils literal"><span class="pre">*N</span></tt>, where <tt class="xref py py-obj docutils literal"><span class="pre">N</span></tt> is an integer literal, to get the value
+of the <tt class="xref py py-obj docutils literal"><span class="pre">N</span></tt>-th output column.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.cors</span></tt>: append <tt class="xref py py-obj docutils literal"><span class="pre">Access-Control-Allow-Origin:</span> <span class="pre">*</span></tt>
+to every HTTP response.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.pgsql.inet</span></tt>: basic manipulations on values
+of <tt class="xref py py-obj docutils literal"><span class="pre">INET</span></tt> data type.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.pgsql.view</span></tt>: determine foreign key relationships
+for views in Postgresql.</li>
+<li>Use <tt class="xref py py-obj docutils literal"><span class="pre">search_path</span></tt> or its analogues to choose a table when
+the table name is ambiguous.</li>
+<li>Optimized introspection for Oracle.</li>
+<li>Added option <tt class="xref py py-obj docutils literal"><span class="pre">-p</span></tt> to ask for a password on startup.</li>
+<li>Added shell command <tt class="xref py py-obj docutils literal"><span class="pre">run</span> <span class="pre">filename.htsql</span></tt> to load and execute
+an HTSQL query from a file.</li>
+<li>Many other fixes and documentation updates.</li>
+</ul>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/htsql-2.1-beta3";
+var disqus_title = "HTSQL 2.1.0b3 is released";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

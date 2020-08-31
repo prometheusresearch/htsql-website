@@ -1,0 +1,14 @@
+*****************************
+  HTSQL 2.0.0b2 is released
+*****************************
+
+.. blogentry::
+   :date: 2010-10-01
+   :author: xi
+
+The second beta of the 2.0 release is now available.  Changes since the last beta:
+
+* Refactored the term tree compiler.
+* `/:json` and `:csv` renderers now emit ``Content-Disposition`` HTTP header.
+* Added :doc:`/doc/tutorial`.
+

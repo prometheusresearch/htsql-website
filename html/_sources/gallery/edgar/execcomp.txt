@@ -1,0 +1,59 @@
+***************************************
+  EDGAR : 2008 Executive Compensation
+***************************************
+
+.. demo::
+
+    <script type="text/javascript"
+        src="/htraf/htraf.js"
+        data-htsql-version="2"
+        data-htsql-prefix="/@edgar">
+    </script>
+
+    <p>Market Sector:
+    <select id="sector" 
+        data-htsql="/(industry^sector)"></select></p>
+    <br/>
+    <div style="width: 470px; height: 300px;" 
+        data-htsql="/industry{name, 
+                      sum(company.officer.compensation.amount)
+                    }?sector=$sector"
+        data-ref="sector"
+        data-widget="chart"
+        data-type="pie"
+        data-title="Executive Compensation by Industry"></div>
+
+    <h3>Companies</h3>
+    <p>For industry
+    <select id="industry"
+        data-htsql="/industry{name}?sector=$sector"
+        data-ref="sector">
+    </select></p>
+    <p>Filter by name: <input id="company_name"/></p>
+    <table id="company"
+        data-htsql="/company{
+                        cik,
+                        name :as 'Company Name',
+                        Ticker,
+                        company_extended.last_annual_eps :as 'EPS',
+                        round(avg(officer.sum(compensation.amount))) -
+                            :as 'Avg Compensation',
+                        max(officer.sum(compensation.amount))
+                            :as 'Max Compensation'
+                     }?industry=$industry&name~$company_name"
+        data-hide-column-0="yes" 
+        data-ref="industry company_name">
+    </table>
+
+    <h3>Officer Compensation</h3>
+    <table id="officer"
+        data-htsql="/officer{
+                        officer_name :as 'Full Name', 
+        	            sum(compensation.amount) - 
+                            :as 'Compensation',
+                        Title
+                     }?cik=$company"
+        data-ref="company">
+    </table>
+
+

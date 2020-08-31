@@ -1,0 +1,284 @@
+***********************
+  Discuss Environment
+***********************
+
+.. blogentry::
+   :date: 2012-08-01
+   :author: cce
+
+In the next release of HTSQL we'll introduce a mechanism
+to track internal state.  This will permit us to introduce
+transactions, CSRF protection, user/roles, and url-based
+record masking.  This post discusses our API changes that
+plugins might use to set/access per-application and
+per-request state in thread local storage.
+
+.. blogcut::
+
+
+It's not per-application per-request state.  When you you
+initiate a new application context ``with app``, you'd
+also be initiating a new request environment.  Nested
+requests wouldn't need to this _unless_ they actually
+wanted a new sub-request, for example, to switch to the
+meta-database.
+
+When you exit the nexted context, it automatically 
+switches to the parent environment.  
+
+Application state is typically read-only or append-only;
+for example, ``introspect`` might cache the catalog in
+the application state.  
+
+What is in the environment?  current user, current 
+transaction object (if you're in one),
+
+Each plugin may declare what environment variables it
+wishes to create and what initial values it might use.
+Generally, nexted contexts don't inherit.  
+
+Application environment key access is hierarchical
+using the plugin path as a namespace.  In this sense
+you'd do context.app.tweak.autolimit.limit,
+
+Should environment be flat?  Alot more collaboration
+at the request level, application state is read-only
+with environment you often want to change it.   You
+need it to be stacked... read-only scoped.
+
+::
+   with context.env(variable=value):
+        [work with modified environment]
+
+This requires a flat namespace with this syntax;
+no namespaces 10-20 variables.   Plugins could
+declare what they use, and report collisions.
+If you create an application it makes new state,
+if two plugins declare the same one it is an 
+application construction error. 
+
+Transactions
+------------
+
+A typical use case for transactions is that some sort of
+user level command, such as ``do()`` wants to call a bunch
+of HTSQL requests that are all executed in the same
+database transaction.   For example, you might want to run
+two inserts together.  
+
+In previous version of HTSQL, our internal API required an
+optional argument with the transaction and the command
+itself was responsible for creating a database connection
+and doing commit/rollback.  The problem with this approach
+is that it requires connection object to be passed through
+nested commands, if you omit the connection a
+sub-connection might be created accidently.  You can't be
+generic, since some commands (such as a render function)
+don't use connection, it makes it hard to manage.
+
+So, we'll have ``env.connection`` would be the current
+connection (in a tranaction bloc).  It's the open
+connection used for transaction if it is set; if it isn't
+set, there isn't an open transaction.  What we need is
+context manager that permits you to do ``with``
+
+::
+
+  from htsql.api import transact
+  with transaction():
+
+There are two cases.  With ``do()`` you'd use ``transact``
+to create a new transaction. 
+
+If you were implementing ``INSERT`` you'd do...
+
+::
+   with transaction() as connection:
+       cursor = connection.cursor()
+       cursor.execute(...)
+
+
+How does transact work?  It has an enter and exit block.
+On entrance, if the current connection is null, you create
+a new connection and set the environment.  In either case
+it returns the DBAPI connect object.  On exit, this gets
+an exception object.  If the entrance didn't create the
+connection it doesn't do anything.  Otherwise, if it is an
+exception, it rollsback the transaction.  If it is a
+normal exit, it does a commit; then it pops previous
+connection.  
+
+Request Forgery
+---------------
+
+In HTSQL, when you get a WSGI request, it goes to
+``app(environ, start_response)``  and this goes to a WSGI
+adapter which parses the environment to create the query,
+builds the request, and calls ``render()`` on the result.
+When you use the API internally, you could bypass the
+render and use ``produce()`` instead.  This is why we
+can't assume we always have an HTTP request.
+
+The problem with cross-site request forgery, by tricking a
+user to click on the link, you could return an arbitrary
+query which might do a denial of service, or call a CRUD
+operation, or a stored procedure which may side effects.  
+
+One way to help address is this checking the Referrer,
+however, some user agents have bugs which permit this
+to be spoofed.
+
+The primary way to protect against CSRF is to send a
+cookie or response header with information that must be
+parroted back in a header.  Unfortunately, this has its
+own set of problems, it requires Javascript to parrot a
+header back.
+
+Three ways user may initiate an HTSQL request:
+
+1. Type the URL directly in the browser.
+2. Use a shell command,
+   when you could still ask
+3. Use HTRAF,
+   when you call an HTRAF request you know it's
+   pre-validated query.
+
+If we require all requests to require a token.  We
+could implement token protection at WSGI level, but
+what if token isn't set?  You'd have to show error,
+and error screen could have a link+confirm button;
+but it'd lack context a command might provide.
+
+HTRAF isn't an issue, it could always read the token
+and set it.   Queries typed within the shell are also
+quite OK since it could know about the token.  The 
+shell itself needs a confirmation screen.  Bare 
+requests without the shell need a confirmation. 
+
+Since shell is a command itself, it doesn't need this
+confirmation since it isn't running a query.
+
+You only want to protect specific commands, not all
+of them.  Some commands operate on URLs and it's OK
+if those work and convenient if they don't require
+confirmation.
+
+We'll have request environment variables, ``can_read``
+and ``can_write``.  By default these are TRUE, and we'll
+have a WSGI adapter that could be enabled that checks
+Referrer and/or token, setting these flags based upon a
+security policy.  For example, it could always permit
+read, or read could require a token.  
+
+CRUD commands would operate only if ``can_write`` is true;
+while SELECT would require ``can_read``.  
+
+Shell always shows the screen regardless of flags, but
+it will execute query only if it can determine that the
+command would be executable.  With shell you get an HTML
+page.  When you open it, you have very specific values
+for can_read and can_write, they could be true/false.
+
+When you open the screen, it opens the editor it'll
+record the initial environment when it loaded, and if
+executes the query using the permission level of the
+original request.  It will need a way to downgrade the
+permission level as needed for the 1st request.  If that
+returns an error, it could show an informative message.
+
+
+Authorization
+-------------
+
+PostgreSQL permits ``SET SESSION AUTHORIZATON`` and
+``SET SESSION ROLE`` to enable the database to know
+exactly who the user and the permission set they should
+be using.   This is an example how you might solve this
+with custom code.
+
+So, you'd have an ``env.user`` that is a environment
+variable and it'd populate this from ``REMOTE_USER``
+WSGI environment.  How ``REMOTE_USER`` is populated
+would be subject to up-stream web infrastructure.  Then
+we'd have a connection adapter which would invoke ``SET
+SESSION AUTHORIZATION`` with this ``env.user``. 
+
+From within a command, you may want to run a query under
+another user.  In this case, we'd do::
+
+  with context.env(user='root'):
+       # won't work due to active transaction
+       produce()
+
+So, we'd have to have a ``switch_user()`` function::
+
+  with switch_user('root'):
+       # This updates the user and calls 'SET SESSION
+       # AUTHORIZATON' on both entry and exit.
+
+We need more information to determine what switch_user does.
+
+Roles are almost the same, only that you have to have a
+container of role-specific introspections.  The catalog
+(per role) and meta database need to be switched when
+you change role.  Plugin interactions are fun.  
+
+
+
+Path Masking
+------------
+
+
+ 
+
+
+
+
+
+
+Background
+----------
+
+Starting with the 2.3.2 release, we will be introducing CRUD
+features.  This requires that we maintain quite a bit of
+internal state that we've thus far avoided.  We need to
+support complex transactions, we need to set/change the
+database user or role, we need to issue tokens so that we can
+protect against cross-site request forgery requests, and we
+wish to 
+
+Context
+-------
+   
+:: 
+   from htsql import HTSQL
+   from htsql.core.context import context
+
+   app = HTSQL("pgsql:htsql_demo")
+   with app:
+        print context
+
+So, per-request environment will be ``context.env``
+and per-application storage will be ``context.app``.
+ 
+   # this switches thread local storage so that
+   # the named application becomes current; this
+   # is typically done transparently.  The first
+   # thing the WSGI interface does this.
+
+   app() and app.produce do this transparently
+
+   app.produce(query) is:
+      with self:
+          return produce(query)
+
+When in an adapter, ``context`` is a global variable,
+so ``context.app.htsql.db`` this returns the Record
+object with fields like host, port, user, database
+
+
+ 
+   
+
+     
+

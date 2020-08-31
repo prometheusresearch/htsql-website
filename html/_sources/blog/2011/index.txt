@@ -1,0 +1,35 @@
+***************************
+  2011 HTSQL News Archive
+***************************
+
+.. blogtree::
+
+   htsql-2.2-final
+   htsql-2.2-rc1
+   discuss-headers
+   discuss-locator
+   htsql-2.2-beta1
+   htsql-2.2-roadmap
+   htsql-2.1-final
+   roadmap-2011-08
+   htsql-2.1-rc1
+   roadmap-2011-06
+   htsql-2.1-beta3
+   introducing-references
+   discuss-catalog
+   discuss-commands
+   discuss-usability
+   roadmap-2011-05
+   introducing-improved-grammar
+   what-is-wrong-with-sql
+   roadmap-2011-04
+   htsql-2.1-beta2
+   introducing-datetime
+   introducing-calculated-attributes
+   htsql-2.1-beta1
+   introducing-projections
+   discuss-link-chains
+   htsql-2011-april
+   htsql-2011-march
+   discuss-ambiguous-names
+   htsql-2.0-final

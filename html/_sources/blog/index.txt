@@ -1,0 +1,38 @@
+***************
+  Latest News
+***************
+
+.. blogtree::
+   :output: index.rss
+   :title: HTSQL news
+   :description: News and tutorials for HTSQL, a database query language
+   :link: http://htsql.org/
+
+   2013/htsql-2.3.3
+   2012/htsql-2.3.2
+   2012/htsql-2.3.1
+   2012/introducing-locators
+   2012/introducing-django-gateway
+   2012/introducing-nested-segments
+   2012/improved-visual-display
+   2012/introducing-object-formats
+   2012/introducing-records
+   2012/htsql-2.3.0
+   2011/htsql-2.2-final
+
+.. toctree::
+   :hidden:
+
+   2013/index
+   2012/index
+   2011/index
+   2010/index
+
+News Archive By Year
+--------------------
+
+* :doc:`2013 News <2013/index>`
+* :doc:`2012 News <2012/index>`
+* :doc:`2011 News <2011/index>`
+* :doc:`2010 News <2010/index>`
+

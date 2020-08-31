@@ -1,0 +1,21 @@
+*****************************
+  HTSQL 2.0.0b3 is released
+*****************************
+
+.. blogentry::
+   :date: 2010-11-09
+   :author: xi
+
+The third beta of the 2.0 release is now available.  Changes since the last
+beta:
+
+* Refactored the frame tree assembler.
+* Added a new translation stage to collapse nested frames and reduce
+  SQL phrases.
+* Added `the HTRAF demo <http://htraf.htsql.org/>`_.  HTRAF is
+  a JQuery-compatible Javascript framework to define complex dashboard
+  using HTSQL.
+* Added the SSI demo: use HTSQL for web without giving direct access
+  to the database.
+* Updated the tutorial, minor bugfixes, regression test updates, etc.
+

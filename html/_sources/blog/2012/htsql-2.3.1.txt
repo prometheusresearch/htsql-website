@@ -1,0 +1,110 @@
+***************************
+  HTSQL 2.3.1 is released
+***************************
+
+.. blogentry::
+   :date: 2012-06-28
+   :author: xi
+
+We are proud to announce a new HTSQL release in the 2.3 development series.
+This release adds a few major features including :doc:`nested records
+<introducing-records>`, :doc:`nested subqueries <introducing-nested-segments>`,
+:doc:`locators <introducing-locators>`, :doc:`new <introducing-object-formats>`
+and :doc:`revamped <improved-visual-display>` output formats,
+:doc:`HTSQL-Django gateway <introducing-django-gateway>`, and more.
+
+In this release, we removed support for Python 2.5.  Currently HTSQL requires
+Python 2.6 or 2.7.
+
+.. blogcut::
+
+Change Log
+==========
+
+Specific changes since the 2.3.0 release:
+
+* Added record and list data types, support for nested records and segments,
+  hierarchical output.  For more information, see :doc:`introducing-records`
+  and :doc:`introducing-nested-segments`.
+* Added support for *locators*, single record access using an array-like 
+  syntax.  For more information see :doc:`introducing-locators`.
+* `top()`: retrieves the first item of a plural argument.
+* Added and updated output formats: `raw`, `json`, `xml`; updated style 
+  for HTML output.  See :doc:`introducing-object-formats` and
+  :doc:`improved-visual-display` for more detail.
+* `HTSQL-DJANGO`: a Django gateway to HTSQL.  See
+  :doc:`introducing-django-gateway` for notes on installation and
+  configuration.
+* Keep all cache and transient files in ``~/.htsql/``.  `htsql-ctl shell`
+  and `htsql-ctl serve` now read default configuration from ``~/.htsqlrc``.
+* Removed support for Python 2.5.  Currently supported are 2.6 and 2.7.
+* Many other fixes and documentation updates.
+
+Example Queries
+===============
+
+The following queries demonstrate new HTSQL features.
+
+Nested Records & Segments
+-------------------------
+
+Show department records with the first field being a nested
+record for the associated school:
+
+.. htsql:: /department{school{code, name}, code, name}
+   :cut: 3
+
+For each school, show lists of associated programs and departments:
+
+.. htsql:: /school{name, /program{title}, /department{name}}
+   :cut: 9
+
+Locators
+--------
+
+Show the department identified by ``comp``:
+
+.. htsql:: /department[comp]
+
+Show course identities:
+
+.. htsql:: /course{id()}
+   :cut: 3
+
+Show class identities for all classes of the course ``comp.515``:
+
+.. htsql:: /course[comp.515].class{id()}
+
+
+``top()``
+---------
+
+The first school in the list:
+
+.. htsql:: /top(school)
+
+For each school, show the top two programs by the number of students:
+
+.. htsql:: /school{name, /program.sort(count(student)-) :top(2)}
+   :cut: 4
+
+Output Formats
+--------------
+
+Output in *JSON* format:
+
+.. htsql:: /program{school{name}, title, degree}/:json
+   :cut: 16
+
+Output in *XML* format:
+
+.. htsql:: /program{school{name}, title, degree}/:xml
+   :cut: 16
+
+Output in *raw* format:
+
+.. htsql:: /program{school{name}, title, degree}/:raw
+   :plain:
+   :cut: 70
+
+

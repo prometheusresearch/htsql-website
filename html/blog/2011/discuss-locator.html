@@ -1,0 +1,358 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Discussion on Location &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="HTSQL 2.2.0b1 is released" href="htsql-2.2-beta1.html" />
+    <link rel="prev" title="Discussion of JSON/CSV Headers" href="discuss-headers.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="discussion-on-location">
+<h1>Discussion on Location<a class="headerlink" href="#discussion-on-location" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-08-28</em></p>
+<p>In htsql, we would like a short-hand notation to locate a
+given row in a table without having to mention the
+primary key columns.  This is especially important for
+insert, update and delete operations.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>In relational database schemas, primary keys have special
+importance in that they are often used to identify rows.
+these columns are often assumed (or perhaps unknown, but
+automatically provided) when working with records from a
+given table.  For example, a product &#8220;code&#8221; may be
+multi-part consisting of a product line, make, model
+together as a composite key.  Users of software will
+recognize the dashes, periods and/or other delimiters
+used to distinguish parts of the product code.</p>
+<p>We&#8217;d like to support something like this natively within
+htsql so that multi-column primary key selection, such as,
+<tt class="docutils literal"><span class="pre">/product?product_line='hctl'&amp;make='mark4'&amp;model='3943'</span></tt>
+could instead be written: <tt class="docutils literal"><span class="pre">/product[hctl.mark4.3943]</span></tt>.
+For this example, the query processor knows the
+<tt class="docutils literal"><span class="pre">product</span></tt> table has 3 primary key columns so that these
+need not be provided in the query proper.</p>
+<p>This sort of mechanism works very well using a database
+having natural keys.  However, sometimes system keys are
+used such that a table has two candidate keys: the first
+one would be an internal/system key; and the second would
+be a unique key composed of foreign keys to other tables
+via their system key, plus a user-assigned code.  For this
+case, the user wishes to see rows using a natural key; some
+footwork is needed to make this happen.</p>
+<p>The locator approach supports both user-friendly
+interfaces, but also much more generic user interface code.
+From the screen designer&#8217;s perspective, they only have to
+know that each record has a locator without having to dive
+into the specifics of how the natural key is constructed.</p>
+</div>
+<div class="section" id="locations">
+<h2>Locations<a class="headerlink" href="#locations" title="Permalink to this headline">¶</a></h2>
+<p>In HTSQL, for each record in a table, its <em>location</em> is
+a nested tuple corresponding to primary key of a table,
+resolving any system keys that may correspond to nested
+locators.  This is defined as follows.  Each location
+tuple has as many slots as the primary key columns for
+the given table.  For any given record, each slot
+contains either the value of the column, or, when
+the column is system key reference, a nested location.</p>
+<p>System key references are assumed when a column in the
+primary key is a singular foreign key to another table,
+that is, one where the target column has a unique index.
+When a system key is identified, the locator slot for
+that column is instead filled with the locator of the
+referenced record from the target table.  In a way, the
+nominal case of single-column natural keys is an
+optimization: the locator for the target table is the
+column value itself and hence can be used directly.</p>
+<p>Locators are written using square brackets together with
+periods separating each slot in a location.  Each slot
+then is the column&#8217;s value for the given record, or a
+nested locator.  There are two short-cuts added to this
+fundamental syntax to make things easy to read.  First,
+if the nested locator is only a single column value, it
+may be written without square brackets.  Secondly, if the
+1st slot is a nested locator and there are no more nested
+locators with more than one slot, then the square
+brackets for the first nested locator may be omitted.</p>
+<p>Each column slot in a location can written without quotes
+if it happens to be a valid HTSQL identifier, date (using
+ISO latin notation) or number.  Otherwise, it can be
+written as a single-quoted string value.  For example,
+<tt class="docutils literal"><span class="pre">'4-MARK'</span></tt> would have to be single quoted since it is
+neither a number nor identifier (I don&#8217;t love this
+restriction... could we be much more relaxed here?).</p>
+<p>Note that locators are only defined for tables with
+primary keys.  A table lacking a primary key does not
+support locator syntax.  The configuration of locators
+can be provided independently or overridden by plugins.</p>
+</div>
+<div class="section" id="an-example">
+<h2>An Example<a class="headerlink" href="#an-example" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s assume our <tt class="docutils literal"><span class="pre">product</span></tt> table has a 3-column natural
+key: <tt class="docutils literal"><span class="pre">line</span></tt>, <tt class="docutils literal"><span class="pre">make</span></tt> and <tt class="docutils literal"><span class="pre">model</span></tt>.  In a natural-key
+scheme, the <tt class="docutils literal"><span class="pre">line</span></tt> may actually be a foreign key to
+<tt class="docutils literal"><span class="pre">product_line{code}</span></tt>.  However, the <tt class="docutils literal"><span class="pre">code</span></tt> column of
+the product line table would also be it&#8217;s primary key.
+Hence, the <tt class="docutils literal"><span class="pre">product_line</span></tt> column in the product table
+would not be considered a nested locators.  On the other
+hand, the <tt class="docutils literal"><span class="pre">make</span></tt> column may be part of a 2-column
+foreign key (<tt class="docutils literal"><span class="pre">product_line</span></tt>, <tt class="docutils literal"><span class="pre">make</span></tt>) onto a
+<tt class="docutils literal"><span class="pre">product_make</span></tt> table.  This column wouldn&#8217;t be a nested
+locator either, since by itself it is not a foreign key
+reference.  Hence, the locators for the <tt class="docutils literal"><span class="pre">product</span></tt> table
+would all be column values.  An example query using the
+locator syntax would be <tt class="docutils literal"><span class="pre">/product[HCTL.MARK4.3943]</span></tt>.</p>
+<p>Let&#8217;s change the schema to use system keys.  In this
+case, let&#8217;s presume that <tt class="docutils literal"><span class="pre">product_line</span></tt> has a system
+(unique) key <tt class="docutils literal"><span class="pre">_id</span></tt> and a primary key of <tt class="docutils literal"><span class="pre">line</span></tt>.
+Further, assume the <tt class="docutils literal"><span class="pre">product_make</span></tt> table also has a
+unique system key, <tt class="docutils literal"><span class="pre">_id</span></tt> and primary key of
+(<tt class="docutils literal"><span class="pre">product_line_id</span></tt>, <tt class="docutils literal"><span class="pre">make</span></tt>) where <tt class="docutils literal"><span class="pre">product_line_id</span></tt>
+references <tt class="docutils literal"><span class="pre">product_line{_id}</span></tt>.  Finally, assume the
+<tt class="docutils literal"><span class="pre">product</span></tt> table also has a unique <tt class="docutils literal"><span class="pre">_id</span></tt> key and a
+primary key of (<tt class="docutils literal"><span class="pre">product_make_id</span></tt>, <tt class="docutils literal"><span class="pre">model</span></tt>).  This is
+typically of ORM generated schemas and follows typical
+design patterns for system-key schema construction.</p>
+<p>In this scenario, we&#8217;d like product records to also be
+queried using <tt class="docutils literal"><span class="pre">/product[HCTL.MARK4.3943]</span></tt>.  The method
+is a bit more complex, but HTSQL will hide the details.
+First, the locator for <tt class="docutils literal"><span class="pre">product</span></tt> itself has two slots,
+a nested-locator to <tt class="docutils literal"><span class="pre">product_make</span></tt> and a column slot
+<tt class="docutils literal"><span class="pre">model</span></tt>.  The nested <tt class="docutils literal"><span class="pre">product_make</span></tt> locator will
+also have two slots, a nested-locator to <tt class="docutils literal"><span class="pre">product_line</span></tt>
+and the column slot <tt class="docutils literal"><span class="pre">make</span></tt>.  Finally, the doubly
+nested <tt class="docutils literal"><span class="pre">product_line</span></tt> locator will have a single slot,
+for the <tt class="docutils literal"><span class="pre">line</span></tt> slot.  The locator for the given product
+record is <tt class="docutils literal"><span class="pre">/product[[[HCTL].MARK4].3943]</span></tt>.  Due to the
+bracket omission rules, this locator could be shortened
+to simply <tt class="docutils literal"><span class="pre">/product[HCTL.MARK4.3943]</span></tt>.</p>
+</div>
+<div class="section" id="location-type">
+<h2>Location Type<a class="headerlink" href="#location-type" title="Permalink to this headline">¶</a></h2>
+<p>This mechanism requires a new <em>location</em> datatype that is
+effectively a (perhaps nested) tuple holding foreign key
+values.  The <tt class="docutils literal"><span class="pre">location()</span></tt> function is a constructor for
+this data type.  Its first argument is an identifier for
+the table for which the locator is constructed.  The
+remaining arguments are slots in the locator.</p>
+<p>For example, <tt class="docutils literal"><span class="pre">location(course,</span> <span class="pre">'mth',</span> <span class="pre">101)</span></tt> would
+construct the internal locator for <tt class="docutils literal"><span class="pre">/course[mth.101]</span></tt>.</p>
+<p>If a slot for a locator is nested due to a foreign-key
+reference, then a nested locator must be passed in for
+the given slot.  In our regression test schema, the
+<tt class="docutils literal"><span class="pre">enrollment</span></tt> table references the <tt class="docutils literal"><span class="pre">class</span></tt> table
+using a system key, <tt class="docutils literal"><span class="pre">course_id</span></tt> where the <tt class="docutils literal"><span class="pre">class</span></tt>
+table uses natural keys for its construction.  The
+construction for an enrollment location would be:</p>
+<div class="highlight-python"><pre>location(enrollment, 1038,
+  location(class, 'mth', '101', 2008, 'spring', '001'))</pre>
+</div>
+</div>
+<div class="section" id="identify">
+<h2>Identify<a class="headerlink" href="#identify" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">id(&lt;location&gt;)</span></tt> function can be used to convert a
+location into a location string.  It can be used in two
+ways.  For any table, <tt class="docutils literal"><span class="pre">/course{id()}</span></tt> will return the
+serialized locator for each row.  This could then be used
+to <em>locate</em> the row for additional data manipulation.</p>
+<p>The <tt class="docutils literal"><span class="pre">id()</span></tt> function can also be used to convert a link
+or system key into a human readable identifier.  For
+example, <tt class="docutils literal"><span class="pre">/enrollment{student_no,</span> <span class="pre">id(course)}</span></tt> would
+return the serialized locator each corresponding course.
+Selecting a link by itself is an error, it is not
+automatically converted into a serialized location.</p>
+</div>
+<div class="section" id="location-operator">
+<h2>Location Operator<a class="headerlink" href="#location-operator" title="Permalink to this headline">¶</a></h2>
+<p>To make this easier, we provide a <tt class="docutils literal"><span class="pre">location</span></tt> operator
+<tt class="docutils literal"><span class="pre">&#64;</span></tt> which uses the short-hand locator syntax to
+construct an internal location object.  Hence we can
+write: <tt class="docutils literal"><span class="pre">&#64;enrollment[2038.[mth.1001.2008.spring.001]]</span></tt>
+Note that the nested brackets are required in this case
+since the FK reference to <tt class="docutils literal"><span class="pre">class</span></tt> is not in the first
+slot of the location.</p>
+<p>Locations can be compared to a link expression.  The
+result is true when the constructed location matches
+the location automatically constructed for the given
+row.  You could return all courses in the math
+department with <tt class="docutils literal"><span class="pre">/course?department=&#64;department[mth]</span></tt></p>
+<p>Since this comparison is common, there is a syntax
+short-hand <tt class="docutils literal"><span class="pre">/course?department=[mth]</span></tt>.  This format
+requires the left-hand-side of equality to be <tt class="docutils literal"><span class="pre">=</span></tt>.</p>
+</div>
+<div class="section" id="locate-function">
+<h2>Locate Function<a class="headerlink" href="#locate-function" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">locate</span></tt> function takes a table expression and
+associates it with a location.  For most commands this
+acts as a selection based on primary keys.  For the
+<tt class="docutils literal"><span class="pre">insert</span></tt> command it acts to set the column assignment.
+Hence the effect of <tt class="docutils literal"><span class="pre">locate</span></tt> on a table expression
+depends upon the current command.</p>
+<p>Let&#8217;s start with an example, <tt class="docutils literal"><span class="pre">/course[mth.101]</span></tt>,
+which is syntax sugar for <tt class="docutils literal"><span class="pre">/course.locate('mth',</span> <span class="pre">101)</span></tt>.
+This would construct <tt class="docutils literal"><span class="pre">locator(course,</span> <span class="pre">'mth',</span> <span class="pre">101)</span></tt>
+and then attach it to the course table expression.
+For <tt class="docutils literal"><span class="pre">select()</span></tt>, <tt class="docutils literal"><span class="pre">update()</span></tt> and <tt class="docutils literal"><span class="pre">delete()</span></tt> commands,
+<tt class="docutils literal"><span class="pre">/course.filter(department_code='mth'&amp;no=101)</span></tt> would
+be an equivalent expression.</p>
+<p>For columns using system keys, <tt class="docutils literal"><span class="pre">locate</span></tt> is defined
+recursively.  So that queries such as
+<tt class="docutils literal"><span class="pre">/enrollment[2038.[mth.1001.2008.spring.001]]</span></tt> work as
+expected.  This would be equivalent to:</p>
+<div class="highlight-python"><pre>/enrollment?student_id=2038
+           &amp;class=[mth.1001.2008.spring.001]</pre>
+</div>
+<p>By contrast, <tt class="docutils literal"><span class="pre">insert()</span></tt> command would use a locator to
+short-cut assignments.  For example, <tt class="docutils literal"><span class="pre">/course[mth.483]</span></tt>
+<tt class="docutils literal"><span class="pre">/insert(title:='Matrix</span> <span class="pre">Theory)</span></tt> would be equivalent to
+adding assignments for <tt class="docutils literal"><span class="pre">department_code</span></tt> and course <tt class="docutils literal"><span class="pre">no</span></tt>.
+For nested locators, the corresponding <tt class="docutils literal"><span class="pre">INSERT</span></tt> statement
+would have a nested select to lookup the given system key.
+An insert into <tt class="docutils literal"><span class="pre">enrollment</span></tt> given a class locator would
+first find the internal <tt class="docutils literal"><span class="pre">class_seq</span></tt>.</p>
+</div>
+<div class="section" id="location-variables">
+<h2>Location Variables<a class="headerlink" href="#location-variables" title="Permalink to this headline">¶</a></h2>
+<p>Since locations are first-class HTSQL data types, they can
+be used in variables.  So, to return a particular course
+you could write, <tt class="docutils literal"><span class="pre">/define($mth_101:=&#64;course[mth,101])</span></tt>
+<tt class="docutils literal"><span class="pre">.course[$mth_101]</span></tt>.</p>
+<p>In some cases, locator composition is useful.  This cannot
+be done using the syntax short hand, but can be
+accomplished using the <tt class="docutils literal"><span class="pre">locate()</span></tt> function.  For example,
+if you wished to create a <tt class="docutils literal"><span class="pre">999</span></tt> study section course for
+every department and we had a <tt class="docutils literal"><span class="pre">foreach</span></tt> command, one could
+write something like:</p>
+<div class="highlight-python"><pre>/department.define($dept:=id())
+.foreach(/course.locate($dept,999)
+                .insert(title='Study Section'))</pre>
+</div>
+<p>Presumably, the <tt class="docutils literal"><span class="pre">locate()</span></tt> command would convert any
+location strings to internal location objects as needed
+for nested locations created by system keys.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h2>
+<p>While it is seemingly such a simple feature, the location
+construct and its associated operators and functions
+create a succinct tool-set for the comparison, location,
+and manipulation of records by primary key.</p>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/discuss-locator";
+var disqus_title = "Discussion on Location";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

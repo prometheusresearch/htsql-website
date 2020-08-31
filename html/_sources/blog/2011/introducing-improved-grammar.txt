@@ -1,0 +1,106 @@
+*******************************
+  Improving the HTSQL Grammar
+*******************************
+
+.. blogentry::
+   :date: 2011-04-30
+   :author: cce
+
+These past few weeks we significantly updated the grammar to reduce the
+learning curve of HTSQL by making it more regular.  The introduction of
+the tutorial and syntax reference have been updated appropriately.
+
+
+.. blogcut::
+
+Selection (``{}``) becomes an operator
+--------------------------------------
+
+In earlier releases the treatment of selection was ad-hoc depending upon
+the context where it was used.  As a result, you couldn't append
+``.limit`` or other table expressions following the curly brackets.
+This is fixed, so you can now write:
+
+.. htsql:: /course{title, credits-}.limit(3)
+   :hide:
+
+Before you had to write:
+
+.. htsql:: /course.sort(credits-).limit(3){title, credits}
+   :hide:
+
+
+Wildcard expression
+-------------------
+
+Wildcard expression ``*`` is also normalized.  Now it selects all of the
+output columns in the current context.   Additionally, if ``*`` is
+followed by a number, it returns the nth output column.  For example,
+
+.. htsql:: /school{code, name, count(department)}.{*1,*3}
+   :hide:
+   :cut: 3
+
+.. **
+
+This mechanism can be used to filter by previously selected expressions:
+
+.. htsql:: /school{code, count(department)}?*2>3
+   :hide:
+
+
+Navigation (``.``) becomes an operator
+----------------------------------------
+
+Previously ``.`` could only be followed by an identifier or a function
+call, not a general expression.  This limitation was lifted. For
+example, the following query returns for each school distinct
+degrees for the programs in that school.
+
+.. htsql:: /school.(program^degree)
+   :cut: 3
+   :hide:
+
+
+Functional forms
+----------------
+
+Normalizing these syntax items permitted us to introduce functional
+aliases for several operators.  For instance,
+
+.. htsql:: /school{name}
+   :hide:
+   :cut: 3
+
+.. htsql:: /school?code='eng'
+   :hide:
+
+.. htsql:: /program^degree
+   :hide:
+   :cut: 3
+
+could now be written:
+
+.. htsql:: /school.select(name)
+   :hide:
+   :cut: 3
+
+.. htsql:: /school.filter(code='eng')
+   :hide:
+
+.. htsql:: /distinct(program{degree})
+   :hide:
+   :cut: 3
+
+The functional form may be preferable in certain contexts since it
+permits you to reduce nesting depth.  For example,
+
+.. htsql:: /(department?school.code='eng').limit(3)
+   :hide:
+
+could be more clearly written:
+
+.. htsql:: /department.filter(school.code='eng').limit(3)
+   :hide:
+
+

@@ -1,0 +1,55 @@
+******************************
+  HTSQL 2.2.0rc1 is released
+******************************
+
+.. blogentry::
+   :date: 2011-11-22
+   :author: xi
+
+The first release candidate for the 2.2 release is now available.
+The primary change from the last beta is the introduction of a 
+new `tweak.override` addon which provides detailed control over
+the database metadata:
+
+* restrict access to particular tables and columns
+* configure missing unique and foreign keys
+* change table, column and link labels
+* define calculated fields 
+
+The other major change is auto completion of table, column and link
+names in the htsql-ctl shell and the web-based editor.  We also added
+a `@` scope reset operator.  Finally, we now have binary packages
+for Debian and RedHat GNU/Linux systems.  
+
+.. blogcut::
+
+Specific changes since the last beta include:
+
+* Added `@` scope reset operator.
+* Omit schemas when serializing table names to SQL.
+* Validate configuration on startup.
+* Added `tweak.override`: restricting access to specific tables
+  and columns, adding database constraints, changing table, column
+  and link labels, defining calculated fields.
+* Added `tweak.django`: integration with Django framework.
+* `tweak.meta`: improved the meta schema.
+* `tweak.cors`: added `origin` parameter.
+* `tweak.shell`: autocompletion by Ctrl-Space, improved layout.
+* `htsql-ctl shell`: Tab-completion for commands and identifiers.
+* Refactored database introspection and model graph.
+* Refactored to use Unicode strings internally.
+* Various build improvements: now building source, DEB and RPM packages.
+* Updated documentation on installing, using and configuring HTSQL.
+* Documentation on deploying on Heroku cloud platform.
+* Added regression tests for addons.
+
+Major changes since the 2.1 release:
+
+* Added `tweak.shell`: web-based editor with syntax highlighting & completion
+* Added `tweak.override`: provides granular meta-data customization
+* Added `tweak.meta`: ``meta()`` command to query database meta-data 
+  including tables, columns and links.
+* Added integration with Django and SQLAlchemy frameworks.
+* Added support for plugin parameters and configuration files.
+
+

@@ -1,0 +1,38 @@
+************************************
+  DonorsChoose : Donation by State
+************************************
+
+
+.. demo::
+
+    <script type="text/javascript"
+        src="/htraf/htraf.js"
+        data-htsql-version="2"
+        data-htsql-prefix="/@donorschoose">
+    </script>
+
+    <h3>Select State</h3>
+    <select id="state" 
+        data-htsql="/city^state">
+    </select>
+    <div style="width: 500px; height: 350px;" 
+        data-htsql="/((project?_schoolid.cityid.state=$state)
+                      ^primary_focus_area)
+                     {primary_focus_area,
+                      sum(^.total_donations)}"
+        data-ref="state"
+        data-type="pie"
+        data-widget="chart"
+        data-title="Focus Areas for this State">
+    </div>
+
+    <h3>Donations by Subject for this State</h3>
+    <table id="subject"
+        data-htsql="/((project?_schoolid.cityid.state=$state)
+                      ^primary_focus_subject)
+                     {primary_focus_subject :as 'Subject',
+                      sum(^.total_donations) - :as 'Total Donations',
+                      sum(^.num_donors) :as 'Number of Donors'}"
+        data-ref="state">
+    </table>
+

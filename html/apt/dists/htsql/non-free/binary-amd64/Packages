@@ -1,0 +1,65 @@
+Package: htsql
+Version: 2.2.1-1
+Architecture: all
+Maintainer: Clark C. Evans <cce@clarkevans.com>
+Installed-Size: 4528
+Depends: python (>= 2.6), python-yaml, python-pkg-resources
+Suggests: python-psycopg2, python-mysqldb
+Homepage: http://htsql.org
+Priority: optional
+Section: non-free/python
+Filename: pool/non-free/h/htsql/htsql_2.2.1-1_all.deb
+Size: 723134
+SHA256: ff6638cdd891bc52b0458c590f8ec3b99d728442cc2bb5a943c24f9968583644
+SHA1: 5447efe726dbac6a3c0d94293bc4c23fb0802088
+MD5sum: 9b2601084be0f351e2f70169868fd03a
+Description: navigational query language for relational databases
+ ***********************************************************
+   HTSQL -- A Query Language for the Accidental Programmer
+ ***********************************************************
+ .
+ HTSQL ("Hyper Text Structured Query Language") is a high-level query
+ language for relational databases.   The target audience for HTSQL is
+ the accidental programmer -- one who is not a SQL expert, yet needs a
+ usable, comprehensive query tool for data access and reporting.
+ .
+ HTSQL is also a web service which takes a request via HTTP, translates
+ it into a SQL query, executes the query against a relational database,
+ and returns the results in a format requested by the user agent (JSON,
+ CSV, HTML, etc.).
+ .
+ Use of HTSQL with open source databases (PostgreSQL, MySQL, SQLite) is
+ royalty free under BSD-style conditions.  Use of HTSQL with proprietary
+ database systems (Oracle, Microsoft SQL) requires a commercial license.
+ See ``LICENSE`` for details.
+
+Package: htsql-mysql
+Version: 2.2
+Architecture: all
+Maintainer: Clark C. Evans <cce@clarkevans.com>
+Depends: htsql, python-mysqldb
+Priority: optional
+Section: non-free/python
+Filename: pool/non-free/h/htsql-mysql/htsql-mysql_2.2_all.deb
+Size: 622
+SHA256: 6c0185857613369e8c0e58736e7b185fef9027438e69ffe47f5cc21b0edc8ee2
+SHA1: 62fa8d4bde5f9492a9cdcda3f41c17a1f895be29
+MD5sum: 254a16466765f475ee0f53ce12eb4136
+Description: HTSQL with MySQL
+ A meta-package for installing HTSQL with MySQL client.
+
+Package: htsql-pgsql
+Version: 2.2
+Architecture: all
+Maintainer: Clark C. Evans <cce@clarkevans.com>
+Depends: htsql, python-psycopg2
+Priority: optional
+Section: non-free/python
+Filename: pool/non-free/h/htsql-pgsql/htsql-pgsql_2.2_all.deb
+Size: 624
+SHA256: bf1cb5083b17ee9efddec692cfe0e52736e7b6a483a673b905952ba6f065dfa0
+SHA1: 6f641e82475a75c80ad82d79af2cf1d6e55b2cda
+MD5sum: bd7dcc3100de26338fc6415691d300d3
+Description: HTSQL with PostgreSQL
+ A meta-package for installing HTSQL with PostgreSQL client.
+

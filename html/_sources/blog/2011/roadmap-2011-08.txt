@@ -1,0 +1,14 @@
+********************************
+  HTSQL Roadmap for August, 2011
+********************************
+
+.. blogentry::
+   :date: 2011-08-09
+   :author: cce
+
+This month we improved the generated SQL for projections and
+multiple-aggregates.  We intend to release 2.1-FINAL this
+month, after additional code cleanup and documention work.
+Additionally, we're scoping features for 2.2, including
+configuration files, plugin parameters, commands, introspection, 
+catalog extensions, and record-based CRUD operations. 

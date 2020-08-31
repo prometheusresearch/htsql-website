@@ -1,0 +1,1308 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTSQL Gallery &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../index.html" />
+    <link rel="next" title="EDGAR : 2008 Executive Compensation" href="edgar/execcomp.html" />
+    <link rel="prev" title="Introducing HTSQL" href="../blog/2010/introducing-htsql.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-gallery">
+<h1>HTSQL Gallery<a class="headerlink" href="#htsql-gallery" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#edgar-database" id="id2">EDGAR Database</a></li>
+<li><a class="reference internal" href="#donors-choose" id="id3">Donors Choose</a></li>
+<li><a class="reference internal" href="#snort-intrusion-detection" id="id4">Snort Intrusion Detection</a></li>
+<li><a class="reference internal" href="#htsql-sample-database" id="id5">HTSQL Sample Database</a></li>
+</ul>
+</div>
+<p>HTSQL can be used in a many ways.  This page demonstrates dashboards
+(using <a class="reference internal" href="../htraf/index.html"><em>HTRAF Toolkit</em></a>) and ad-hoc query examples.  If you click
+on any of the screen shots below, it will take you to an interactive
+example with the complete source code below.</p>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="edgar-database">
+<h2><a class="toc-backref" href="#id2">EDGAR Database</a><a class="headerlink" href="#edgar-database" title="Permalink to this headline">¶</a></h2>
+<p>The EDGAR database contains detailed financial filings from U.S. public
+companies.  The demo includes the most recent (2008) filing information
+from 1,000 public companies, including executive compensation data
+(courtesy of <a class="reference external" href="http://www.directedgar.com/">directEDGAR</a>) and company facts and financials (from <a class="reference external" href="http://www.edgar-online.com/">EDGAR
+Online</a>).  Perform your own financial analysis to see how executive
+salaries stack up against company performance.</p>
+<div class="section" id="edgar-dashboard-executive-compensation">
+<h3>EDGAR Dashboard : Executive Compensation<a class="headerlink" href="#edgar-dashboard-executive-compensation" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="edgar/execcomp.html"><em>Executive Compensation</em></a> dashboard shows the
+power of HTRAF to create an interactive application by combining HTSQL
+queries with HTRAF elements like selectors and text inputs.  See how
+easy it is to find the top earners by industry, name and title.</p>
+<a class="reference external image-reference" href="edgar/execcomp.html"><img alt="../_images/execcomp.png" class="align-center" src="../_images/execcomp.png" style="width: 80%;" /></a>
+</div>
+<div class="section" id="edgar-schema">
+<h3>EDGAR Schema<a class="headerlink" href="#edgar-schema" title="Permalink to this headline">¶</a></h3>
+<img class="diagram align-center" height="307" src="../_images/edgar-schema.png" width="633" />
+</div>
+<div class="section" id="edgar-queries">
+<h3>EDGAR Queries<a class="headerlink" href="#edgar-queries" title="Permalink to this headline">¶</a></h3>
+<p>Try these queries to see what compensation packages executives at 1000
+U.S. companies enjoy.</p>
+<div class="section" id="return-a-table">
+<h4>Return a table<a class="headerlink" href="#return-a-table" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://edgar.htsql.org/officer" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://edgar.htsql.org/officer" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">officer</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="4%" />
+<col width="20%" />
+<col width="12%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">officer_id</th>
+<th class="head">cik</th>
+<th class="head">officer_name</th>
+<th class="head">officer_type</th>
+<th class="head">title</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-integer-type">10001</td>
+<td class="htsql-integer-type">1750</td>
+<td class="htsql-text-type">DAVID P. STORCH</td>
+<td class="htsql-text-type">Executive</td>
+<td class="htsql-text-type">CHAIRMAN OF THE BOARD AND CHIEF EXECUTIVE OFFICER</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">10002</td>
+<td class="htsql-integer-type">1750</td>
+<td class="htsql-text-type">JAMES J. CLARK</td>
+<td class="htsql-text-type">Executive</td>
+<td class="htsql-text-type">GROUP VICE PRESIDENT AVIATION SUPPLY CHAIN</td>
+</tr>
+<tr class="row-even"><td class="htsql-integer-type">10003</td>
+<td class="htsql-integer-type">1750</td>
+<td class="htsql-text-type">RICHARD J. POULTON</td>
+<td class="htsql-text-type">Executive</td>
+<td class="htsql-text-type">VICE PRESIDENT, CHIEF FINANCIAL OFFICER AND TREASURER</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">10004</td>
+<td class="htsql-integer-type">1750</td>
+<td class="htsql-text-type">TERRY D. STINSON</td>
+<td class="htsql-text-type">Executive</td>
+<td class="htsql-text-type">GROUP VICE PRESIDENT STRUCTURES AND SYSTEMS</td>
+</tr>
+<tr class="row-even"><td class="htsql-integer-type">10005</td>
+<td class="htsql-integer-type">1750</td>
+<td class="htsql-text-type">TIMOTHY J. ROMENESKO</td>
+<td class="htsql-text-type">Executive</td>
+<td class="htsql-text-type">PRESIDENT AND CHIEF OPERATING OFFICER</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Here&#8217;s the simplest possible HTSQL query &#8212; return all rows and columns
+from the <tt class="xref py py-obj docutils literal"><span class="pre">officer</span></tt> table.  As with all HTSQL queries, <a class="reference external" href="http://edgar.htsql.org/officer">the URL is the
+query</a>.</p>
+</div>
+<div class="section" id="select-specific-columns">
+<h4>Select specific columns<a class="headerlink" href="#select-specific-columns" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://edgar.htsql.org/officer{officer_name,%20title}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://edgar.htsql.org/officer{officer_name,%20title}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">officer</span><span class="p">{</span><span class="nb">officer_name</span><span class="p">,</span> <span class="nb">title</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">officer_name</th>
+<th class="head">title</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">DAVID P. STORCH</td>
+<td class="htsql-text-type">CHAIRMAN OF THE BOARD AND CHIEF EXECUTIVE OFFICER</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">JAMES J. CLARK</td>
+<td class="htsql-text-type">GROUP VICE PRESIDENT AVIATION SUPPLY CHAIN</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">RICHARD J. POULTON</td>
+<td class="htsql-text-type">VICE PRESIDENT, CHIEF FINANCIAL OFFICER AND TREASURER</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">TERRY D. STINSON</td>
+<td class="htsql-text-type">GROUP VICE PRESIDENT STRUCTURES AND SYSTEMS</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">TIMOTHY J. ROMENESKO</td>
+<td class="htsql-text-type">PRESIDENT AND CHIEF OPERATING OFFICER</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Here&#8217;s another simple query that shows selection of two specific
+columns, <tt class="xref py py-obj docutils literal"><span class="pre">officer_name</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">officer_title</span></tt>, from the <tt class="xref py py-obj docutils literal"><span class="pre">officer</span></tt> table.</p>
+</div>
+<div class="section" id="add-a-simple-filter">
+<h4>Add a simple filter<a class="headerlink" href="#add-a-simple-filter" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://edgar.htsql.org/officer{officer_name,%20title}%0A%20%20%20%20%20%20%20%20?title~'chief%20technology%20officer'" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://edgar.htsql.org/officer{officer_name,%20title}%0A%20%20%20%20%20%20%20%20?title~'chief%20technology%20officer'" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">officer</span><span class="p">{</span><span class="nb">officer_name</span><span class="p">,</span> <span class="nb">title</span><span class="p">}</span>
+        <span class="o">?</span><span class="nb">title</span><span class="o">~</span><span class="s">&#39;chief technology officer&#39;</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="84%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">officer_name</th>
+<th class="head">title</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">MARK R. PINTO</td>
+<td class="htsql-text-type">SENIOR VICE PRESIDENT, CHIEF TECHNOLOGY OFFICER AND GENERAL MANAGER ENERGY AND ENVIRONMENTAL SOLUTIONS</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">WIDGE, SUNIL Y.</td>
+<td class="htsql-text-type">SENIOR VICE PRESIDENT AND CHIEF TECHNOLOGY OFFICER</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">HOSSEIN M. MOGHADAM</td>
+<td class="htsql-text-type">SENIOR VICE PRESIDENT, CHIEF TECHNOLOGY OFFICER</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">LARRY A. SHOFF</td>
+<td class="htsql-text-type">EXEC. V.P. AND CHIEF TECHNOLOGY OFFICER</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ROBERT C. DOBKIN</td>
+<td class="htsql-text-type">VICE PRESIDENT, ENGINEERING AND CHIEF TECHNOLOGY OFFICER</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Same selector as the previous query, but here we&#8217;ve added a filter.
+This filter finds rows in the <tt class="xref py py-obj docutils literal"><span class="pre">officer</span></tt> table where the <tt class="xref py py-obj docutils literal"><span class="pre">title</span></tt> contains
+<em>chief technology officer</em>.</p>
+</div>
+<div class="section" id="add-a-simple-link">
+<h4>Add a simple link<a class="headerlink" href="#add-a-simple-link" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://edgar.htsql.org/compensation{officer.officer_name,%20amount}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://edgar.htsql.org/compensation{officer.officer_name,%20amount}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">compensation</span><span class="p">{</span><span class="nb">officer</span><span class="p">.</span><span class="nb">officer_name</span><span class="p">,</span> <span class="nb">amount</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="77%" />
+<col width="23%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">officer_name</th>
+<th class="head">amount</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">DAVID P. STORCH</td>
+<td class="htsql-decimal-type">695657</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">JAMES J. CLARK</td>
+<td class="htsql-decimal-type">153786</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">RICHARD J. POULTON</td>
+<td class="htsql-decimal-type">25269</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">TIMOTHY J. ROMENESKO</td>
+<td class="htsql-decimal-type">162393</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">DAN L. GUNTER</td>
+<td class="htsql-decimal-type">41081</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-decimal-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This illustrates a simple link.  The base table is <tt class="xref py py-obj docutils literal"><span class="pre">compensation</span></tt>.  The
+first expression in the selector, <tt class="xref py py-obj docutils literal"><span class="pre">officer.officer_name</span></tt> instructs HTSQL
+to return the <tt class="xref py py-obj docutils literal"><span class="pre">officer_name</span></tt> column from the (related) <tt class="xref py py-obj docutils literal"><span class="pre">officer</span></tt> table.
+Note that we don&#8217;t have to specify the join in any more detail because
+HTSQL already knows how the <tt class="xref py py-obj docutils literal"><span class="pre">officer</span></tt> table is related to the
+<tt class="xref py py-obj docutils literal"><span class="pre">compensation</span></tt> table.</p>
+</div>
+<div class="section" id="aggregate-data">
+<h4>Aggregate data<a class="headerlink" href="#aggregate-data" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://edgar.htsql.org/company{name,%20count(officer)-,%20max(officer.sum(compensation.amount))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://edgar.htsql.org/company{name,%20count(officer)-,%20max(officer.sum(compensation.amount))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">company</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">officer</span><span class="p">)</span><span class="o">-</span><span class="p">,</span> <span class="nf">max</span><span class="p">(</span><span class="nb">officer</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="nb">compensation</span><span class="p">.</span><span class="nb">amount</span><span class="p">))}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="26%" />
+<col width="20%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">count(officer)</th>
+<th class="head">max(officer.sum(compensation.amount))</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">WET SEAL INC</td>
+<td class="htsql-integer-type">11</td>
+<td class="htsql-decimal-type">2910449</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">DANA HOLDING CORP</td>
+<td class="htsql-integer-type">10</td>
+<td class="htsql-decimal-type">8720591</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ITC Holdings Corp.</td>
+<td class="htsql-integer-type">10</td>
+<td class="htsql-decimal-type">7319156</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">MOTOROLA INC</td>
+<td class="htsql-integer-type">9</td>
+<td class="htsql-decimal-type">17271677</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">SPRINT NEXTEL CORP</td>
+<td class="htsql-integer-type">9</td>
+<td class="htsql-decimal-type">19201373</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-decimal-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This example shows an expression that is straightforward and reasonably
+intuitive in HTSQL &#8212; for each company, we return the number of
+officers and maximum total compensation given to those officers.
+Interestingly, the SQL equivalent is neither intuitive nor simple (go
+ahead, try it.)  This is not an accident.  We&#8217;ve spent the last six
+years working to make sure that HTSQL syntax is intuitive enough for
+business analysts and power users to understand, yet powerful enough for
+developers to use.</p>
+</div>
+</div>
+</div>
+<div class="section" id="donors-choose">
+<h2><a class="toc-backref" href="#id3">Donors Choose</a><a class="headerlink" href="#donors-choose" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://www.donorschoose.org/">Donors Choose</a> is a great organization that matches donors with
+classrooms in need.  They&#8217;re sponsoring the <a class="reference external" href="http://www.donorschoose.org/hacking-education">Hacking Education</a> contest
+(through June 30, 2011) to encourage app developers to find helpful new
+ways to use their project database.</p>
+<div class="section" id="donors-choose-top-subjects">
+<h3>Donors Choose : Top Subjects<a class="headerlink" href="#donors-choose-top-subjects" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="donorschoose/subject.html"><em>Top Subjects</em></a> dashboard provides a
+visualization of which subject areas received the most donation dollars.
+Even simple dashboards like this one provide a greater degree of insight
+into data than tabular data (let alone raw data output).  Using HTSQL
+and HTRAF, anyone familiar with the data (and who has basic HTML skills)
+can create data visualizations.</p>
+<a class="reference external image-reference" href="donorschoose/subject.html"><img alt="../_images/subject.png" class="align-center" src="../_images/subject.png" style="width: 80%;" /></a>
+</div>
+<div class="section" id="donors-choose-subject-by-state">
+<h3>Donors Choose : Subject by State<a class="headerlink" href="#donors-choose-subject-by-state" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="donorschoose/state.html"><em>Subject by State</em></a> dashboard shows what
+subject areas and donations are popular for a given state.</p>
+<a class="reference external image-reference" href="donorschoose/state.html"><img alt="../_images/state.png" class="align-center" src="../_images/state.png" style="width: 80%;" /></a>
+</div>
+<div class="section" id="donors-choose-top-ten-teachers">
+<h3>Donors Choose : Top Ten Teachers<a class="headerlink" href="#donors-choose-top-ten-teachers" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="donorschoose/teacher.html"><em>Top Ten Teachers</em></a> dashboard provides a
+data driven page that allows a user to select a city and a school, and
+then displays the top ten teachers for that school and all of their
+related projects.</p>
+<a class="reference external image-reference" href="donorschoose/teacher.html"><img alt="../_images/teacher.png" class="align-center" src="../_images/teacher.png" style="width: 80%;" /></a>
+</div>
+<div class="section" id="donors-choose-schema">
+<h3>Donors Choose Schema<a class="headerlink" href="#donors-choose-schema" title="Permalink to this headline">¶</a></h3>
+<img class="diagram align-center" height="194" src="../_images/donorschoose-schema.png" width="699" />
+</div>
+<div class="section" id="donors-choose-queries">
+<h3>Donors Choose Queries<a class="headerlink" href="#donors-choose-queries" title="Permalink to this headline">¶</a></h3>
+<p>The demonstration HTSQL server on top of the Donors Choose data set is
+at <a class="reference external" href="http://donorschoose.htsql.org">http://donorschoose.htsql.org</a> &#8211; it is configured to return no more
+than 1000 rows per request.</p>
+<p>Try these queries to get a flavor for what&#8217;s in the database:</p>
+<div class="section" id="top-10-projects">
+<h4>Top 10 projects<a class="headerlink" href="#top-10-projects" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://donorschoose.htsql.org/project{_projectid,%20primary_focus_subject,%0A%20%20%20%20%20%20%20%20%20primary_focus_area}.limit(10)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://donorschoose.htsql.org/project{_projectid,%20primary_focus_subject,%0A%20%20%20%20%20%20%20%20%20primary_focus_area}.limit(10)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">project</span><span class="p">{</span><span class="nb">_projectid</span><span class="p">,</span> <span class="nb">primary_focus_subject</span><span class="p">,</span>
+         <span class="nb">primary_focus_area</span><span class="p">}.</span><span class="nf">limit</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="29%" />
+<col width="26%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">_projectid</th>
+<th class="head">primary_focus_subject</th>
+<th class="head">primary_focus_area</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">0000023f507999464aa2b78875b7e5d6</td>
+<td class="htsql-text-type">Health &amp; Life Science</td>
+<td class="htsql-text-type">Math &amp; Science</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">0000702ee4cefdb1e7f89084e50d3c85</td>
+<td class="htsql-text-type">Mathematics</td>
+<td class="htsql-text-type">Math &amp; Science</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">00008c61582d7b4d3a2d89ad88f9eedf</td>
+<td class="htsql-text-type">Literature &amp; Writing</td>
+<td class="htsql-text-type">Literacy &amp; Language</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">000096b54de3b748fce836454030c8d5</td>
+<td class="htsql-text-type">Early Development</td>
+<td class="htsql-text-type">Applied Learning</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">0000ab9b97284791e1c6759b9046db9e</td>
+<td class="htsql-text-type">Literacy</td>
+<td class="htsql-text-type">Literacy &amp; Language</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This query returns the first 10 rows from the <tt class="xref py py-obj docutils literal"><span class="pre">project</span></tt> table &#8212; if you
+omit the <tt class="xref py py-obj docutils literal"><span class="pre">limit(10)</span></tt> our demo server silently truncates the results to
+1000 rows.</p>
+</div>
+<div class="section" id="donations-per-project">
+<h4>Donations per project<a class="headerlink" href="#donations-per-project" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://donorschoose.htsql.org/project{essay.title,%20count(donation)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://donorschoose.htsql.org/project{essay.title,%20count(donation)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">project</span><span class="p">{</span><span class="nb">essay</span><span class="p">.</span><span class="nb">title</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">donation</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="77%" />
+<col width="23%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">title</th>
+<th class="head">count(donation)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">GOAL: Ordinary Students &#8211;&gt; SUCCESSFUL SCIENTISTS</td>
+<td class="htsql-integer-type">11</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Projection to Capture Attention</td>
+<td class="htsql-integer-type">6</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Special Education Students Need Literary Resources!</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">We Need Puzzles And Manipulatives!</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Come Play with Me!</td>
+<td class="htsql-integer-type">0</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This query returns only the title and the number of donations per
+project.</p>
+</div>
+<div class="section" id="projects-from-la-csv">
+<h4>Projects from LA (CSV)<a class="headerlink" href="#projects-from-la-csv" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://donorschoose.htsql.org/project{essay.title}?school.city.state='LA'/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://donorschoose.htsql.org/project{essay.title}?school.city.state='LA'/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">project</span><span class="p">{</span><span class="nb">essay</span><span class="p">.</span><span class="nb">title</span><span class="p">}</span><span class="o">?</span><span class="nb">school</span><span class="p">.</span><span class="nb">city</span><span class="p">.</span><span class="nb">state</span><span class="o">=</span><span class="s">&#39;LA&#39;</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>title
+GOAL: Ordinary Students --&gt; SUCCESSFUL SCIENTISTS
+Rockin&#39; 5th Grade
+Art Library 
+Let&#39;s Learn History While Reading!
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>This query will return projects where the school&#8217;s state is LA (also
+truncated at 1000 rows).  The output format is CSV, replace <tt class="xref py py-obj docutils literal"><span class="pre">/:csv</span></tt> with
+<tt class="xref py py-obj docutils literal"><span class="pre">/:json</span></tt> to create your mashups.</p>
+</div>
+<div class="section" id="number-of-teachers-projects-donations">
+<h4>Number of teachers, projects, donations<a class="headerlink" href="#number-of-teachers-projects-donations" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://donorschoose.htsql.org/{count(teacher),%20count(project),%20count(donation)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://donorschoose.htsql.org/{count(teacher),%20count(project),%20count(donation)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">count</span><span class="p">(</span><span class="nb">teacher</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="nb">project</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="nb">donation</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">count(teacher)</th>
+<th class="head">count(project)</th>
+<th class="head">count(donation)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-integer-type">117751</td>
+<td class="htsql-integer-type">295287</td>
+<td class="htsql-integer-type">1118828</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This query returns the number of teachers, cities, and projects that are
+in the dataset.</p>
+</div>
+<div class="section" id="teachers-with-projects-in-more-than-one-school">
+<h4>Teachers with projects in more than one school<a class="headerlink" href="#teachers-with-projects-in-more-than-one-school" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://donorschoose.htsql.org/count(teacher?count(project^_schoolid)&gt;1)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://donorschoose.htsql.org/count(teacher?count(project^_schoolid)&gt;1)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">count</span><span class="p">(</span><span class="nb">teacher</span><span class="o">?</span><span class="nf">count</span><span class="p">(</span><span class="nb">project</span><span class="o">^</span><span class="nb">_schoolid</span><span class="p">)</span><span class="o">&gt;</span><span class="m">1</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-integer-type">4597</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This query returns the number of teachers sponsoring projects in more
+than one school.</p>
+</div>
+<div class="section" id="average-donation-per-focus-subject">
+<h4>Average donation per focus subject<a class="headerlink" href="#average-donation-per-focus-subject" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://donorschoose.htsql.org/distinct(project{primary_focus_subject}?num_donors)%0A%20%20%20%20%20{*,%20sum(^.total_donations)/sum(^.num_donors)%20-}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://donorschoose.htsql.org/distinct(project{primary_focus_subject}?num_donors)%0A%20%20%20%20%20{*,%20sum(^.total_donations)/sum(^.num_donors)%20-}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">distinct</span><span class="p">(</span><span class="nb">project</span><span class="p">{</span><span class="nb">primary_focus_subject</span><span class="p">}</span><span class="o">?</span><span class="nb">num_donors</span><span class="p">)</span>
+     <span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="nf">sum</span><span class="p">(</span><span class="o">^</span><span class="p">.</span><span class="nb">total_donations</span><span class="p">)</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="o">^</span><span class="p">.</span><span class="nb">num_donors</span><span class="p">)</span> <span class="o">-</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">primary_focus_subject</th>
+<th class="head">sum(^.total_donations)/sum(^.num_donors)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">College &amp; Career Prep</td>
+<td class="htsql-decimal-type">174.138628537</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Economics</td>
+<td class="htsql-decimal-type">160.810041265</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Other</td>
+<td class="htsql-decimal-type">129.401476729</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Civics &amp; Government</td>
+<td class="htsql-decimal-type">119.893683751</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Sports</td>
+<td class="htsql-decimal-type">119.730495993</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-decimal-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This query returns primary focus subjects in descending order by the
+average donation amount.  Unsurprisingly, <em>College &amp; Career Prep</em> takes
+the cake with $174 per donor.</p>
+</div>
+<div class="section" id="cities-with-more-than-5-schools">
+<h4>Cities with more than 5 schools<a class="headerlink" href="#cities-with-more-than-5-schools" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://donorschoose.htsql.org/(city?count(school)&gt;5)%0A%20%20%20%20%20{city,%20state,%20sum(school.project.total_donations)/count(school)%20-}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://donorschoose.htsql.org/(city?count(school)&gt;5)%0A%20%20%20%20%20{city,%20state,%20sum(school.project.total_donations)/count(school)%20-}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">city</span><span class="o">?</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="p">)</span><span class="o">&gt;</span><span class="m">5</span><span class="p">)</span>
+     <span class="p">{</span><span class="nb">city</span><span class="p">,</span> <span class="nb">state</span><span class="p">,</span> <span class="nf">sum</span><span class="p">(</span><span class="nb">school</span><span class="p">.</span><span class="nb">project</span><span class="p">.</span><span class="nb">total_donations</span><span class="p">)</span><span class="o">/</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="p">)</span> <span class="o">-</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="8%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">city</th>
+<th class="head">state</th>
+<th class="head">sum(school.project.total_donations)/count(school)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">La Mesa</td>
+<td class="htsql-text-type">CA</td>
+<td class="htsql-decimal-type">39959.4657143</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">E Palo Alto</td>
+<td class="htsql-text-type">CA</td>
+<td class="htsql-decimal-type">22405.5214286</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Georgetown</td>
+<td class="htsql-text-type">SC</td>
+<td class="htsql-decimal-type">17619.7433333</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Corona</td>
+<td class="htsql-text-type">NY</td>
+<td class="htsql-decimal-type">16641.9222222</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Porter</td>
+<td class="htsql-text-type">TX</td>
+<td class="htsql-decimal-type">16480.7683333</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-decimal-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This query produce cities with more than 5 schools ordered by the number
+of donations per school.</p>
+<p><em>La Mesa, CA</em> has by far the highest number of donations per school &#8212;
+$39k. The next closest is <em>E. Palo Alto</em> with $22k.</p>
+</div>
+<div class="section" id="accounts-by-number-of-donations">
+<h4>Accounts by number of donations<a class="headerlink" href="#accounts-by-number-of-donations" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://donorschoose.htsql.org/account{city{city,%20state},%0A%20%20%20%20%20%20%20%20%20count(donation?dollar_amount='100_and_up')%20-}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://donorschoose.htsql.org/account{city{city,%20state},%0A%20%20%20%20%20%20%20%20%20count(donation?dollar_amount='100_and_up')%20-}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">account</span><span class="p">{</span><span class="nb">city</span><span class="p">{</span><span class="nb">city</span><span class="p">,</span> <span class="nb">state</span><span class="p">},</span>
+         <span class="nf">count</span><span class="p">(</span><span class="nb">donation</span><span class="o">?</span><span class="nb">dollar_amount</span><span class="o">=</span><span class="s">&#39;100_and_up&#39;</span><span class="p">)</span> <span class="o">-</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="8%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="2">city</th>
+<th class="head" rowspan="2">count(donation?dollar_amount=&#8216;100_and_up&#8217;)</th>
+</tr>
+<tr class="row-even"><th class="head">city</th>
+<th class="head">state</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type">Seattle</td>
+<td class="htsql-text-type">WA</td>
+<td class="htsql-integer-type">10298</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">New York</td>
+<td class="htsql-text-type">NJ</td>
+<td class="htsql-integer-type">3127</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Oklahoma City</td>
+<td class="htsql-text-type">OK</td>
+<td class="htsql-integer-type">3012</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Chicago</td>
+<td class="htsql-text-type">IL</td>
+<td class="htsql-integer-type">2023</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">San Francisco</td>
+<td class="htsql-text-type">CA</td>
+<td class="htsql-integer-type">1849</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This query produce city and state of each donor ordered by the
+number of donations of 100 dollars and up.</p>
+<p><em>The Gates Foundation</em> seems to be the single largest donor with 10,298
+donations of $100 and up.</p>
+</div>
+</div>
+</div>
+<div class="section" id="snort-intrusion-detection">
+<h2><a class="toc-backref" href="#id4">Snort Intrusion Detection</a><a class="headerlink" href="#snort-intrusion-detection" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://www.snort.org/">Snort</a> is a free, lightweight intrusion detection system developed by
+Sourcefire.  This demo shows how easy it is to read and visualize
+network logs stored in the Snort database.</p>
+<div class="section" id="snort-daily-overview">
+<h3>Snort: Daily Overview<a class="headerlink" href="#snort-daily-overview" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="snort/overview.html"><em>Daily Overview</em></a> dashboard provides a graphical and
+tabular summary of today&#8217;s activity.</p>
+<a class="reference external image-reference" href="snort/overview.html"><img alt="../_images/overview.png" class="align-center" src="../_images/overview.png" style="width: 80%;" /></a>
+</div>
+<div class="section" id="snort-event-detail">
+<h3>Snort: Event Detail<a class="headerlink" href="#snort-event-detail" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="snort/events.html"><em>Event Detail</em></a> dashboard lists the last 10 events,
+where clicking an event shows detail such as protocol header information
+and data payload.</p>
+<a class="reference external image-reference" href="snort/events.html"><img alt="../_images/events.png" class="align-center" src="../_images/events.png" style="width: 80%;" /></a>
+</div>
+<div class="section" id="snort-queries">
+<h3>Snort Queries<a class="headerlink" href="#snort-queries" title="Permalink to this headline">¶</a></h3>
+<p>The HTSQL interface for snort data source is at <a class="reference external" href="http://snort.htsql.org/">http://snort.htsql.org/</a>.</p>
+<div class="section" id="last-10-source-ips">
+<h4>Last 10 source IPs<a class="headerlink" href="#last-10-source-ips" title="Permalink to this headline">¶</a></h4>
+<p>This query displays source IP addresses from the last 10 events.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://snort.htsql.org/iphdr{inet(ip_src)}.sort(event.timestamp-).limit(10)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://snort.htsql.org/iphdr{inet(ip_src)}.sort(event.timestamp-).limit(10)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">iphdr</span><span class="p">{</span><span class="nf">inet</span><span class="p">(</span><span class="nb">ip_src</span><span class="p">)}.</span><span class="nf">sort</span><span class="p">(</span><span class="nb">event</span><span class="p">.</span><span class="nb">timestamp</span><span class="o">-</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">inet(ip_src)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-inet-type">199.231.208.98</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">205.251.242.165</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type">69.56.174.114</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">96.126.116.126</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type">96.126.116.126</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">78.110.52.64</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type">192.168.100.3</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">192.168.100.3</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type">192.168.100.3</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">78.110.52.64</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="unique-destinations-for-a-given-source">
+<h4>Unique destinations for a given source<a class="headerlink" href="#unique-destinations-for-a-given-source" title="Permalink to this headline">¶</a></h4>
+<p>This query displays all distinct destinations IP addresses and TCP ports
+from source IP <tt class="xref py py-obj docutils literal"><span class="pre">216.243.150.122</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://snort.htsql.org/distinct(event{inet(iphdr.ip_src),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20inet(iphdr.ip_dst),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20tcphdr.tcp_dport}%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20?inet(iphdr.ip_src)='216.243.150.122')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://snort.htsql.org/distinct(event{inet(iphdr.ip_src),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20inet(iphdr.ip_dst),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20tcphdr.tcp_dport}%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20?inet(iphdr.ip_src)='216.243.150.122')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">distinct</span><span class="p">(</span><span class="nb">event</span><span class="p">{</span><span class="nf">inet</span><span class="p">(</span><span class="nb">iphdr</span><span class="p">.</span><span class="nb">ip_src</span><span class="p">),</span>
+                <span class="nf">inet</span><span class="p">(</span><span class="nb">iphdr</span><span class="p">.</span><span class="nb">ip_dst</span><span class="p">),</span>
+                <span class="nb">tcphdr</span><span class="p">.</span><span class="nb">tcp_dport</span><span class="p">}</span>
+               <span class="o">?</span><span class="nf">inet</span><span class="p">(</span><span class="nb">iphdr</span><span class="p">.</span><span class="nb">ip_src</span><span class="p">)</span><span class="o">=</span><span class="s">&#39;216.243.150.122&#39;</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="40%" />
+<col width="40%" />
+<col width="20%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">inet(iphdr.ip_src)</th>
+<th class="head">inet(iphdr.ip_dst)</th>
+<th class="head">tcp_dport</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-inet-type">216.243.150.122</td>
+<td class="htsql-inet-type">192.168.0.117</td>
+<td class="htsql-integer-type">21</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">216.243.150.122</td>
+<td class="htsql-inet-type">192.168.0.117</td>
+<td class="htsql-integer-type">22</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type">216.243.150.122</td>
+<td class="htsql-inet-type">192.168.0.117</td>
+<td class="htsql-integer-type">23</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">216.243.150.122</td>
+<td class="htsql-inet-type">192.168.0.117</td>
+<td class="htsql-integer-type">25</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type">216.243.150.122</td>
+<td class="htsql-inet-type">192.168.0.117</td>
+<td class="htsql-integer-type">80</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type htsql-cut"></td>
+<td class="htsql-inet-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="range-of-ip-addressees">
+<h4>Range of IP addressees<a class="headerlink" href="#range-of-ip-addressees" title="Permalink to this headline">¶</a></h4>
+<p>This example shows all pairs of source and destination IPs
+where the source IP belongs to the block <tt class="xref py py-obj docutils literal"><span class="pre">10.90.90.0/24</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://snort.htsql.org/distinct(iphdr{inet(ip_src),%20inet(ip_dst)}%0A%20%20%20%20%20?inet(ip_src)&gt;='10.90.90.0'&amp;inet(ip_src)&lt;='10.90.90.255')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://snort.htsql.org/distinct(iphdr{inet(ip_src),%20inet(ip_dst)}%0A%20%20%20%20%20?inet(ip_src)&gt;='10.90.90.0'&amp;inet(ip_src)&lt;='10.90.90.255')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">distinct</span><span class="p">(</span><span class="nb">iphdr</span><span class="p">{</span><span class="nf">inet</span><span class="p">(</span><span class="nb">ip_src</span><span class="p">),</span> <span class="nf">inet</span><span class="p">(</span><span class="nb">ip_dst</span><span class="p">)}</span>
+     <span class="o">?</span><span class="nf">inet</span><span class="p">(</span><span class="nb">ip_src</span><span class="p">)</span><span class="o">&gt;=</span><span class="s">&#39;10.90.90.0&#39;</span><span class="o">&amp;</span><span class="nf">inet</span><span class="p">(</span><span class="nb">ip_src</span><span class="p">)</span><span class="o">&lt;=</span><span class="s">&#39;10.90.90.255&#39;</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="48%" />
+<col width="52%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">inet(ip_src)</th>
+<th class="head">inet(ip_dst)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-inet-type">10.90.90.75</td>
+<td class="htsql-inet-type">192.168.0.117</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">10.90.90.91</td>
+<td class="htsql-inet-type">192.168.0.117</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="last-500-events-for-a-specified-host-csv">
+<h4>Last 500 events for a specified host (CSV)<a class="headerlink" href="#last-500-events-for-a-specified-host-csv" title="Permalink to this headline">¶</a></h4>
+<p>This query shows the most recent 500 events for host <tt class="xref py py-obj docutils literal"><span class="pre">216.243.150.122</span></tt>.
+The output is in CSV format and contains the timestamp, destination IP
+address, TCP destination port, UDP destination port, ICMP type,
+signature name and signature class name.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://snort.htsql.org/event{timestamp-,%0A%20%20%20%20%20%20%20inet(iphdr.ip_dst),%0A%20%20%20%20%20%20%20tcphdr.tcp_dport,%0A%20%20%20%20%20%20%20udphdr.udp_dport,%0A%20%20%20%20%20%20%20icmphdr.icmp_type,%0A%20%20%20%20%20%20%20signature.sig_name,%0A%20%20%20%20%20%20%20signature.sig_class.sig_class_name}%0A%20%20%20%20%20%20.filter(inet(iphdr.ip_src)='216.243.150.122')%0A%20%20%20%20%20%20.limit(500)/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://snort.htsql.org/event{timestamp-,%0A%20%20%20%20%20%20%20inet(iphdr.ip_dst),%0A%20%20%20%20%20%20%20tcphdr.tcp_dport,%0A%20%20%20%20%20%20%20udphdr.udp_dport,%0A%20%20%20%20%20%20%20icmphdr.icmp_type,%0A%20%20%20%20%20%20%20signature.sig_name,%0A%20%20%20%20%20%20%20signature.sig_class.sig_class_name}%0A%20%20%20%20%20%20.filter(inet(iphdr.ip_src)='216.243.150.122')%0A%20%20%20%20%20%20.limit(500)/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">event</span><span class="p">{</span><span class="nb">timestamp</span><span class="o">-</span><span class="p">,</span>
+       <span class="nf">inet</span><span class="p">(</span><span class="nb">iphdr</span><span class="p">.</span><span class="nb">ip_dst</span><span class="p">),</span>
+       <span class="nb">tcphdr</span><span class="p">.</span><span class="nb">tcp_dport</span><span class="p">,</span>
+       <span class="nb">udphdr</span><span class="p">.</span><span class="nb">udp_dport</span><span class="p">,</span>
+       <span class="nb">icmphdr</span><span class="p">.</span><span class="nb">icmp_type</span><span class="p">,</span>
+       <span class="nb">signature</span><span class="p">.</span><span class="nb">sig_name</span><span class="p">,</span>
+       <span class="nb">signature</span><span class="p">.</span><span class="nb">sig_class</span><span class="p">.</span><span class="nb">sig_class_name</span><span class="p">}</span>
+      <span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nf">inet</span><span class="p">(</span><span class="nb">iphdr</span><span class="p">.</span><span class="nb">ip_src</span><span class="p">)</span><span class="o">=</span><span class="s">&#39;216.243.150.122&#39;</span><span class="p">)</span>
+      <span class="p">.</span><span class="nf">limit</span><span class="p">(</span><span class="m">500</span><span class="p">)</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>timestamp,inet(iphdr.ip_dst),tcp_dport,udp_dport,icmp_type,sig_name,sig_class_name
+2011-05-13 18:15:34.183000+00:00,192.168.0.117,80,,,(http_inspect) OVERSIZE REQUEST-URI DIRECTORY,bad-unknown
+2011-05-13 18:15:33.143000+00:00,192.168.0.117,80,,,(http_inspect) OVERSIZE REQUEST-URI DIRECTORY,bad-unknown
+2011-05-13 18:15:16.836000+00:00,192.168.0.117,21,,,(ftp_telnet) Invalid FTP Command,bad-unknown
+2011-05-13 18:15:16.835000+00:00,192.168.0.117,21,,,(ftp_telnet) Invalid FTP Command,bad-unknown
+2011-05-13 18:15:16.834000+00:00,192.168.0.117,21,,,FTP USER overflow attempt,attempted-admin
+2011-05-13 18:15:16.834000+00:00,192.168.0.117,21,,,(ftp_telnet) FTP command parameters were too long,attempted-admin
+2011-05-13 18:15:16.774000+00:00,192.168.0.117,21,,,POLICY FTP anonymous login attempt,misc-activity
+2011-05-13 18:15:16.715000+00:00,192.168.0.117,21,,,POLICY FTP anonymous login attempt,misc-activity
+2011-05-13 18:15:15.659000+00:00,192.168.0.117,25,,,SMTP HELO overflow attempt,attempted-admin
+…
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="number-of-ip-addresses-per-signature">
+<h4>Number of IP addresses per signature<a class="headerlink" href="#number-of-ip-addresses-per-signature" title="Permalink to this headline">¶</a></h4>
+<p>This query displays the number of unique IP addresses for each detected
+signature.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://snort.htsql.org/signature{sig_sid,%20sig_name,%0A%20%20%20%20%20%20%20%20%20%20%20count(distinct(event{iphdr.ip_src}))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://snort.htsql.org/signature{sig_sid,%20sig_name,%0A%20%20%20%20%20%20%20%20%20%20%20count(distinct(event{iphdr.ip_src}))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">signature</span><span class="p">{</span><span class="nb">sig_sid</span><span class="p">,</span> <span class="nb">sig_name</span><span class="p">,</span>
+           <span class="nf">count</span><span class="p">(</span><span class="nf">distinct</span><span class="p">(</span><span class="nb">event</span><span class="p">{</span><span class="nb">iphdr</span><span class="p">.</span><span class="nb">ip_src</span><span class="p">}))}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="64%" />
+<col width="31%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">sig_sid</th>
+<th class="head">sig_name</th>
+<th class="head">count(distinct(event{iphdr.ip_src}))</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">TCP Timestamp is outside of PAWS window</td>
+<td class="htsql-integer-type">14</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">2</td>
+<td class="htsql-text-type">Data on SYN packet</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-even"><td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">(spp_ssh) Protocol mismatch</td>
+<td class="htsql-integer-type">129</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">15</td>
+<td class="htsql-text-type">Reset outside window</td>
+<td class="htsql-integer-type">321</td>
+</tr>
+<tr class="row-even"><td class="htsql-integer-type">3</td>
+<td class="htsql-text-type">(ftp_telnet) Telnet Subnegotiation Begin Command without Subnegotiation End</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">2</td>
+<td class="htsql-text-type">(ftp_telnet) Invalid FTP Command</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-even"><td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">(smtp) Attempted specific command buffer overflow: HELO, 1460 chars</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">1</td>
+<td class="htsql-text-type">(ftp_telnet) Consecutive Telnet AYT commands beyond threshold</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-even"><td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">(smtp) Attempted specific command buffer overflow: VRFY, 1460 chars</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">1</td>
+<td class="htsql-text-type">(smtp) Attempted command buffer overflow: more than 512 chars</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-even"><td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="unique-ip-addresses-and-signatures">
+<h4>Unique IP addresses and signatures<a class="headerlink" href="#unique-ip-addresses-and-signatures" title="Permalink to this headline">¶</a></h4>
+<p>This query displays all unique IP addresses and detected signature names
+with the number of times the IP has been detected with the signature.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://snort.htsql.org/distinct(event{inet(iphdr.ip_src),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20signature.sig_name}){*,%20count(^)-}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://snort.htsql.org/distinct(event{inet(iphdr.ip_src),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20signature.sig_name}){*,%20count(^)-}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">distinct</span><span class="p">(</span><span class="nb">event</span><span class="p">{</span><span class="nf">inet</span><span class="p">(</span><span class="nb">iphdr</span><span class="p">.</span><span class="nb">ip_src</span><span class="p">),</span>
+                <span class="nb">signature</span><span class="p">.</span><span class="nb">sig_name</span><span class="p">}){</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">)</span><span class="o">-</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="51%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">inet(iphdr.ip_src)</th>
+<th class="head">sig_name</th>
+<th class="head">count(^)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-inet-type">119.188.7.192</td>
+<td class="htsql-text-type">(spp_ssh) Protocol mismatch</td>
+<td class="htsql-integer-type">52730</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">96.31.99.167</td>
+<td class="htsql-text-type">(spp_ssh) Protocol mismatch</td>
+<td class="htsql-integer-type">46674</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type">204.228.226.17</td>
+<td class="htsql-text-type">(spp_ssh) Protocol mismatch</td>
+<td class="htsql-integer-type">41536</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">204.228.226.16</td>
+<td class="htsql-text-type">(spp_ssh) Protocol mismatch</td>
+<td class="htsql-integer-type">29226</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type">58.64.167.156</td>
+<td class="htsql-text-type">(spp_ssh) Protocol mismatch</td>
+<td class="htsql-integer-type">26314</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">207.228.254.35</td>
+<td class="htsql-text-type">Reset outside window</td>
+<td class="htsql-integer-type">20882</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type">207.249.136.19</td>
+<td class="htsql-text-type">(spp_ssh) Protocol mismatch</td>
+<td class="htsql-integer-type">19548</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">218.15.221.84</td>
+<td class="htsql-text-type">(spp_ssh) Protocol mismatch</td>
+<td class="htsql-integer-type">17676</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type">207.248.63.162</td>
+<td class="htsql-text-type">(spp_ssh) Protocol mismatch</td>
+<td class="htsql-integer-type">17060</td>
+</tr>
+<tr class="row-odd"><td class="htsql-inet-type">46.17.0.124</td>
+<td class="htsql-text-type">(spp_ssh) Protocol mismatch</td>
+<td class="htsql-integer-type">13692</td>
+</tr>
+<tr class="row-even"><td class="htsql-inet-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="high-severity-events-for-today">
+<h4>High severity events for today<a class="headerlink" href="#high-severity-events-for-today" title="Permalink to this headline">¶</a></h4>
+<p>This query displays all source and destination IPs that caused high
+severity events today along with signature name and timestamp.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://snort.htsql.org/event{inet(iphdr.ip_src),%0A%20%20%20%20%20%20%20inet(iphdr.ip_dst),%0A%20%20%20%20%20%20%20signature.sig_name,%0A%20%20%20%20%20%20%20time(timestamp)}%0A%20%20%20%20%20%20?date(timestamp)=today()&amp;signature.sig_priority=1" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://snort.htsql.org/event{inet(iphdr.ip_src),%0A%20%20%20%20%20%20%20inet(iphdr.ip_dst),%0A%20%20%20%20%20%20%20signature.sig_name,%0A%20%20%20%20%20%20%20time(timestamp)}%0A%20%20%20%20%20%20?date(timestamp)=today()&amp;signature.sig_priority=1" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">event</span><span class="p">{</span><span class="nf">inet</span><span class="p">(</span><span class="nb">iphdr</span><span class="p">.</span><span class="nb">ip_src</span><span class="p">),</span>
+       <span class="nf">inet</span><span class="p">(</span><span class="nb">iphdr</span><span class="p">.</span><span class="nb">ip_dst</span><span class="p">),</span>
+       <span class="nb">signature</span><span class="p">.</span><span class="nb">sig_name</span><span class="p">,</span>
+       <span class="nf">time</span><span class="p">(</span><span class="nb">timestamp</span><span class="p">)}</span>
+      <span class="o">?</span><span class="nf">date</span><span class="p">(</span><span class="nb">timestamp</span><span class="p">)</span><span class="o">=</span><span class="nf">today</span><span class="p">()</span><span class="o">&amp;</span><span class="nb">signature</span><span class="p">.</span><span class="nb">sig_priority</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">inet(iphdr.ip_src)</th>
+<th class="head">inet(iphdr.ip_dst)</th>
+<th class="head">sig_name</th>
+<th class="head">time(timestamp)</th>
+</tr>
+</thead>
+<tbody valign="top">
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="htsql-sample-database">
+<h2><a class="toc-backref" href="#id5">HTSQL Sample Database</a><a class="headerlink" href="#htsql-sample-database" title="Permalink to this headline">¶</a></h2>
+<p>This gallery is for examples and dashboards based on our sample database
+which is a dummy university course catalog &amp; enrollment system.</p>
+<div class="section" id="demo-course-dashboard">
+<h3>Demo : Course Dashboard<a class="headerlink" href="#demo-course-dashboard" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="demo/courses.html"><em>Course Catalog</em></a> dashboard lets you drill down to
+individual courses by first selecting the school, then clicking on the
+department name.  The dashboard updates in real time and always features
+the most current data because HTSQL pulls it directly from the database.</p>
+<a class="reference external image-reference" href="demo/courses.html"><img alt="../_images/courses.png" class="align-center" src="../_images/courses.png" style="width: 80%;" /></a>
+</div>
+<div class="section" id="university-schema">
+<h3>University Schema<a class="headerlink" href="#university-schema" title="Permalink to this headline">¶</a></h3>
+<img class="diagram align-center" height="114" src="../_images/demo-schema.png" width="545" />
+</div>
+<div class="section" id="university-queries">
+<h3>University Queries<a class="headerlink" href="#university-queries" title="Permalink to this headline">¶</a></h3>
+<p>Welcome to HTSQL&#8217;s test database, where we put HTSQL through its paces
+with a complex database structure.  The courses are fake, but the
+problems solved are real, as these queries show how easy it is to
+aggregate and analyze course data from multiple tables.  For a complete
+tour of this database and HTSQL, visit the <a class="reference internal" href="../doc/tutorial.html"><em>HTSQL Tutorial</em></a>.</p>
+<div class="section" id="average-number-of-courses-per-department-in-each-school">
+<h4>Average number of courses per department in each school<a class="headerlink" href="#average-number-of-courses-per-department-in-each-school" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20avg(department.count(course))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20avg(department.count(course))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">department</span><span class="p">.</span><span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="p">))}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">avg(department.count(course))</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-decimal-type">19.0</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Business</td>
+<td class="htsql-decimal-type">14.6666666667</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">College of Education</td>
+<td class="htsql-decimal-type">17.5</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-decimal-type">17.75</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-decimal-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="courses-in-the-business-school-in-csv-format">
+<h4>Courses in the Business School in CSV format<a class="headerlink" href="#courses-in-the-business-school-in-csv-format" title="Permalink to this headline">¶</a></h4>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(school?code='bus').department.course{no,credits,title}/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(school?code='bus').department.course{no,credits,title}/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">school</span><span class="o">?</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;bus&#39;</span><span class="p">).</span><span class="nb">department</span><span class="p">.</span><span class="nb">course</span><span class="p">{</span><span class="nb">no</span><span class="p">,</span><span class="nb">credits</span><span class="p">,</span><span class="nb">title</span><span class="p">}</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>no,credits,title
+100,2,Practical Bookkeeping
+200,3,Introduction to Accounting
+234,3,Accounting Information Systems
+315,5,Financial Accounting
+322,3,Managerial Accounting
+420,3,Individual Taxation
+426,3,Corporate Taxation
+431,3,Nonprofit Organization Accounting
+506,3,Corporate Financial Law
+511,5,Audit
+527,3,Advanced Accounting
+620,6,Accounting Internship
+101,6,Introduction to Microeconomics
+102,6,Introduction to Macroeconomics
+112,3,Quantitative Method in Microeconomics
+205,3,Introduction to Global Economy
+213,3,American Economic History
+246,3,Microeconomic Theory
+278,4,Statistics in Economics
+321,3,Banking System
+339,3,Labor Economics
+352,3,History of Economic Thought
+370,3,Game Theory
+412,3,International Financial Markets
+430,4,Econometrics
+452,3,Government Finance
+489,3,Special Topics in Economics
+256,3,Principles of Marketing
+304,3,Managerial Economics I
+305,3,Managerial Economics II
+318,3,Marketing Research
+331,4,Marketing Planning
+355,5,Human Resource Management
+401,3,Competitive Strategy
+404,3,Corporate Financial Management
+430,5,Promotion
+434,3,Advertising
+520,4,Project Management
+531,3,International Business
+601,3,Case Studies in Corporate Finance
+650,3,International Marketing
+756,3,Capital Risk Management
+808,3,Principles of Portfolio Management
+818,3,Financial Statement Analysis
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

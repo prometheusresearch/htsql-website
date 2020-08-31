@@ -1,0 +1,194 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Discussing Manipulation &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="discussing-manipulation">
+<h1>Discussing Manipulation<a class="headerlink" href="#discussing-manipulation" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2012-07-17</em></p>
+<p>Thus far HTSQL has been limited to querying data.  In the
+next few months we&#8217;d like to expand the scope to permit both
+record and set-based data manipulations.  This is a
+discussion of our ideas and how we might accomplish it.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>There are three reasons for adding mutation operations to
+HTSQL.  The first one is to enable two-tier applications
+using HTSQL as a middleware layer.  This requires a set of
+single record, CRUD, operations.  The second reason is to
+enable database level transformations, including set based
+updates, select-from/insert-into and deletes.  The third is
+to provide some way to import data into the database system.</p>
+<p>The ideal solution is one that is not just comprehensive, but
+also consistent with the rest of HTSQL.  The operators we
+choose, while they need to be implementable using modern
+relational databases, don&#8217;t need to have SQL equivalents.
+Conversely, while it might be fun for a URL inspired syntax
+to be &#8220;RESTful&#8221;, it isn&#8217;t strictly speaking a requirement.
+HTSQL is its own language with its own inherent logic,
+what&#8217;s important is that the solution solve real problems in
+a manner consistent with its own internal design.</p>
+</div>
+<div class="section" id="historical">
+<h2>Historical<a class="headerlink" href="#historical" title="Permalink to this headline">¶</a></h2>
+<p>Earlier versions of HTSQL had <tt class="docutils literal"><span class="pre">insert()</span></tt>, <tt class="docutils literal"><span class="pre">update()</span></tt>, and
+<tt class="docutils literal"><span class="pre">delete()</span></tt> commands which supplemented the default
+<tt class="docutils literal"><span class="pre">select()</span></tt> command.  These commands provided an alternative
+translation of the query syntax into SQL.  Insert was limited
+to a single record.  Update used <tt class="docutils literal"><span class="pre">:=</span></tt> operator for
+assignment, unwisely mixing filter criteria and assignments.</p>
+<p>We also had a <tt class="docutils literal"><span class="pre">merge()</span></tt> command, which was very popular
+since it was idempotent.  This was a record-based command
+that first did an update, and if that returned zero records,
+it would do an insert instead.</p>
+<p>One of the biggest usability problems with our update and
+delete operations was that they required imagination as to
+what would happen when you ran the query.  Would your query
+delete one record, or every row from the table?  As a safety,
+we added an <tt class="docutils literal"><span class="pre">expect=n</span></tt> command argument which would
+rollback the update if the number of affected records
+differed from expectation.  Since the default value was
+<tt class="docutils literal"><span class="pre">1</span></tt>, this approach saved countless accidental deletes.
+However, it felt more of a bandaid than a solution.</p>
+<p>A secondary problem is that we ended up having to introduce a
+redundant <tt class="docutils literal"><span class="pre">import()</span></tt> command that was essentially a variant
+of insert/update/merge that took an external data set and
+applied it row-by-row.  The primary mechanism for altering
+data sets was to download the data, change what would be
+required, and then merge the results using import.  The
+<tt class="docutils literal"><span class="pre">import()</span></tt> command did also have a way to signal deleted
+records, but it was hardly used.</p>
+<p>One of the features that these commands supported was the
+convenient manipulation of &#8220;facet&#8221; tables.  A facet table is
+one where there is a zero-or-one relationship to the current
+driving table.  The assignment operator supported assignments
+to facet tables, confusing the interpretation of <tt class="docutils literal"><span class="pre">update()</span></tt>
+since an assignment to a facet that didn&#8217;t exist was
+implemented using an <tt class="docutils literal"><span class="pre">INSERT</span></tt>.  It would be very nice to
+keep this convenience, although with better clarity as to
+what each command does.</p>
+<p>We also had a <tt class="docutils literal"><span class="pre">do()</span></tt> command which wrapped N sub commands
+into a single transaction.  Using this mechanism a client
+application could insert/update an entire hierarchy.</p>
+<p>HTSQL 2.X must have some way to address the business needs
+that drove these historical features, even if the new
+solution doesn&#8217;t take the same form.</p>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2012/discuss-manipulation";
+var disqus_title = "Discussing Manipulation";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

@@ -1,0 +1,148 @@
+*********************
+  HTSQL 2.2 Roadmap
+*********************
+
+.. blogentry::
+   :date: 2011-08-31
+   :author: cce
+
+The theme for HTSQL 2.2 is "Form Applications".
+Our focus for this release will be on functionality
+gaps that hinder use of HTSQL by developers to
+create Javascript based "CRUD" applications. 
+
+.. blogcut::
+
+Overview
+--------
+
+This release will include plugin configuration,
+schema introspection, custom commands, CRUD
+operations, and general support for Javascript
+applications such as HTRAF Forms.
+
+This roadmap has 5 milestones.
+
+* Plugin Configuration & Introspection
+* Commands & Query Structure Analysis
+* Identifiers & Record Locators
+* Record-Based CRUD Operations
+* Transactions & Data Handling
+* Catalog Extensions & Capstone
+
+A secondary focus for this release, as time
+permits, will be adding usability improvements such
+as better error handling and adding new data types
+or functions.
+
+Milestone A : Plugin Configuration & Introspection
+--------------------------------------------------
+
+The first milestone for HTSQL 2.2 will support
+configuration for plugins and a mechanism to obtain
+metadata from a Javascript application.  This work
+is expected to enable the construction of a visual
+query builder and other complementary tools.  The
+milestone includes several deliverables:
+
+1. mechanism for plugins and plugin arguments so 
+   that HTSQL tweeks can be customized without 
+   having to alter source code for each client
+2. configuration file mechanism (YAML) so plugin
+   parameters can be specified without programming
+3. simplified metadata introspection so Javascript
+   applications can list tables, links and columns
+4. documentation for 1-3
+
+One immediate use of this deliverable will be a
+sample plugin to enable SQLAlchemy users to use
+their model configuration to specify primary and
+foreign key constraints.
+
+Milestone B : Commands & Query Structure Analysis
+-------------------------------------------------
+
+This milestone create a way to define custom 
+commands and introspect the structure of an HTSQL 
+query.  It is expected that this deliverable would 
+enable client side Javascript to dynamically build 
+a form based on a query.
+
+1. create a mechanism to define and invoke commands
+2. create a way to decorate fields in a selector
+3. create a command to introspect a query 
+
+This milestone is needed to build forms dynamically.
+
+Milestone C : Identifiers & Record Locators
+-------------------------------------------
+
+This milestone introduces a mechanism to identify
+individual records via primary key values without
+requiring the key column names be listed.  This
+simplifies user interface construction and enables
+record-based commands to be added.  This includes:
+
+1. adding ``id()`` function and associated data
+   type that returns a unique identifier for a 
+   given record in the database
+2. adding the locator syntax to accept a single
+   record identifier and uses it to return exactly 
+   one row during selection
+
+This milestone is a requirement for basic CRUD
+operations and enables single-record access.
+
+Milestone D : Record-Based CRUD Operations
+------------------------------------------
+
+This milestone will be an optional plugin with a
+full set of record-based operations for INSERT,
+UPDATE and DELETE.  These additional commands will
+permit CRUD applications to be written on top of
+HTSQL that do more than query the database. 
+
+1. single record ``insert``, ``update``, and
+   ``delete`` commands that use record locators
+
+This first pass of CRUD operations will only be
+available to databases that support ``RETURNING``.
+
+Milestone E : Transactions & Data Handling
+------------------------------------------
+
+This milestone will address how to pass nested data
+sets to the server and introduce ways to
+communicate between commands.  
+
+1. support for JSON literal values to pass nested
+   data structures from client to server
+2. a transaction mechanism ``do()`` to group
+   multiple record operations
+3. a way to pass data from one command to another
+   using variables and control structures
+4. a ``foreach`` command to loop over record 
+   sequences and nested data sets
+
+This milestone will enable sophisticated 
+backend processing and master/detail forms.
+
+Milestone F : Catalog Extensions & Capstone
+-------------------------------------------
+
+This is the final milestone of the release and will
+fill gaps identified by users building applications
+using HTSQL.  In particular, it may include support
+for custom catalog extensions so that form builders
+can augment meta-data with configured screen
+labels.  It will probably also include query
+manipulation commands, such as stripping selectors
+or replacing a filter.
+
+1. support for custom catalog extensions
+2. query manipulation operations
+3. updating documentation, website & materials
+
+This deliverable will likely be modified heavily
+based on what's needed to deliver HTRAF Forms.
+

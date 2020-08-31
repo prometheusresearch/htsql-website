@@ -1,0 +1,174 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DonorsChoose : Donations by Subject &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Gallery" href="../index.html" />
+    <link rel="next" title="DonorsChoose : Top Ten Teachers" href="teacher.html" />
+    <link rel="prev" title="DonorsChoose : Donation by State" href="state.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="donorschoose-donations-by-subject">
+<h1>DonorsChoose : Donations by Subject<a class="headerlink" href="#donorschoose-donations-by-subject" title="Permalink to this headline">¶</a></h1>
+<div class="demo-block compound">
+<div class="demo-area compound-first"><script type="text/javascript"
+    src="/htraf/htraf.js"
+    data-htsql-version="2"
+    data-htsql-prefix="/@donorschoose">
+</script>
+
+<h3>Select Focus Area</h3>
+<select id="focus"
+    data-htsql="/project^primary_focus_area">
+</select>
+<div style="width: 500px; height: 350px;"
+    data-htsql="/((project?primary_focus_area=$focus)
+                  ^primary_focus_subject)
+                 {primary_focus_subject,
+                  sum(^.total_donations)}"
+    data-ref="focus"
+    data-type="pie"
+    data-widget="chart"
+    data-title="Percent of Donations by Subject"></div>
+
+<h3>Focus Subject</h3>
+<table id="subject"
+    data-htsql="/((project?primary_focus_area=$focus)
+                  ^primary_focus_subject)
+                 {primary_focus_subject :as 'Subject',
+                  sum(^.total_donations) - :as 'Total Donations',
+                  sum(^.num_donors) :as 'Number of Donors'}"
+    data-ref="focus">
+</table></div><tt class="demo-switch compound-middle docutils literal"><span class="pre">[-</span> <span class="pre">view</span> <span class="pre">source]</span></tt><div class="demo-source compound-last highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span>
+    <span class="na">src=</span><span class="s">&quot;/htraf/htraf.js&quot;</span>
+    <span class="na">data-htsql-version=</span><span class="s">&quot;2&quot;</span>
+    <span class="na">data-htsql-prefix=</span><span class="s">&quot;/@donorschoose&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;h3&gt;</span>Select Focus Area<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&quot;focus&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/project^primary_focus_area&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/select&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;width: 500px; height: 350px;&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/((project?primary_focus_area=$focus)</span>
+<span class="s">                  ^primary_focus_subject)</span>
+<span class="s">                 {primary_focus_subject,</span>
+<span class="s">                  sum(^.total_donations)}&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;focus&quot;</span>
+    <span class="na">data-type=</span><span class="s">&quot;pie&quot;</span>
+    <span class="na">data-widget=</span><span class="s">&quot;chart&quot;</span>
+    <span class="na">data-title=</span><span class="s">&quot;Percent of Donations by Subject&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+
+<span class="nt">&lt;h3&gt;</span>Focus Subject<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;subject&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/((project?primary_focus_area=$focus)</span>
+<span class="s">                  ^primary_focus_subject)</span>
+<span class="s">                 {primary_focus_subject :as &#39;Subject&#39;,</span>
+<span class="s">                  sum(^.total_donations) - :as &#39;Total Donations&#39;,</span>
+<span class="s">                  sum(^.num_donors) :as &#39;Number of Donors&#39;}&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;focus&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

@@ -1,0 +1,14 @@
+*******************************
+  HTSQL Roadmap for June, 2011
+*******************************
+
+.. blogentry::
+   :date: 2011-06-08
+   :author: cce
+
+This month we have been working on documentation in preparation
+for a 2.1 release.  In particular, we've been focusing on the
+reference and incorporating HTRAF documentation into the website.
+Time permitting we will work on various query optimizations,
+especially for projections.
+

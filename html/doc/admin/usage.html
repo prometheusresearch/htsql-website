@@ -1,0 +1,1150 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using and Configuring HTSQL &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Administration" href="index.html" />
+    <link rel="next" title="Deploying HTSQL" href="deploy.html" />
+    <link rel="prev" title="Installing HTSQL" href="install.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="using-and-configuring-htsql">
+<h1>Using and Configuring HTSQL<a class="headerlink" href="#using-and-configuring-htsql" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#usage" id="id17">Usage</a></li>
+<li><a class="reference internal" href="#extension-mechanism" id="id18">Extension Mechanism</a></li>
+<li><a class="reference internal" href="#extension-reference" id="id19">Extension Reference</a></li>
+</ul>
+</div>
+<div class="section" id="usage">
+<h2><a class="toc-backref" href="#id17">Usage</a><a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="invoking-htsql-ctl">
+<span id="htsql-ctl"></span><span id="index-0"></span><h3>Invoking <tt class="docutils literal"><span class="pre">htsql-ctl</span></tt><a class="headerlink" href="#invoking-htsql-ctl" title="Permalink to this headline">¶</a></h3>
+<p>Installing HTSQL creates a command-line application <tt class="docutils literal"><span class="pre">htsql-ctl</span></tt>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">htsql-ctl</span></tt> script is a collection of subcommands called
+<em>routines</em>.  The command-line syntax of <tt class="docutils literal"><span class="pre">htsql-ctl</span></tt> is</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl &lt;routine&gt; <span class="o">[</span>options<span class="o">]</span> <span class="o">[</span>arguments<span class="o">]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">&lt;routine&gt;</span></tt> is the routine name;</li>
+<li><tt class="docutils literal"><span class="pre">options</span></tt> are any routine options in short (<tt class="docutils literal"><span class="pre">-X</span></tt>)
+or long (<tt class="docutils literal"><span class="pre">--option-name</span></tt>) form;</li>
+<li><tt class="docutils literal"><span class="pre">arguments</span></tt> are routine arguments.</li>
+</ul>
+<p>To get a list of routines, run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl <span class="nb">help</span>
+</pre></div>
+</div>
+<p>To describe a specific routine, run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl <span class="nb">help</span> &lt;routine&gt;
+</pre></div>
+</div>
+<span class="target" id="index-1"></span></div>
+<div class="section" id="database-connection">
+<span id="dburi"></span><span id="index-2"></span><h3>Database Connection<a class="headerlink" href="#database-connection" title="Permalink to this headline">¶</a></h3>
+<p>Many routines require a connection URI parameter, which specifies how to
+connect to a database.  The connection URI has the form:</p>
+<div class="highlight-text"><div class="highlight"><pre>&lt;engine&gt;://&lt;user&gt;:&lt;pass&gt;@&lt;host&gt;:&lt;port&gt;/&lt;database&gt;
+</pre></div>
+</div>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">&lt;engine&gt;</span></tt> is the type of the database server; <tt class="docutils literal"><span class="pre">sqlite</span></tt> for
+SQLite, <tt class="docutils literal"><span class="pre">pgsql</span></tt> for PostgreSQL, <tt class="docutils literal"><span class="pre">mysql</span></tt> for MySQL, <tt class="docutils literal"><span class="pre">mssql</span></tt> for
+MS SQL Server, <tt class="docutils literal"><span class="pre">oracle</span></tt> for Oracle.</li>
+<li><tt class="docutils literal"><span class="pre">&lt;user&gt;:&lt;pass&gt;</span></tt> are authentication parameters;</li>
+<li><tt class="docutils literal"><span class="pre">&lt;host&gt;:&lt;port&gt;</span></tt> is the address of the database server;</li>
+<li><tt class="docutils literal"><span class="pre">&lt;database&gt;</span></tt> is the name of the database.</li>
+</ul>
+<p>For SQLite, <tt class="docutils literal"><span class="pre">&lt;user&gt;:&lt;pass&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;host&gt;:&lt;port&gt;</span></tt> are omitted, and
+<tt class="docutils literal"><span class="pre">&lt;database&gt;</span></tt> specifies the path to the database file.  Thus, to
+connect to SQLite database <tt class="docutils literal"><span class="pre">htsql_demo.db</span></tt> located in the
+current directory, use the URI:</p>
+<div class="highlight-text"><div class="highlight"><pre>sqlite:htsql_demo.db
+</pre></div>
+</div>
+<p>For PostgreSQL, if <tt class="docutils literal"><span class="pre">user:pass</span></tt> is omitted, the credentials of the
+current user are used; if <tt class="docutils literal"><span class="pre">host:port</span></tt> is omitted, the server is
+assumed to run on the local machine.  Thus, to connect to a database
+<tt class="docutils literal"><span class="pre">htsql_demo</span></tt> running on the same host under credentials of the
+current user, use the URI:</p>
+<div class="highlight-text"><div class="highlight"><pre>pgsql:htsql_demo
+</pre></div>
+</div>
+<p>Other database servers use similar conventions.</p>
+<p>You can use option <tt class="docutils literal"><span class="pre">-p</span></tt> to prompt for a password if you do not want
+to specify the database password in a command line.</p>
+</div>
+<div class="section" id="command-line-shell">
+<span id="index-3"></span><h3>Command-line Shell<a class="headerlink" href="#command-line-shell" title="Permalink to this headline">¶</a></h3>
+<p>To start a command-line HTSQL shell, run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl shell &lt;DBURI&gt;
+</pre></div>
+</div>
+<p>That starts an interactive HTSQL shell, where you could type and execute
+HTSQL queries against the specified database.</p>
+<p>For example, to start the shell on a PostgreSQL database <tt class="docutils literal"><span class="pre">htsql_demo</span></tt>,
+run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl shell pgsql:htsql_demo
+
+<span class="go">Interactive HTSQL Shell</span>
+<span class="go">Type &#39;help&#39; for more information, &#39;exit&#39; to quit the shell.</span>
+<span class="go">htsql_demo$</span>
+</pre></div>
+</div>
+<p>For more details on the <tt class="docutils literal"><span class="pre">shell</span></tt> routine, run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl <span class="nb">help </span>shell
+</pre></div>
+</div>
+</div>
+<div class="section" id="http-server">
+<span id="htsql-ctl-serve"></span><span id="index-4"></span><h3>HTTP Server<a class="headerlink" href="#http-server" title="Permalink to this headline">¶</a></h3>
+<p>To start a <em>demonstration</em> web server running HTSQL, run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl server &lt;DBURI&gt; <span class="o">[</span>&lt;HOST&gt; <span class="o">[</span>&lt;PORT&gt;<span class="o">]]</span>
+</pre></div>
+</div>
+<p>That starts an HTTP server on the address <tt class="docutils literal"><span class="pre">&lt;HOST&gt;:&lt;PORT&gt;</span></tt>.
+If <tt class="docutils literal"><span class="pre">&lt;HOST&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;PORT&gt;</span></tt> are omitted, the server is started on
+<tt class="docutils literal"><span class="pre">*:8080</span></tt>.</p>
+<p>For example, to start the HTSQL web server against PostgreSQL
+database <tt class="docutils literal"><span class="pre">htsql_demo</span></tt> on <tt class="docutils literal"><span class="pre">localhost:3128</span></tt>, run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl server pgsql:htsql_demo localhost 3128
+
+<span class="go">Starting an HTSQL server on localhost:3128 over htsql_demo</span>
+</pre></div>
+</div>
+<p>If database connection <a class="reference internal" href="#configuration"><em>configuration</em></a> is provided
+by <tt class="docutils literal"><span class="pre">-C</span></tt>, you could use <tt class="docutils literal"><span class="pre">-</span></tt> as a place holder for the mandatory
+database URI parameter so that you could provide a HOST and PORT.  For
+example, to run the server on <tt class="docutils literal"><span class="pre">localhost:80</span></tt> you would write:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> htsql-ctl serve - localhost 80 -C demo-config.yaml
+</pre></div>
+</div>
+<p>For more details on the <tt class="docutils literal"><span class="pre">server</span></tt> routine, run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl <span class="nb">help </span>server
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="extension-mechanism">
+<span id="index-5"></span><h2><a class="toc-backref" href="#id18">Extension Mechanism</a><a class="headerlink" href="#extension-mechanism" title="Permalink to this headline">¶</a></h2>
+<p>HTSQL has an extensive addon system that can be used to override almost
+every aspect of server operation or query construction with an adapter.
+Extensions can live in third party modules or be included in the HTSQL
+distribution as part of our supported &#8220;tweaks&#8221;.  To list supported
+extensions, you could type:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl extension
+</pre></div>
+</div>
+<p>To find out more about an extension, such as <a class="reference internal" href="#tweak-autolimit"><em>tweak.autolimit</em></a>, write:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl extension tweak.autolimit
+</pre></div>
+</div>
+<div class="section" id="using-extensions">
+<h3>Using Extensions<a class="headerlink" href="#using-extensions" title="Permalink to this headline">¶</a></h3>
+<p>An extension can be enabled using <tt class="docutils literal"><span class="pre">-E</span></tt> parameter on the <tt class="docutils literal"><span class="pre">htsql-ctl</span></tt>
+command line.  For example, to enable the <a class="reference internal" href="#tweak-meta"><em>tweak.meta</em></a> addon on the
+HTSQL demo database, you&#8217;d write:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl shell pgsql:htsql_demo -E tweak.meta
+</pre></div>
+</div>
+<p>Then, you could use the <tt class="docutils literal"><span class="pre">/meta()</span></tt> command registered by this addon:</p>
+<div class="highlight-text"><div class="highlight"><pre>Interactive HTSQL Shell
+Type &#39;help&#39; for more information, &#39;exit&#39; to quit the shell.
+htsql_demo$ /meta(/table)
+</pre></div>
+</div>
+<p>Some addons have parameters which can be added to the command line.
+For example, the <a class="reference internal" href="#tweak-autolimit"><em>tweak.autolimit</em></a> extension truncates output at
+<tt class="docutils literal"><span class="pre">limit</span></tt> number of rows.  The default is 10k, but this value
+can be changed:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl shell pgsql:htsql_demo -E tweak.autolimit:limit<span class="o">=</span>10
+</pre></div>
+</div>
+<p>If more than one parameter is possible, use &#8221;,&#8221; to separate them:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl serve pgsql:htsql_demo <span class="se">\</span>
+<span class="go">  -E &quot;tweak.shell:server-root=&#39;http://demo.htsql.org&#39;,limit=10&quot;</span>
+</pre></div>
+</div>
+<p>HTSQL plugins are found using Python&#8217;s entry point feature.  When a
+Python package is installed, it can register itself as an
+<tt class="docutils literal"><span class="pre">htsql.addon</span></tt> extension so that it could be loaded in this manner.</p>
+</div>
+<div class="section" id="configuration-files">
+<span id="configuration"></span><h3>Configuration Files<a class="headerlink" href="#configuration-files" title="Permalink to this headline">¶</a></h3>
+<p>Extension configuration can be provided with a <a class="reference external" href="http://yaml.org/">YAML</a> (or <a class="reference external" href="http://json.org/">JSON</a>) file
+using <tt class="docutils literal"><span class="pre">-C</span></tt> on the command line.  The top level of this file is a
+dictionary listing the plugins that are enabled.  The second nesting
+level are plugin parameters, if any.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># demo-config.yaml</span>
+<span class="l-Scalar-Plain">htsql</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">db</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">engine</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pgsql</span>
+    <span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">htsql_demo</span>
+    <span class="l-Scalar-Plain">username</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">htsql_demo</span>
+    <span class="l-Scalar-Plain">password</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">secret</span>
+    <span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">localhost</span>
+    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5432</span>
+<span class="l-Scalar-Plain">tweak.autolimit</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">limit</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1000</span>
+<span class="l-Scalar-Plain">tweak.shell.default</span><span class="p-Indicator">:</span>
+</pre></div>
+</div>
+<p>In this example, there are three plugins enabled, <tt class="docutils literal"><span class="pre">htsql</span></tt> (which is a
+mandatory plugin), <a class="reference internal" href="#tweak-autolimit"><em>tweak.autolimit</em></a> and <a class="reference internal" href="#tweak-shell-default"><em>tweak.shell.default</em></a>.
+The <tt class="docutils literal"><span class="pre">htsql</span></tt> plugin has one argument, <tt class="docutils literal"><span class="pre">db</span></tt> which has sub-structure
+providing connection information.  You could then use this
+configuration file using <tt class="docutils literal"><span class="pre">-C</span></tt>:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> htsql-ctl shell -C demo-config.yaml
+</pre></div>
+</div>
+<p>If both <tt class="docutils literal"><span class="pre">-E</span></tt> and <tt class="docutils literal"><span class="pre">-C</span></tt> are used, explicit command line options override
+values provided in the configuration file.  This permits a configuration
+file to be used as a default perhaps using a different database URI.</p>
+<p>A configuration parameter may be loaded from another file using
+<tt class="docutils literal"><span class="pre">!include</span></tt> tag.  In the following example, definitions of custom
+functions for <a class="reference internal" href="#tweak-override"><em>tweak.override</em></a> addon are loaded from
+<tt class="docutils literal"><span class="pre">globals.yaml</span></tt>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># demo-config.yaml</span>
+<span class="l-Scalar-Plain">htsql</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">db</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">engine</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pgsql</span>
+    <span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">htsql_demo</span>
+<span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">globals</span><span class="p-Indicator">:</span> <span class="kt">!include</span> <span class="s">&quot;globals.yaml&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># globals.yaml</span>
+<span class="l-Scalar-Plain">num_school</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(count(@school))</span>
+<span class="l-Scalar-Plain">trunc_month($d)</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(date(year($d), month($d), 1))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="extension-reference">
+<h2><a class="toc-backref" href="#id19">Extension Reference</a><a class="headerlink" href="#extension-reference" title="Permalink to this headline">¶</a></h2>
+<p>The HTSQL distribution ships with several built-in extensions which
+we describe here.</p>
+<div class="section" id="htsql">
+<h3><tt class="docutils literal"><span class="pre">htsql</span></tt><a class="headerlink" href="#htsql" title="Permalink to this headline">¶</a></h3>
+<p>The HTSQL core that provides the SQL translator and an HTTP server
+is implemented in form of an addon <tt class="docutils literal"><span class="pre">htsql</span></tt>.  This addon is always
+included.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">db</span></tt></dt>
+<dd>The connection URI.</dd>
+</dl>
+<p>The parameter <tt class="docutils literal"><span class="pre">db</span></tt> specifies how HTSQL connects to the database.  It
+could be written in a short or an expanded form.  In the short form,
+the parameter is an URI:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">htsql</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">db</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pgsql://htsql_demo:secret@localhost:5432/htsql_demo</span>
+</pre></div>
+</div>
+<p>In the expanded form, a mapping notation is used:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">htsql</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">db</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">engine</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pgsql</span>
+    <span class="l-Scalar-Plain">username</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">htsql_demo</span>
+    <span class="l-Scalar-Plain">password</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">secret</span>
+    <span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">localhost</span>
+    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5432</span>
+    <span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">htsql_demo</span>
+</pre></div>
+</div>
+<p>Every component except <tt class="docutils literal"><span class="pre">engine</span></tt> and <tt class="docutils literal"><span class="pre">database</span></tt> is optional.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">password</span></tt></dt>
+<dd>The database password.</dd>
+</dl>
+<p>The parameter <tt class="docutils literal"><span class="pre">password</span></tt> allows you to override the database password
+keeping the other connection parameters intact.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">debug</span></tt></dt>
+<dd>Enable debugging output.</dd>
+</dl>
+<p>When <tt class="docutils literal"><span class="pre">debug</span></tt> option is set, text output, as well as some error
+messages will contain a respective SQL query.</p>
+</div>
+<div class="section" id="engine">
+<span id="index-6"></span><h3><tt class="docutils literal"><span class="pre">engine.*</span></tt><a class="headerlink" href="#engine" title="Permalink to this headline">¶</a></h3>
+<p>Extensions in the <tt class="docutils literal"><span class="pre">engine</span></tt> namespace implement database backends.
+An appropriate extension is loaded automatically based on the <tt class="docutils literal"><span class="pre">engine</span></tt>
+parameter of the connection URI.</p>
+<p>HTSQL supports the following database servers:</p>
+<ul class="simple">
+<li>SQLite 3+ (<tt class="docutils literal"><span class="pre">engine.sqlite</span></tt>)</li>
+<li>PostgreSQL 8.3+ (<tt class="docutils literal"><span class="pre">engine.pgsql</span></tt>)</li>
+<li>MySQL 5.1+ (<tt class="docutils literal"><span class="pre">engine.mysql</span></tt>)</li>
+<li>Oracle 10g+ (<tt class="docutils literal"><span class="pre">engine.oracle</span></tt>)</li>
+<li>Microsoft SQL Server 2005+ (<tt class="docutils literal"><span class="pre">engine.mssql</span></tt>)</li>
+</ul>
+</div>
+<div class="section" id="tweak-autolimit">
+<span id="index-7"></span><span id="id1"></span><h3><tt class="docutils literal"><span class="pre">tweak.autolimit</span></tt><a class="headerlink" href="#tweak-autolimit" title="Permalink to this headline">¶</a></h3>
+<p>This addon truncates query output to a given number of rows
+(10,000 by default).  It could be used to prevent accidental
+denial of service caused by queries returning a large number
+of rows.</p>
+<p>The addon adds <tt class="docutils literal"><span class="pre">LIMIT</span> <span class="pre">&lt;limit&gt;</span></tt> to every generated SQL query.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">limit</span></tt></dt>
+<dd>Truncation threshold (default: 10,000).</dd>
+</dl>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.autolimit</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">limit</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1000</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-cors">
+<span id="index-8"></span><span id="id2"></span><h3><tt class="docutils literal"><span class="pre">tweak.cors</span></tt><a class="headerlink" href="#tweak-cors" title="Permalink to this headline">¶</a></h3>
+<p>This addon adds <a class="reference external" href="http://www.w3.org/TR/cors/">CORS</a> support to permit AJAX requests to the
+HTSQL server by web pages hosted on a different domain.</p>
+<p>To prevent data leaks, web browsers do not allow AJAX
+requests to cross domain boundaries.  The <a class="reference external" href="http://www.w3.org/TR/cors/">CORS</a>
+(Cross-Origin Resource Sharing) specification defines
+a way for a server to provide a list of domains which
+are permitted to make AJAX requests.</p>
+<p><a class="reference external" href="http://www.w3.org/TR/cors/">CORS</a> relies on browser support and may not work with older
+web browsers.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">origin</span></tt></dt>
+<dd>Domains allowed to access the server (default: <tt class="docutils literal"><span class="pre">*</span></tt>).</dd>
+</dl>
+<p>The <tt class="docutils literal"><span class="pre">origin</span></tt> parameter is a list of domains which are
+allowed to access the server.  The value must either be
+<tt class="docutils literal"><span class="pre">*</span></tt> (means <em>any</em>, which is the default) or a space-separated
+list of host names:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="go">http[s]://domain[:port]</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The default settings permit HTSQL queries from any domain.
+Do not use the default settings with non-public data!</p>
+</div>
+<p>For example, to enable AJAX requests to the HTSQL demo server
+(located at <a class="reference external" href="http://demo.htsql.org/">http://demo.htsql.org/</a>) from domains <a class="reference external" href="http://htsql.org/">http://htsql.org/</a>
+and <a class="reference external" href="http://htsql.com/">http://htsql.com/</a>, we could write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.cors</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">origin</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://htsql.org http://htsql.com</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-csrf">
+<span id="index-9"></span><span id="id3"></span><h3><tt class="docutils literal"><span class="pre">tweak.csrf</span></tt><a class="headerlink" href="#tweak-csrf" title="Permalink to this headline">¶</a></h3>
+<p>This extension provides protection against cross-site request
+forgery (CSRF) attacks.</p>
+<p>A CSRF attack tricks the user to visit the attacker&#8217;s website,
+which then submits database queries to the HTSQL service from
+the user&#8217;s account.  Even though the browser would not permit
+the malicious website to read the output of the queries, this
+form of attack can be used for denial of service or changing
+the data in the database.  For background on CSRF, see
+<a class="reference external" href="http://en.wikipedia.org/wiki/Cross-site_request_forgery">http://en.wikipedia.org/wiki/Cross-site_request_forgery</a>.</p>
+<p>This addon requires all HTSQL requests to submit a secret
+token in two forms:</p>
+<ul class="simple">
+<li>as a cookie <tt class="xref py py-obj docutils literal"><span class="pre">htsql-csrf-token</span></tt>;</li>
+<li>as HTTP header <tt class="xref py py-obj docutils literal"><span class="pre">X-HTSQL-CSRF-Token</span></tt>.</li>
+</ul>
+<p>If the token is not submitted, the addon prevents the request
+from reading or updating any data in the database.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">allow_cs_read</span></tt></dt>
+<dd>If set, a request is permitted to read data from the database
+even when the secret token is not provided.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">allow_cs_write</span></tt></dt>
+<dd>If set, a request is permitted to update data in the database
+even if the secret token is not provided.</dd>
+</dl>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.csrf</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">allow_cs_read</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+  <span class="l-Scalar-Plain">allow_cs_write</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-django">
+<span id="index-10"></span><span id="id4"></span><h3><tt class="docutils literal"><span class="pre">tweak.django</span></tt><a class="headerlink" href="#tweak-django" title="Permalink to this headline">¶</a></h3>
+<p>This extension provides integration with <a class="reference external" href="https://www.djangoproject.com/">Django</a> web framework.
+It replaces built-in database introspection and connection
+handling with facilities provided by Django.</p>
+<p>When using <tt class="docutils literal"><span class="pre">tweak.django</span></tt> addon, do not specify the connection
+URI as it is determined from the Django project database
+settings.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">settings</span></tt></dt>
+<dd>Path to the settings module (default: use
+<tt class="docutils literal"><span class="pre">DJANGO_SETTINGS_MODULE</span></tt>).</dd>
+</dl>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.django</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">settings</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">mysite.settings</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-etl">
+<span id="index-11"></span><span id="id5"></span><h3><tt class="docutils literal"><span class="pre">tweak.etl</span></tt><a class="headerlink" href="#tweak-etl" title="Permalink to this headline">¶</a></h3>
+<p>This extension provides the following commands:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">insert(feed)</span></tt></dt>
+<dd>Adds records to a table.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">update(feed)</span></tt></dt>
+<dd>Updates table records.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">merge(feed)</span></tt></dt>
+<dd>Adds or updates records in a table.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">delete(feed)</span></tt></dt>
+<dd>Deletes records from a table.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">truncate(name)</span></tt></dt>
+<dd>Truncates a table.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">do(command,</span> <span class="pre">...)</span></tt></dt>
+<dd>Performs a series of command in a single transaction.</dd>
+</dl>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.etl</span><span class="p-Indicator">:</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This extension is work-in-progress.  The interface and
+implementation of commands may change in the future.
+Currently only PostgreSQL is supported.</p>
+</div>
+</div>
+<div class="section" id="tweak-filedb">
+<span id="index-12"></span><span id="id6"></span><h3><tt class="docutils literal"><span class="pre">tweak.filedb</span></tt><a class="headerlink" href="#tweak-filedb" title="Permalink to this headline">¶</a></h3>
+<p>This extension makes a database from a set of CSV files.
+Each source CSV file becomes a table in the database.
+The name of the table is derived from the file name;
+the column names are taken from the first row of the CSV file.
+The remaining rows become the records in the table.</p>
+<p>The database is realized as an in-memory SQLite database.
+Use optional parameter <tt class="xref py py-obj docutils literal"><span class="pre">cache-file</span></tt> to specify a persistent
+storage for the database.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">sources</span></tt></dt>
+<dd><p class="first">List of entries describing the source files; each
+entry has the following fields:</p>
+<dl class="last docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">file</span></tt></dt>
+<dd>The path to the CSV file.</dd>
+</dl>
+</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">cache-file</span></tt></dt>
+<dd>Persistent storage for the database.</dd>
+</dl>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.filedb</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">sources</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">school.csv</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">department.csv</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">program.csv</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">course.csv</span>
+  <span class="l-Scalar-Plain">cache-file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">cache.sqlite</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-gateway">
+<span id="index-13"></span><span id="id7"></span><h3><tt class="docutils literal"><span class="pre">tweak.gateway</span></tt><a class="headerlink" href="#tweak-gateway" title="Permalink to this headline">¶</a></h3>
+<p>This extensions allows you to create a gateway to another database
+and execute HTSQL queries against it.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">gateways</span></tt></dt>
+<dd><p class="first">A mapping of names to datebase configuration.</p>
+<p>Each mapping entry creates a function which takes a query
+as a parameter and execute it against the gateway database.</p>
+<p class="last">Database configuration could be either connection URI or
+nested HTSQL configuration.</p>
+</dd>
+</dl>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.gateway</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">gateways</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">sqlite_gw</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sqlite:database.sqlite</span>
+    <span class="l-Scalar-Plain">remote_gw</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">htsql</span><span class="p-Indicator">:</span>
+        <span class="l-Scalar-Plain">db</span><span class="p-Indicator">:</span>
+          <span class="l-Scalar-Plain">engine</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pgsql</span>
+          <span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">remote_db</span>
+</pre></div>
+</div>
+<p>The gateway name becomes a command which executes a query
+against the gateway database:</p>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="o">/</span><span class="nb">table</span><span class="o">/</span><span class="p">:</span><span class="nf">sqlite_gw</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-meta">
+<span id="index-14"></span><span id="id8"></span><h3><tt class="docutils literal"><span class="pre">tweak.meta</span></tt><a class="headerlink" href="#tweak-meta" title="Permalink to this headline">¶</a></h3>
+<p>This extension provides a <em>meta</em> database describing tables,
+columns and links of the primary database.</p>
+<p>The <tt class="docutils literal"><span class="pre">tweak.meta</span></tt> addon has no parameters.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.meta</span><span class="p-Indicator">:</span>
+</pre></div>
+</div>
+<p>The meta database is composed of the following tables:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">table</span></tt></dt>
+<dd>all available tables</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">field</span></tt></dt>
+<dd>columns and links for a given table</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">column</span></tt></dt>
+<dd>all columns for a given table</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">link</span></tt></dt>
+<dd>all links from one table to another</dd>
+</dl>
+<p>Use function <tt class="docutils literal"><span class="pre">meta()</span></tt> to make a query against the meta database.</p>
+<p>To get a list of tables:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/meta(/table)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/meta(/table)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">table</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">appointment</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">class</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">classification</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">confidential</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Mapping call notation is also permitted:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/table/:meta" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/table/:meta" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">table</span><span class="o">/</span><span class="p">:</span><span class="nf">meta</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">appointment</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">class</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">classification</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">confidential</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>To list all columns of a given table in the output order:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/meta(/column.sort(field.sort)?table.name='course')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/meta(/column.sort(field.sort)?table.name='course')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">column</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="nb">field</span><span class="p">.</span><span class="nb">sort</span><span class="p">)</span><span class="o">?</span><span class="nb">table</span><span class="p">.</span><span class="nb">name</span><span class="o">=</span><span class="s">&#39;course&#39;</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="34%" />
+<col width="16%" />
+<col width="27%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">table_name</th>
+<th class="head">name</th>
+<th class="head">domain</th>
+<th class="head">is_mandatory</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">course</td>
+<td class="htsql-text-type">department_code</td>
+<td class="htsql-text-type">text</td>
+<td class="htsql-boolean-type htsql-true-val">true</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">course</td>
+<td class="htsql-text-type">no</td>
+<td class="htsql-text-type">integer</td>
+<td class="htsql-boolean-type htsql-true-val">true</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">course</td>
+<td class="htsql-text-type">title</td>
+<td class="htsql-text-type">text</td>
+<td class="htsql-boolean-type htsql-true-val">true</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">course</td>
+<td class="htsql-text-type">credits</td>
+<td class="htsql-text-type">integer</td>
+<td class="htsql-boolean-type htsql-false-val">false</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-boolean-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>To get all links to and from a specific table:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/meta(/link?table.name='department'|target.name='department')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/meta(/link?table.name='department'|target.name='department')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">link</span><span class="o">?</span><span class="nb">table</span><span class="p">.</span><span class="nb">name</span><span class="o">=</span><span class="s">&#39;department&#39;</span><span class="o">|</span><span class="nb">target</span><span class="p">.</span><span class="nb">name</span><span class="o">=</span><span class="s">&#39;department&#39;</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">table_name</th>
+<th class="head">name</th>
+<th class="head">is_singular</th>
+<th class="head">target_name</th>
+<th class="head">reverse_name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">appointment</td>
+<td class="htsql-text-type">department</td>
+<td class="htsql-boolean-type htsql-true-val">true</td>
+<td class="htsql-text-type">department</td>
+<td class="htsql-text-type">appointment</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">course</td>
+<td class="htsql-text-type">department</td>
+<td class="htsql-boolean-type htsql-true-val">true</td>
+<td class="htsql-text-type">department</td>
+<td class="htsql-text-type">course</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">department</td>
+<td class="htsql-text-type">appointment</td>
+<td class="htsql-boolean-type htsql-false-val">false</td>
+<td class="htsql-text-type">appointment</td>
+<td class="htsql-text-type">department</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">department</td>
+<td class="htsql-text-type">course</td>
+<td class="htsql-boolean-type htsql-false-val">false</td>
+<td class="htsql-text-type">course</td>
+<td class="htsql-text-type">department</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-boolean-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>To describe the meta database itself, apply <tt class="docutils literal"><span class="pre">meta()</span></tt> twice:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/meta(/meta(/table))" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/meta(/meta(/table))" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">table</span><span class="p">))</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">column</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">field</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">link</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">table</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.meta</span><span class="p-Indicator">:</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-override">
+<span id="index-15"></span><span id="id9"></span><h3><tt class="docutils literal"><span class="pre">tweak.override</span></tt><a class="headerlink" href="#tweak-override" title="Permalink to this headline">¶</a></h3>
+<p>This extension provides several ways to adjust database metadata.
+It allows the user to restrict access to specific tables and columns,
+specify additional database constraints, change the generated names
+for tables, columns and links, and define calculated attributes.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">included-tables</span></tt></dt>
+<dd>Tables permitted to use.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">excluded-tables</span></tt></dt>
+<dd>Tables forbidden to use.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">included-columns</span></tt></dt>
+<dd>Columns permitted to use.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">excluded-columns</span></tt></dt>
+<dd>Columns forbidden to use.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">not-nulls</span></tt></dt>
+<dd>Additional <tt class="docutils literal"><span class="pre">NOT</span> <span class="pre">NULL</span></tt> constraints.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">unique-keys</span></tt></dt>
+<dd>Additional <tt class="docutils literal"><span class="pre">PRIMARY</span> <span class="pre">KEY</span></tt> and <tt class="docutils literal"><span class="pre">UNIQUE</span></tt> constraints.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">foreign-keys</span></tt></dt>
+<dd>Additional <tt class="docutils literal"><span class="pre">FOREIGN</span> <span class="pre">KEY</span></tt> constraints.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">class-labels</span></tt></dt>
+<dd>Labels for tables and top-level calculations.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">field-labels</span></tt></dt>
+<dd>Labels for columns, links and calculated fields.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">field-orders</span></tt></dt>
+<dd>Default table fields.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">unlabeled-tables</span></tt></dt>
+<dd>Tables to hide.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">unlabeled-columns</span></tt></dt>
+<dd>Columns to hide.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">globals</span></tt></dt>
+<dd>Global definitions.</dd>
+</dl>
+<p>To restrict access to a specific set of tables, use parameters
+<tt class="docutils literal"><span class="pre">included-tables</span></tt> and <tt class="docutils literal"><span class="pre">excluded-tables</span></tt>.  Parameter
+<tt class="docutils literal"><span class="pre">included-tables</span></tt> is a list of tables allowed to be used
+by HTSQL.  If this parameter is provided, any table not
+in this list is completely hidden from the HTSQL processor.
+Parameter <tt class="docutils literal"><span class="pre">excluded-tables</span></tt> allows you to forbid access
+to a set of tables.</p>
+<p>To forbid use of table <tt class="docutils literal"><span class="pre">confidential</span></tt>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">excluded-tables</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">confidential</span><span class="p-Indicator">]</span>
+</pre></div>
+</div>
+<p>To allow access only to tables in <tt class="docutils literal"><span class="pre">ad</span></tt> and <tt class="docutils literal"><span class="pre">ed</span></tt> schemas:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">included-tables</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">ad.*</span><span class="p-Indicator">,</span> <span class="nv">ed.*</span><span class="p-Indicator">]</span>
+</pre></div>
+</div>
+<p>We could also use <em>block</em> form of a sequence:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">included-tables</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">ad.*</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">ed.*</span>
+</pre></div>
+</div>
+<p>In general, the table name may have the form <tt class="docutils literal"><span class="pre">&lt;table&gt;</span></tt> or
+<tt class="docutils literal"><span class="pre">&lt;schema&gt;.&lt;table&gt;</span></tt> and could include <tt class="docutils literal"><span class="pre">*</span></tt> meta-character to
+indicate any number of characters.  Table names are
+case-insensitive and normalized: any non-alphanumeric
+character is replaced with <tt class="docutils literal"><span class="pre">_</span></tt>.</p>
+<p>Similarly, to restrict access to a specific set of columns,
+use parameters <tt class="docutils literal"><span class="pre">included-columns</span></tt> and <tt class="docutils literal"><span class="pre">excluded-columns</span></tt>.
+Parameter <tt class="docutils literal"><span class="pre">exclude-columns</span></tt> is a list of column forbidden
+for use by the HTSQL processor.</p>
+<p>To exclude column <tt class="docutils literal"><span class="pre">SSN</span></tt> of table <tt class="docutils literal"><span class="pre">confidential</span></tt>, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">excluded-columns</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">confidential.ssn</span><span class="p-Indicator">]</span>
+</pre></div>
+</div>
+<p>The column name may have the form <tt class="docutils literal"><span class="pre">&lt;column&gt;</span></tt>, <tt class="docutils literal"><span class="pre">&lt;table&gt;.&lt;column&gt;</span></tt>,
+or <tt class="docutils literal"><span class="pre">&lt;schema&gt;.&lt;table&gt;.&lt;column&gt;</span></tt> and could include <tt class="docutils literal"><span class="pre">*</span></tt> meta-character.</p>
+<p>Note that columns listed in <tt class="docutils literal"><span class="pre">excluded-columns</span></tt> are removed
+together with all associated key constraints.  If you want
+to hide a column from output, but keep associated primary and
+foreign keys, use the <tt class="docutils literal"><span class="pre">unlabeled-columns</span></tt> parameter.</p>
+<p>HTSQL discovers database constraints from the schema definition.
+If some constraints are not explicitly defined in the schema,
+you may provide them using parameters <tt class="docutils literal"><span class="pre">not-nulls</span></tt>, <tt class="docutils literal"><span class="pre">unique-keys</span></tt>
+and <tt class="docutils literal"><span class="pre">foreign-keys</span></tt>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">When specifying additional constraints, make sure they are respected
+by the data; otherwise, the output produced by HTSQL may be invalid.</p>
+</div>
+<p>Parameter <tt class="docutils literal"><span class="pre">not-nulls</span></tt> is a list of columns with <tt class="docutils literal"><span class="pre">NOT</span> <span class="pre">NULL</span></tt>
+constraints.</p>
+<p>To indicate that all columns named <tt class="docutils literal"><span class="pre">code</span></tt> and <tt class="docutils literal"><span class="pre">id</span></tt>, as well as
+column <tt class="docutils literal"><span class="pre">student.full_name</span></tt> do not contain <tt class="docutils literal"><span class="pre">NULL</span></tt> value, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">not-nulls</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;*.code&quot;</span><span class="p-Indicator">,</span> <span class="s">&quot;*.id&quot;</span><span class="p-Indicator">,</span> <span class="nv">student.full_name</span><span class="p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Note that we need to put the column patterns into quotes
+since YAML syntax does not permit <tt class="docutils literal"><span class="pre">*</span></tt> character at the
+beginning of a scalar value.</p>
+<p>Parameter <tt class="docutils literal"><span class="pre">unique-keys</span></tt> is a list of key specifications
+of the form <tt class="docutils literal"><span class="pre">&lt;table&gt;(&lt;column&gt;,...)[!]</span></tt>.  The trailing
+symbol <tt class="docutils literal"><span class="pre">!</span></tt> indicates a <tt class="docutils literal"><span class="pre">PRIMARY</span> <span class="pre">KEY</span></tt> constraint.
+All columns in a primary key are marked as <tt class="docutils literal"><span class="pre">NOT</span> <span class="pre">NULL</span></tt>.</p>
+<p>To indicate that <tt class="docutils literal"><span class="pre">school.code</span></tt> is a primary key and
+<tt class="docutils literal"><span class="pre">school.name</span></tt> is unique, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">unique-keys</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">school(code)!</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">school(name)</span>
+</pre></div>
+</div>
+<p>Parameter <tt class="docutils literal"><span class="pre">foreign-keys</span></tt> is a list of foreign key
+specifications, which have the form
+<tt class="docutils literal"><span class="pre">&lt;origin&gt;(&lt;column&gt;,...)</span> <span class="pre">-&gt;</span> <span class="pre">&lt;target&gt;(&lt;column&gt;,...)</span></tt>.
+Target columns could be omitted when they coincide with
+the target primary key.</p>
+<p>To define two foreign keys on table <tt class="docutils literal"><span class="pre">program</span></tt>, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">foreign-keys</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">program(school_code) -&gt; school(code)</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">program(school_code, part_of_code) -&gt; program</span>
+</pre></div>
+</div>
+<p>In HTSQL, database tables, columns and links have a <em>label</em>,
+an identifier by which they are referred in HTSQL queries.
+Normally, entity labels coincide with their names, but parameters
+<tt class="docutils literal"><span class="pre">class-labels</span></tt> and <tt class="docutils literal"><span class="pre">field-labels</span></tt> allow you to assign
+them arbitrary labels.  In addition, these parameters allow
+you to assign a label to an arbitrary HTSQL expression.</p>
+<p>Use parameter <tt class="docutils literal"><span class="pre">class-labels</span></tt> to assign custom labels
+to tables and top-level HTSQL expressions.  Parameter <tt class="docutils literal"><span class="pre">class-labels</span></tt>
+is a mapping; each key is a label, the corresponding value
+is either a table name or an HTSQL expression enclosed in
+parentheses.</p>
+<p>To rename table <tt class="docutils literal"><span class="pre">classification</span></tt> to <tt class="docutils literal"><span class="pre">c14n</span></tt> and to assign
+a label to expression <tt class="docutils literal"><span class="pre">school^campus</span></tt>, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">class-labels</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">c14n</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">classification</span>
+    <span class="l-Scalar-Plain">campus</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(school^campus)</span>
+</pre></div>
+</div>
+<p>Calculated classes defined by <tt class="docutils literal"><span class="pre">class-labels</span></tt> may accept
+parameters.  For instance, to add a class <tt class="docutils literal"><span class="pre">students_by_year()</span></tt>
+which takes the year of admission as an argument, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">class-labels</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">students_by_year($year)</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(student?year(start_date)=$year)</span>
+</pre></div>
+</div>
+<p>Use parameter <tt class="docutils literal"><span class="pre">field-labels</span></tt> to assign custom labels
+to table fields.  This parameter is a mapping; each
+key has a form <tt class="docutils literal"><span class="pre">&lt;table&gt;.&lt;field&gt;</span></tt>, where <tt class="docutils literal"><span class="pre">&lt;table&gt;</span></tt>
+is the table label, <tt class="docutils literal"><span class="pre">&lt;field&gt;</span></tt> is the field label
+to define.  The corresponding value is one of:</p>
+<ul class="simple">
+<li>a column name;</li>
+<li>a link specification;</li>
+<li>an HTSQL expression enclosed in parentheses.</li>
+</ul>
+<p>A link specification is a comma-separated list of
+patterns <tt class="docutils literal"><span class="pre">&lt;origin&gt;(&lt;column&gt;,...)</span> <span class="pre">-&gt;</span> <span class="pre">&lt;target&gt;(&lt;column&gt;,...)</span></tt>.
+Each pattern must match a foreign key or a reverse foreign
+key.  Column lists could be omitted if the foreign key
+could be determined uniquely.</p>
+<p>To rename a column <tt class="docutils literal"><span class="pre">student.name</span></tt> to <tt class="docutils literal"><span class="pre">full_name</span></tt>, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">field-labels</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">student.full_name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">name</span>
+</pre></div>
+</div>
+<p>To add a many-to-many link between <tt class="docutils literal"><span class="pre">student</span></tt> and <tt class="docutils literal"><span class="pre">class</span></tt>
+via <tt class="docutils literal"><span class="pre">enrollment</span></tt> table, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">field-labels</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">student.class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">student -&gt; enrollment, enrollment -&gt; class</span>
+    <span class="l-Scalar-Plain">class.student</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">class -&gt; enrollment, enrollment -&gt; student</span>
+</pre></div>
+</div>
+<p>Note that link specifier <tt class="docutils literal"><span class="pre">student</span> <span class="pre">-&gt;</span> <span class="pre">enrollment</span></tt> uniquely
+matches foreign key <tt class="docutils literal"><span class="pre">enrollment(student_id)</span> <span class="pre">-&gt;</span> <span class="pre">student(id)</span></tt>
+while <tt class="docutils literal"><span class="pre">enrollment</span> <span class="pre">-&gt;</span> <span class="pre">class</span></tt> matches foreign key
+<tt class="docutils literal"><span class="pre">enrollment(class_seq)</span> <span class="pre">-&gt;</span> <span class="pre">class(class_seq)</span></tt> so we do not
+need to provide column lists.</p>
+<p>The self-referential link from <tt class="docutils literal"><span class="pre">program</span></tt> to all included
+programs is called, by default, <tt class="docutils literal"><span class="pre">program.program_via_part_of</span></tt>.
+To assign a different label to this link, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">field-labels</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">program.includes</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">program(school_code, code) -&gt; program(school_code, part_of_code)</span>
+</pre></div>
+</div>
+<p>To define a calculated field <tt class="docutils literal"><span class="pre">student.avg_grade</span></tt>, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">field-labels</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">student.avg_grade</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(avg(enrollment.grade))</span>
+</pre></div>
+</div>
+<p>Calculated fields may accept a parameter.  To define a calculated
+field <tt class="docutils literal"><span class="pre">department.students_by_year()</span></tt> accepting the year of
+admission as a parameter, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">field-labels</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">department.students_by_year($year)</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(student?year(start_date)=$year)</span>
+</pre></div>
+</div>
+<p>By default, when an HTSQL query does not contain a selector
+expression, all table columns are displayed.  To set a custom
+list of fields for this case, use parameter <tt class="docutils literal"><span class="pre">field-orders</span></tt>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">field-orders</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">program</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">code</span><span class="p-Indicator">,</span> <span class="nv">title</span><span class="p-Indicator">,</span> <span class="nv">degree</span><span class="p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Parameter <tt class="docutils literal"><span class="pre">unlabeled-tables</span></tt> is a list of tables without an
+assigned labels, which effectively hides the tables from the users.
+The tables could still be used in SQL generated by the HTSQL
+translator.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">unlabeled-tables</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">enrollment</span><span class="p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Parameter <tt class="docutils literal"><span class="pre">unlabeled-columns</span></tt> is a list of columns without
+an assigned tables.  Unlabeled columns are hidden from the users,
+but could be used in SQL generated by the HTSQL translator.</p>
+<p>To hide all <tt class="docutils literal"><span class="pre">id</span></tt> columns, write:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">unlabeled-columns</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">id</span><span class="p-Indicator">,</span> <span class="s">&quot;*_id&quot;</span><span class="p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Use parameter <tt class="docutils literal"><span class="pre">globals</span></tt> define global attributes and functions.
+This parameter is a mapping: each key is the attribute name with
+an optional list of parameters, the value is an HTSQL expression.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.override</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">globals</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">num_school</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(count(@school))</span>
+    <span class="l-Scalar-Plain">trunc_month($d)</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(date(year($d), month($d), 1))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-pool">
+<span id="index-16"></span><span id="id10"></span><h3><tt class="docutils literal"><span class="pre">tweak.pool</span></tt><a class="headerlink" href="#tweak-pool" title="Permalink to this headline">¶</a></h3>
+<p>This addons caches open database connections so that the same
+connection could be reused to execute more than one query.
+Use this addon with backends where opening a database connection
+is an expensive operation.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.pool</span><span class="p-Indicator">:</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-resource">
+<span id="index-17"></span><span id="id11"></span><h3><tt class="docutils literal"><span class="pre">tweak.resource</span></tt><a class="headerlink" href="#tweak-resource" title="Permalink to this headline">¶</a></h3>
+<p>This extension adds a mechanism for serving static files via HTTP.
+This mechanism is used by other extensions to provide access to
+static resources such as Javascript and CSS files.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">indicator</span></tt></dt>
+<dd>HTTP root for static files, excluding leading and trailing <tt class="docutils literal"><span class="pre">/</span></tt>
+(default: <tt class="docutils literal"><span class="pre">-</span></tt>)</dd>
+</dl>
+<p>Usually you don&#8217;t need to enable this extension explicitly as
+it is done by extensions with static resources.</p>
+</div>
+<div class="section" id="tweak-shell">
+<span id="index-18"></span><span id="id12"></span><h3><tt class="docutils literal"><span class="pre">tweak.shell</span></tt><a class="headerlink" href="#tweak-shell" title="Permalink to this headline">¶</a></h3>
+<p>This extension adds an in-browser HTSQL editor called the HTSQL shell.
+The shell provides a visual query editor (based on <a class="reference external" href="http://codemirror.net/">CodeMirror</a>) with
+support for syntax highlighting and code completion.</p>
+<p>The shell is invoked by command <tt class="docutils literal"><span class="pre">/shell()</span></tt>, which takes an optional
+query to edit.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">server-root</span></tt></dt>
+<dd>The root URL of the HTSQL server (default: guess)</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">limit</span></tt></dt>
+<dd>Truncation threshold for shell output (default: 1000)</dd>
+</dl>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.shell</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">server-root</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://demo.htsql.org</span>
+  <span class="l-Scalar-Plain">limit</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">100</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-shell-default">
+<span id="index-19"></span><span id="id13"></span><h3><tt class="docutils literal"><span class="pre">tweak.shell.default</span></tt><a class="headerlink" href="#tweak-shell-default" title="Permalink to this headline">¶</a></h3>
+<p>Enable addon <tt class="docutils literal"><span class="pre">tweak.shell.default</span></tt> to make the shell the default
+output format.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.shell.default</span><span class="p-Indicator">:</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-sqlalchemy">
+<span id="index-20"></span><span id="id14"></span><h3><tt class="docutils literal"><span class="pre">tweak.sqlalchemy</span></tt><a class="headerlink" href="#tweak-sqlalchemy" title="Permalink to this headline">¶</a></h3>
+<p>This extension provides integration with <a class="reference external" href="http://www.sqlalchemy.org/">SQLAlchemy</a> toolkit.
+It replaces built-in HTSQL database introspection and
+connection handling with SQLAlchemy facilities.</p>
+<p>When using <tt class="docutils literal"><span class="pre">tweak.sqlalchemy</span></tt> addon, do not specify the
+connection URI as it is determined from the SQLAlchemy
+engine settings.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">engine</span></tt></dt>
+<dd>The SQLAlchemy engine object.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">metadata</span></tt></dt>
+<dd>The SQLAlchemy metadata object.</dd>
+</dl>
+<p>The value must have the form <tt class="docutils literal"><span class="pre">&lt;module&gt;.&lt;attr&gt;</span></tt> or
+<tt class="docutils literal"><span class="pre">&lt;package&gt;.&lt;module&gt;.&lt;attr&gt;</span></tt>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.sqlalchemy</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">engine</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sademo.engine</span>
+  <span class="l-Scalar-Plain">metadata</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">sademo.metadata</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tweak-system">
+<span id="index-21"></span><span id="id15"></span><h3><tt class="docutils literal"><span class="pre">tweak.system</span></tt><a class="headerlink" href="#tweak-system" title="Permalink to this headline">¶</a></h3>
+<p>This extension adds access to system catalog tables.</p>
+<p>Currently, only PostgreSQL backend is supported.</p>
+</div>
+<div class="section" id="tweak-timeout">
+<span id="index-22"></span><span id="id16"></span><h3><tt class="docutils literal"><span class="pre">tweak.timeout</span></tt><a class="headerlink" href="#tweak-timeout" title="Permalink to this headline">¶</a></h3>
+<p>This extension limits query execution to a given amount
+of time (1 minute by default).  Use it to ensure
+against accidental denial of service caused by complex
+queries.</p>
+<p>Parameters:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">timeout</span></tt></dt>
+<dd>The timeout value, in seconds (default: 60).</dd>
+</dl>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.timeout</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">timeout</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">300</span>
+</pre></div>
+</div>
+<p>Currently, this addon is only supported with PostgreSQL.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

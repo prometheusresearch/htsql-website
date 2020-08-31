@@ -1,0 +1,204 @@
+*****************************
+  A Database Query Language
+*****************************
+
+.. toctree::
+   :hidden:
+
+   blog/index
+   gallery/index
+   doc/index
+   htraf/index
+   community/index
+   download/index
+   license/index
+
+Overview
+========
+
+.. image:: img/shared-language.png
+   :align: right
+   :alt: Shared Language
+   :target: http://demo.htsql.org/school{name,count(program),count(department)}
+
+**HTSQL is a comprehensive navigational query language for 
+relational databases**. 
+
+HTSQL is designed for data analysts and other *accidental programmers*
+who have complex business inquiries to solve and need a productive tool
+to write and share database queries.  
+
+HTSQL is *free and open source* software.
+
+.. container:: quick-links clearfix
+
+   * :doc:`Overview <doc/overview>`
+     a gentle introduction to HTSQL
+
+   * :doc:`Handbook <doc/handbook>`
+     install, configure, and use HTSQL
+
+   * :doc:`Tutorial <doc/tutorial>`
+     learn HTSQL by example
+      
+   * :doc:`Reference <doc/ref/index>`
+     HTSQL syntax, types, and functions
+
+.. _features:
+
+Features
+========
+
+.. vsplit::
+
+   .. container::
+
+      **Advanced Query Language**
+    
+      HTSQL is a complete query language featuring automated linking, 
+      aggregation, projections, filters, macros, a compositional 
+      syntax, and a full set of data types & functions.
+
+   .. container::
+      
+      **Relational Database Gateway**
+
+      HTSQL requests are translated to efficient SQL queries.  HTSQL 
+      supports different SQL dialects including SQLite, PostgreSQL, 
+      MySQL, Oracle, and Microsoft SQL Server.
+     
+.. vsplit:: 
+
+   .. container::
+
+      **Web Service Integration**
+     
+      HTSQL is a web service that accepts queries as URLs, returning
+      results formatted as HTML, JSON, CSV or XML.  With HTSQL, 
+      databases can be accessed, secured, cached, and integrated 
+      using standard web technologies.
+   
+   .. container::
+
+      **Embedded Reporting**
+  
+      HTSQL is a backend framework supporting visual dashboard and
+      reporting tools.  HTSQL can be included in client-side Javascript 
+      or server-side Python applications.  HTSQL plugins can provide 
+      domain specific customizations.
+
+.. vsplit:: 
+
+   .. container::
+
+      **Development Environment**
+     
+      HTSQL includes a command line and web based query editor with 
+      syntax highlighting, context-sensitive completion, and error
+      messages with tips and suggestions.
+
+   .. container::
+      
+      **Communication Tool**
+      
+      HTSQL is used for collaboration among business users, data analysts,
+      and application developers.  HTSQL queries can be emailed, embedded 
+      in reports, and included in feature requests.
+
+
+Applications
+============
+
+:doc:`htraf/index` is a Javascript framework for embedding data into HTML
+pages.  It can be used with HTSQL to quickly create attractive reports and
+dashboards.
+
+.. vsplit::
+
+   .. sourcecode:: html
+
+      <body>
+      <h3>Select a School</h3>
+      <select id="school"
+        data-htsql="/school{code, name}"></select>
+      <div style="width: 500px; height: 350px;"
+        data-htsql="/program{title, count(student)}
+                    ?school_code=$school&count(student)>0"
+        data-ref="school" data-type="pie" data-widget="chart"
+        data-title="Percent of Students by Program"></div>
+      <h3>Departments</h3>
+      <p>Filter by name: <input id="department_name"/></p>
+      <table id="department" data-hide-column-0="yes"
+        data-htsql="/department{code, name, school.name}
+                    ?school_code=$school&name~$department_name"
+        data-ref="school department_name"></table>
+      <p>
+        The selected department:
+        <em data-htsql="/department{name}?code=$department"
+            data-ref="department"></em> <br/>
+        The number of courses in the selected department:
+        <strong data-htsql="/department{count(course)}
+                            ?code=$department"
+                data-ref="department"></strong>
+      </p>
+      <h3>Courses</h3>
+      <table id="course"
+        data-htsql="/course?department_code=$department"
+        data-ref="department"></table>
+      </body>
+
+   .. image:: img/htraf_screenshot.png
+      :alt: The HTRAF demo
+      :target: http://htsql.org/gallery/demo/courses.html
+
+The dashboard above shows a 3-level drill down (``school``,
+``department``, and ``course``) for a university schema.  For more
+examples like this, browse our :doc:`Gallery <gallery/index>`.
+
+
+.. _license:
+
+Licensing
+=========
+
+HTSQL is *free software*.  `Prometheus Research <http://prometheusresearch.com>`_
+offers support services, feature development, and sells license
+exceptions for use of HTSQL in combination with proprietary databases. 
+
+* For open source database systems, such as SQLite, PostgreSQL, and
+  MySQL, HTSQL is released as free_ software under the terms of the
+  AGPLv3.  Additionally, we offer HTSQL with a *non-free*, but otherwise
+  permissive_ license so that proprietary applications may use HTSQL in
+  combination with open source database systems.
+
+* For proprietary database systems, including Oracle and Microsoft SQL 
+  Server, we offer HTSQL under an evaluation_ and a proprietary_ license.
+
+For more detail, please read about our :doc:`license/index`
+and :doc:`community/index`.
+
+.. _free: /license/#free
+.. _permissive: /license/#permissive
+.. _proprietary: /license/#proprietary
+.. _evaluation: /license/#evaluation
+.. _exceptions: http://www.fsf.org/blogs/rms/selling-exceptions
+
+
+.. |mdash| unicode:: U+2014
+   :trim:
+
+Acknowledgements
+================
+
+Exceptionally generous support for HTSQL has been provided by the
+`Simons Foundation <http://simonsfoundation.org/>`_ as part of its
+`SFARI <http://sfari.org/>`_ autism research initiative.
+
+This material is based upon work supported by the National Science
+Foundation under Grant #0944460. Any opinions, findings, and conclusions
+or recommendations expressed in this material are those of the author(s)
+and do not necessarily reflect the views of the NSF.
+
+HTSQL was developed by Clark C. Evans and Kirill Simonov, both
+of `Prometheus Research <http://prometheusresearch.com>`_.
+

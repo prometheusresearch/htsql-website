@@ -1,0 +1,263 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>A Database Query Language &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/htrafdemo.css" type="text/css" />
+    <link rel="stylesheet" href="_static/root.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="#" />
+    <link rel="next" title="Latest News" href="blog/index.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="a-database-query-language">
+<h1>A Database Query Language<a class="headerlink" href="#a-database-query-language" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<a class="reference external image-reference" href="http://demo.htsql.org/school{name,count(program),count(department)}"><img alt="Shared Language" class="align-right" src="_images/shared-language.png" /></a>
+<p><strong>HTSQL is a comprehensive navigational query language for
+relational databases</strong>.</p>
+<p>HTSQL is designed for data analysts and other <em>accidental programmers</em>
+who have complex business inquiries to solve and need a productive tool
+to write and share database queries.</p>
+<p>HTSQL is <em>free and open source</em> software.</p>
+<div class="quick-links clearfix container">
+<ul class="simple">
+<li><a class="reference internal" href="doc/overview.html"><em>Overview</em></a>
+a gentle introduction to HTSQL</li>
+<li><a class="reference internal" href="doc/handbook.html"><em>Handbook</em></a>
+install, configure, and use HTSQL</li>
+<li><a class="reference internal" href="doc/tutorial.html"><em>Tutorial</em></a>
+learn HTSQL by example</li>
+<li><a class="reference internal" href="doc/ref/index.html"><em>Reference</em></a>
+HTSQL syntax, types, and functions</li>
+</ul>
+</div>
+</div>
+<div class="section" id="features">
+<span id="id1"></span><h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<div class="vsplit container">
+<div class="vsplit-left container">
+<p><strong>Advanced Query Language</strong></p>
+<p>HTSQL is a complete query language featuring automated linking,
+aggregation, projections, filters, macros, a compositional
+syntax, and a full set of data types &amp; functions.</p>
+</div>
+<div class="vsplit-right container">
+<p><strong>Relational Database Gateway</strong></p>
+<p>HTSQL requests are translated to efficient SQL queries.  HTSQL
+supports different SQL dialects including SQLite, PostgreSQL,
+MySQL, Oracle, and Microsoft SQL Server.</p>
+</div>
+<div class="vsplit-clear container">
+</div>
+</div>
+<div class="vsplit container">
+<div class="vsplit-left container">
+<p><strong>Web Service Integration</strong></p>
+<p>HTSQL is a web service that accepts queries as URLs, returning
+results formatted as HTML, JSON, CSV or XML.  With HTSQL,
+databases can be accessed, secured, cached, and integrated
+using standard web technologies.</p>
+</div>
+<div class="vsplit-right container">
+<p><strong>Embedded Reporting</strong></p>
+<p>HTSQL is a backend framework supporting visual dashboard and
+reporting tools.  HTSQL can be included in client-side Javascript
+or server-side Python applications.  HTSQL plugins can provide
+domain specific customizations.</p>
+</div>
+<div class="vsplit-clear container">
+</div>
+</div>
+<div class="vsplit container">
+<div class="vsplit-left container">
+<p><strong>Development Environment</strong></p>
+<p>HTSQL includes a command line and web based query editor with
+syntax highlighting, context-sensitive completion, and error
+messages with tips and suggestions.</p>
+</div>
+<div class="vsplit-right container">
+<p><strong>Communication Tool</strong></p>
+<p>HTSQL is used for collaboration among business users, data analysts,
+and application developers.  HTSQL queries can be emailed, embedded
+in reports, and included in feature requests.</p>
+</div>
+<div class="vsplit-clear container">
+</div>
+</div>
+</div>
+<div class="section" id="applications">
+<h2>Applications<a class="headerlink" href="#applications" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="htraf/index.html"><em>HTRAF Toolkit</em></a> is a Javascript framework for embedding data into HTML
+pages.  It can be used with HTSQL to quickly create attractive reports and
+dashboards.</p>
+<div class="vsplit container">
+<div class="vsplit-left highlight-html"><div class="highlight"><pre><span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Select a School<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&quot;school&quot;</span>
+  <span class="na">data-htsql=</span><span class="s">&quot;/school{code, name}&quot;</span><span class="nt">&gt;&lt;/select&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;width: 500px; height: 350px;&quot;</span>
+  <span class="na">data-htsql=</span><span class="s">&quot;/program{title, count(student)}</span>
+<span class="s">              ?school_code=$school&amp;count(student)&gt;0&quot;</span>
+  <span class="na">data-ref=</span><span class="s">&quot;school&quot;</span> <span class="na">data-type=</span><span class="s">&quot;pie&quot;</span> <span class="na">data-widget=</span><span class="s">&quot;chart&quot;</span>
+  <span class="na">data-title=</span><span class="s">&quot;Percent of Students by Program&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Departments<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;p&gt;</span>Filter by name: <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;department_name&quot;</span><span class="nt">/&gt;&lt;/p&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;department&quot;</span> <span class="na">data-hide-column-0=</span><span class="s">&quot;yes&quot;</span>
+  <span class="na">data-htsql=</span><span class="s">&quot;/department{code, name, school.name}</span>
+<span class="s">              ?school_code=$school&amp;name~$department_name&quot;</span>
+  <span class="na">data-ref=</span><span class="s">&quot;school department_name&quot;</span><span class="nt">&gt;&lt;/table&gt;</span>
+<span class="nt">&lt;p&gt;</span>
+  The selected department:
+  <span class="nt">&lt;em</span> <span class="na">data-htsql=</span><span class="s">&quot;/department{name}?code=$department&quot;</span>
+      <span class="na">data-ref=</span><span class="s">&quot;department&quot;</span><span class="nt">&gt;&lt;/em&gt;</span> <span class="nt">&lt;br/&gt;</span>
+  The number of courses in the selected department:
+  <span class="nt">&lt;strong</span> <span class="na">data-htsql=</span><span class="s">&quot;/department{count(course)}</span>
+<span class="s">                      ?code=$department&quot;</span>
+          <span class="na">data-ref=</span><span class="s">&quot;department&quot;</span><span class="nt">&gt;&lt;/strong&gt;</span>
+<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Courses<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;course&quot;</span>
+  <span class="na">data-htsql=</span><span class="s">&quot;/course?department_code=$department&quot;</span>
+  <span class="na">data-ref=</span><span class="s">&quot;department&quot;</span><span class="nt">&gt;&lt;/table&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+</pre></div>
+</div>
+<a class="vsplit-right reference external image-reference" href="http://htsql.org/gallery/demo/courses.html"><img alt="The HTRAF demo" src="_images/htraf_screenshot.png" /></a>
+<div class="vsplit-clear container">
+</div>
+</div>
+<p>The dashboard above shows a 3-level drill down (<tt class="docutils literal"><span class="pre">school</span></tt>,
+<tt class="docutils literal"><span class="pre">department</span></tt>, and <tt class="docutils literal"><span class="pre">course</span></tt>) for a university schema.  For more
+examples like this, browse our <a class="reference internal" href="gallery/index.html"><em>Gallery</em></a>.</p>
+</div>
+<div class="section" id="licensing">
+<span id="license"></span><h2>Licensing<a class="headerlink" href="#licensing" title="Permalink to this headline">¶</a></h2>
+<p>HTSQL is <em>free software</em>.  <a class="reference external" href="http://prometheusresearch.com">Prometheus Research</a>
+offers support services, feature development, and sells license
+exceptions for use of HTSQL in combination with proprietary databases.</p>
+<ul class="simple">
+<li>For open source database systems, such as SQLite, PostgreSQL, and
+MySQL, HTSQL is released as <a class="reference external" href="/license/#free">free</a> software under the terms of the
+AGPLv3.  Additionally, we offer HTSQL with a <em>non-free</em>, but otherwise
+<a class="reference external" href="/license/#permissive">permissive</a> license so that proprietary applications may use HTSQL in
+combination with open source database systems.</li>
+<li>For proprietary database systems, including Oracle and Microsoft SQL
+Server, we offer HTSQL under an <a class="reference external" href="/license/#evaluation">evaluation</a> and a <a class="reference external" href="/license/#proprietary">proprietary</a> license.</li>
+</ul>
+<p>For more detail, please read about our <a class="reference internal" href="license/index.html"><em>HTSQL Licensing</em></a>
+and <a class="reference internal" href="community/index.html"><em>HTSQL Community</em></a>.</p>
+</div>
+<div class="section" id="acknowledgements">
+<h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<p>Exceptionally generous support for HTSQL has been provided by the
+<a class="reference external" href="http://simonsfoundation.org/">Simons Foundation</a> as part of its
+<a class="reference external" href="http://sfari.org/">SFARI</a> autism research initiative.</p>
+<p>This material is based upon work supported by the National Science
+Foundation under Grant #0944460. Any opinions, findings, and conclusions
+or recommendations expressed in this material are those of the author(s)
+and do not necessarily reflect the views of the NSF.</p>
+<p>HTSQL was developed by Clark C. Evans and Kirill Simonov, both
+of <a class="reference external" href="http://prometheusresearch.com">Prometheus Research</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

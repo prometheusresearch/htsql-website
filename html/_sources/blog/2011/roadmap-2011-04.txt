@@ -1,0 +1,131 @@
+*********************************
+  HTSQL Roadmap for April, 2011
+*********************************
+
+.. blogentry::
+   :date: 2011-03-31
+   :author: cce
+
+The HTSQL 2.1 release is scoped to deliver extended query functionality
+for advanced queries.  The previous betas of 2.1 added support for more
+backends, datetime, projections, and calculated attributes.  Here we
+discuss features yet to be implemented for the HTSQL 2.1 final release.
+
+.. blogcut::
+
+Advanced Queries
+================
+
+So far we've implemented calculated attributes to reduce the redundancy
+found in complex expressions.  We've also introduced projections, so
+that results can be returned from relations that are not materialized as
+an existing table.  What's left is some semantic cleanup, linking 
+features and optimizations.
+
+Advanced Linking Connectors
+---------------------------
+
+Currently HTSQL limits query construction to a pre-defined set of links
+defined by foreign key relationships.  This set of features will allow
+the construction of arbitrary navigation paths.
+
+``home()`` 
+  We'll introduce a virtual table ``home`` which has one row and a
+  plural link to every table in the system, and a singular link back.
+  The ``home()`` function will link back to this virtual table.  This
+  will permit cross joins, for instance, ``course.home().program``
+  generate a cross product between course and program tables.  
+
+``fork()`` 
+  The ``fork()`` operation will clone the last axis of the link chain.
+  In the simple case, ``course.fork()`` is equivalent to
+  ``course.home().course``.  The ``fork()`` function may accept an
+  argument which indicates an extra join condition.  For example,
+  ``/course?credits>avg(fork().credits)`` returns courses having more
+  credits than average. 
+  
+``link()``
+  The ``link(chain, condition)`` operation generates an arbitrary link
+  from the current context to the table identified by the chain, 
+  associating rows based on the given condition.   This is especially
+  useful when a foreign key is omitted from the catalog.
+
+We have reserved the ``@`` character for an abbreviated link construct,
+but have yet to decide if it'll be used for ``home()`` or ``fork()``
+
+Functional Aliases
+------------------
+
+Currently we use ``{}`` for selection, ``?`` for filtering, and ``^``
+for projections.  Occasionally, it's more convenient to use a
+functional notation for these operations, therefore we want to add the
+following functions:
+
+``select()`` 
+   For example, ``/department.select(school,name)`` is equivalent to
+   ``/department{school,name}``.
+
+``filter()``
+   The query ``/school?code='ns'`` could be expresses instead as
+   ``/school.filter(code='ns')``.
+
+``distinct()``
+   A projection, ``/(program^degree)`` could be written
+   ``/distinct(program{degree})``.
+
+To implement this change, many parser internals will have to be
+revisited and selection semantics re-defined.
+
+Name Lookup
+-----------
+
+Currently when you follow a table link, there's no way to refer to the
+columns of the previous tables in the link path.  This is rather
+restricted behavior but important to preserve the principle of least
+surprise -- adding a new column to a table or an expression to a macro
+shouldn't cause existing queries to break.
+
+We want to introduce a lookup operator, ``*name`` which would look for
+the name recursively in the link path.
+
+Alternatively, if we decide not to add extra syntax at this point, we
+may introduce a special namespace ``all()``, which includes names from
+the current and all the previous namespaces in the link path.
+
+One possible use of this feature is accessing macro arguments in a
+nested link context, e.g., ``define(cohort(y):=student?year(dob)=*y)``
+
+We also would use ``\*n``, where ``n`` is an integer literal to refer to
+the nth element of the current selection.   This feature would make it
+easy to filter on complex expressions without repeating them.
+
+Projection Namespace
+--------------------
+
+We would like the projection operator to define a more usable namespace,
+for instance, ``program^degree`` should have a namespace with two names,
+``degree`` which refers to the projection's kernel and ``program`` which
+refers to the base of the projection.
+
+But, how do we define the namespace in the general case where either 
+the base or the kernel are arbitrary expressions?
+
+Schemas & Ambiguous Names
+-------------------------
+
+Currently there isn't a mechanism to refer to tables named the same but
+in different schemas.  In a similar way, if a table has more than one
+backlink to the same target, they are inaccessible.
+
+We don't have any ideas how to fix this yet.
+
+Aggregate Optimizations
+-----------------------
+
+We want to apply more aggressive optimizations for queries using
+aggregates to reduce the number of subselects.  For instance, an
+expression ``/{avg(course{credits}?no>400),avg(course{credits}?no<=400)}``
+could be re-written as
+``/{avg(course{if(n>400,credits)}),avg(course{if(no<=400,credits)}}``
+in order to use a single SELECT frame in the generated SQL.
+

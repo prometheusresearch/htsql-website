@@ -1,0 +1,49 @@
+******************************
+  HTSQL 2.1.0rc1 is released
+******************************
+
+.. blogentry::
+   :date: 2011-06-21
+   :author: xi
+
+The first release candidate for the 2.1 release is now available.
+Changes since the last beta:
+
+* Added `/:tsv` formatter that generates output in tab-separated format
+  (thank to Andrey Popp).
+* A lot of updates to the tutorial, the reference and other documentation.
+* Minor code updates and bug fixes.
+
+.. blogcut::
+
+The documentation changes include:
+
+1. We completely revamped the `HTRAF Toolkit Reference
+   <http://htsql.org/htraf/index.html>`_.
+
+2. We revisited the `Tutorial <http://htsql.org/doc/tutorial.html>`_,
+   editing most sections and adding two new sections that describe 2.1
+   features: `Calculations & References <http://htsql.org/doc/tutorial.html#calculations-references>`_, 
+   `Projections <http://htsql.org/doc/tutorial.html#projections>`_.
+
+3. We revisited the `Overview <http://htsql.org/doc/overview.html>`_,
+   which now includes two new sections: 
+   `HTSQL in a Nutshell <http://htsql.org/doc/overview.html#htsql-in-a-nutshell>`_, 
+   `Why not SQL? <http://htsql.org/doc/overview.html#why-not-sql>`_.
+
+4. We started work on a `Reference <http://htsql.org/doc/reference.html>`_.
+
+5. We added a `Gallery <http://htsql.org/gallery/index.html>`_ with
+   examples of HTSQL queries and HTRAF dashboards for several datasets.
+
+Major changes since the 2.0 release:
+
+* Added *MySQL*, *Oracle* and *MS SQL Server* backends, in addition to
+  existing *SQLite* and *PostgreSQL* backends.
+* Added support for projections (see :doc:`introducing-projections`).
+* Added support for calculated attributes and references (see
+  :doc:`introducing-calculated-attributes` and
+  :doc:`introducing-references`).
+* Streamlined HTSQL grammar and semantics, added support for `time` and
+  `datetime` data types, and many other improvements.
+

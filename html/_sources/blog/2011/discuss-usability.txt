@@ -1,0 +1,216 @@
+**********************************
+  HTSQL 2.X Usability Discussion
+**********************************
+
+.. blogentry::
+   :date: 2011-09-06
+   :author: cce
+
+This is a brainstorm discussion blog entry on usability items
+needed for HTSQL adoption.   It includes discussion of editor,
+installer, configuration and development.
+
+.. blogcut::
+
+UI Shell
+========
+
+The purpose of the UI Shell is to provide a visual environment
+giving data analysts or programmers an interface to the HTSQL
+system and underlying database.  Specifically, such a shell 
+would help the user with the following items:
+
+1. Query Construction
+
+   a. Database Query
+   b. Processing Pipeline
+   c. Query Versioning
+
+2. Meta-Data Exploration
+   
+   a. Listing of Tables & Links
+   b. Detail about a Table
+ 
+3. Documentation Access
+
+   a. Function Reference
+   b. Syntax & Tutorials
+ 
+4. Sharing of Queries
+
+   a. Saved Queries
+   b. Wiki Like System?
+   c. Parameter Prompting
+
+5. Integration /w Analysis Tools
+
+   a. Data Export 
+   b. Embedded Tools?
+
+6. Access-Like Features*
+
+   a. Query By Form
+   b. Excel-Like Grid (Auto-Filter, Sort-by-Click)
+   c. Record Editing: By Grid & By Form
+   d. Import Utility /w Column Type Guessing
+   e. Data Navigation ala Finder
+   f. Master Detail / Nested Lookup Views & Editor
+
+7. Analysis Features*
+   
+   a. Pivot Tables
+   b. Rollups & Cubes
+   c. Plotting & Graphing
+   d. Full-Text Search
+
+With the exception of sharing, this is mostly a client-side
+and stateless component.  The access like features are
+explicitly not included in HTSQL's distribution.
+
+
+Usability
+=========
+
+1. Couldn't Play With It : Editor
+
+   a. Diagram Tables & Links
+   b. Syntax Highlighting
+   c. Ideally Completion*
+
+2. Couldn't Install It : Installer
+
+3. Couldn't Configure: Configurator
+
+   a. Links to be Specified
+   b. Filter out columns/tables
+   c. Ideally, saved Attributes
+
+Nice to Have:
+
+4. Build Dashboard & Queries
+
+   a. HTRAF IDE?
+   b. Query Builder
+
+5. Deploying
+
+   a. Primarily Documentation 
+   b. Heroku, Apache, IIS
+   c. Security & Authentication
+   
+
+HTSQL Editor
+------------
+
+Critical Path:
+
+1. Create an edit.html resource that uses CM2 text 
+   area and an iframe for results.
+2. Add HTSQL syntax highlighting to CM2 text area.
+3. Integrate this editor as the default formatter.
+4. Add diagram & meta-data browser to the editor.
+
+Nice to Have:
+
+1. Add to the editor a scrolling grid using window fetching.
+2. Add completion to the editor's textarea.
+
+
+Installer
+---------
+
+Critial Path:
+
+1. Ubuntu DEB File / Fedora RPM
+2. VM Image (AWS, VDK)
+
+Nice to Have:
+
+1. DEB/RPM Repositories 
+2. Bundled OSX
+3. Bundled Windows
+4. Bundled Linux DEB/RPM
+
+
+Visual Configurator
+-------------------
+
+Visual Editor for Configuring: Database Connection,
+Schema Overrides, and other Plugin Parameters.
+
+Integrates HTSQL Editor
+
+Uses Internal Web-Server or Server Configuration
+
+Works as localhost:port or as local app using
+something like XULRunner.
+
+
+Command-Line Workflow
+---------------------
+
+Review how a new user would discover how to use ``htsql-ctl``
+to connect and ensure that the documentation, ``--help`` and
+error messages are informative. 
+
+Documentation for how to make a configuration file and a 
+good hooks for the PyYAML parser to report on any problems
+that they may have (such as using tabs, or missing keys.)
+
+Documentation for how to make table/schema configuration
+file plus hooks for good error messages.
+
+Ensure that ``htsql-ctl shell`` and ``htsql-ctl serve`` work
+and are well documented.  Document shell & serve features.
+
+
+Slide Show for Website
+----------------------
+
+Some way to have N page slideshow for reStructuredText
+website content, so that donors choose examples can
+be turned into single-point-at-a-time.
+
+
+HTSQL Editor Detail
+-------------------
+
+The problem the HTSQL editor solves is that a URL is 
+a horrible place to make a query.  So this sort of 
+editor 
+
+The core idea with this particular deliverable is a
+formatter that is divided in two parts.  The top half
+is the query, and the bottom half is the output.
+What's important is that the formatter loads
+immediately and sends an async request to run the
+query itself, and this works with errors as well.
+
+This only works when the user agent support
+text/html, so other user agents will get other
+formatters.  Ideally this would be the default
+formatter for web browsers, however, it'd require
+javascript and support for changing the URL location
+when you press ENTER to load a new page.  For IE,
+it could redirect to new page for other browsers 
+it could directly modify the location bar without
+re-loading to preserver the user's cursor.
+
+The first pass can be very simple, it could be an
+editor.html which is a static file, using hash-tags
+to pass the query and an iframe to show the results.
+This could go into the demo directory for the 1st
+pass and integrated with CodeMirror.
+
+Later passes could use a scrollable grid, clever
+magic to change the URL, and become the default
+formatter.  In this case, we'd probably have a 
+server-side ``execute`` function which took the
+unadultrated query with a page number and either
+returned the JSON to be rendered... or a 302 if
+the query doesn't support a producer interface.
+
+This could go into the demo server.  I'd like 
+this integrated with tutorial. 
+
+

@@ -1,0 +1,68 @@
+***************************
+  Improved Visual Display
+***************************
+
+.. blogentry::
+   :date: 2012-03-19
+   :author: cce
+
+We overhauled the visual style of HTML-based output.  The
+web-based editor and the `/:html` output now share the same
+formatting theme.  This theme includes row numbers and visual
+hints for missing records and empty strings.
+
+.. blogcut::
+
+Background
+----------
+
+While the primary focus of HTSQL is on the query language
+itself, it is important to have visual output that permits
+HTSQL to be used out-of-the-box for ad-hoc queries.  This
+update improves our HTML-based output to make data
+exploration easier.
+
+Specifically, we improved the ``/:html`` output, the 
+default output format for browsers.   Additionally, we
+updated the visual query editor ``/:shell``.  To use the
+shell plugin, you must enable it with ``-E tweak.shell`` or
+include it in your configuration file.
+
+
+Presentation
+------------
+
+In HTML-based formats, row numbers are now shown; they are
+displayed in grey lettering with a slightly reduced font
+size.  Numeric columns are right-aligned.  For boolean
+columns, we show *false* in italic so that it is more easily
+distinguished from ``true``.
+
+.. htsql:: 
+   :hide:
+
+   /department{name, num_course := count(course), 
+               num_course > avg(fork().num_course)
+               :as 'greater than average?'}
+
+
+It is was previously impossible to know when a nested record
+was missing or when the record existed but its selected
+columns were ``null``.  We now indicate missing records using
+dashes between fields:
+
+.. htsql:: /department{name, school{name,campus}}
+   :hide:
+
+By convention, we show ``null`` as an empty cell.  This makes
+sense for numeric, boolean, date and other types.   However,
+it was impossible to distinguish ``null`` from an empty
+string (``''``).  Since this difference can be a source of
+errors, we now show an empty string as a dotted box.
+
+.. htsql:: 
+   :hide:
+
+   /course{department_code, no, description,
+           description :is_null, description == ''} ?!description
+

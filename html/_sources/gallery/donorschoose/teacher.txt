@@ -1,0 +1,62 @@
+***********************************
+  DonorsChoose : Top Ten Teachers
+***********************************
+
+Please choose a city, then a school below, and finally a teacher in
+that school to list proposed and funded projects.
+
+.. demo::
+
+    <script type="text/javascript"
+        src="/htraf/htraf.js"
+        data-htsql-version="2"
+        data-htsql-prefix="/@donorschoose">
+    </script>
+
+    <h3>Top Five Cities</h3>
+    <table id="city" width="100%"
+        data-hide-column-0="yes" 
+        data-htsql="/city{
+                        id,
+                        city :as City,
+                        state :as State, 
+                        sum(school.project.total_donations)- :as Donations
+                     }.limit(5)">
+    </table>
+
+    <h3>Top Five Schools</h3>
+    <table id="school" width="100%"
+        data-hide-column-0="yes" 
+        data-htsql="/(school?cityid=$city){
+                        _schoolid,
+                        ncesid :as NCESID,
+                        district :as District,
+                        sum(project.total_donations)- :as Donations 
+                     }.limit(5)"
+        data-ref="city">
+    </table>
+
+    <h3>Top Ten Teachers</h3>
+    <table id="teacher" width="100%"
+        data-hide-column-0="yes" 
+        data-htsql="/(teacher.define(
+                        school_projects := project?_schoolid=$school)
+                      ?exists(school_projects)){
+                        _teacher_acctid,
+                        count(school_projects) :as 'No. Projects',
+                        sum(school_projects.total_donations)- :as Donations
+                     }.limit(10)"
+        data-ref="school">
+    </table>
+
+    <h3>Projects for that Teacher!</h3>
+    <table id="project" width="100%"
+        data-htsql="/project{primary_focus_subject :as Subject, 
+                             essay.title :as Title,
+                             funding_status :as 'Funding Status', 
+                             total_donations- :as Donations}
+                     ?_teacher_acctid=$teacher&_schoolid=$school"
+        data-ref="teacher school">
+    </table>
+
+

@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<meta name="version" content="S5 1.1" />
+<title>Rapid Report Generation for the System Administrator</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 6253 2010-03-02 00:24:53Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: left }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<script src="ui/default/slides.js" type="text/javascript"></script>
+<link rel="stylesheet" href="ui/default/slides.css"
+      type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/default/outline.css"
+      type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/default/print.css"
+      type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/default/opera.css"
+      type="text/css" media="projection" id="operaFix" />
+
+<style type="text/css">
+#currentSlide {display: none;}
+</style>
+</head>
+<body>
+<div class="layout">
+<div id="controls"></div>
+<div id="currentSlide"></div>
+<div id="header">
+
+</div>
+</div>
+<div class="presentation">
+<div class="slide" id="slide0">
+<h1 class="title">Rapid Report Generation for the System Administrator</h1>
+
+<p>Using the Snort database as an example, I will show
+you how to use HTSQL as a tool to simplify generation
+of reports and dashboards.</p>
+<p>You can view the demo at <a class="reference external" href="http://htsql.org/gallery/snort/index.html">http://htsql.org/gallery/snort/index.html</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Presenter:</th><td class="field-body">Dan Ferris, Prometheus Research, LLC</td>
+</tr>
+<tr class="field"><th class="field-name">Date:</th><td class="field-body">May 13th, 2011</td>
+</tr>
+<tr class="field"><th class="field-name">Location:</th><td class="field-body">BSDCan, Ottawa Ontario</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="slide" id="introduction">
+<h1>Introduction</h1>
+<ul class="simple">
+<li>Getting data into databases is easy.</li>
+<li>Getting meaningful data out is hard.</li>
+<li>Reporting infrastructure can get very complex.  My previous employer had 4 full time employees working on a unified reporting system for 2500 network devices.  Every time we introduced a new device or service, reporting was at least 50% of development time.</li>
+</ul>
+</div>
+<div class="slide" id="what-s-so-special-about-snort-anyway">
+<h1>What's so Special about Snort Anyway</h1>
+<ul class="simple">
+<li>Snort is the most popular Open Source IDS.</li>
+<li>In most situations Snort is most useful when logging alerts to a database.</li>
+<li>The Snort database is complicated enough that writing an application is time consuming.</li>
+<li>The HTSQL principles shown will carry over to other apps that report to a database (jrtg, syslog-ng/rsyslog, FreeRadius, or custom applications).</li>
+</ul>
+</div>
+<div class="slide" id="the-simplified-snort-db-schema">
+<h1>The (Simplified) Snort DB Schema</h1>
+<img alt="img/snortdb.png" class="align-center" src="img/snortdb.png" />
+</div>
+<div class="slide" id="what-is-htsql">
+<h1>What is HTSQL?</h1>
+<ul class="simple">
+<li>In its most basic form, HTSQL is a web gateway to a relational database.</li>
+<li>HTSQL is a sophisticated query language.</li>
+<li>In a nutshell, HTSQL takes a specially formatted URL, translates it to SQL statements, and then returns formatted results from the database.</li>
+</ul>
+</div>
+<div class="slide" id="htsql-example">
+<h1>HTSQL Example</h1>
+<ul>
+<li><dl class="first docutils">
+<dt>An HTSQL query that returns the source and destination IPs from the last 10 events sorted by source:</dt>
+<dd><img alt="img/htsql1.png" class="first last align-center" src="img/htsql1.png" />
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="slide" id="id1">
+<h1>HTSQL Example</h1>
+<p><tt class="docutils literal"><span class="pre">/iphdr{inet(ip_src)-,</span> <span class="pre">inet(ip_dst)}.limit(10)</span></tt></p>
+<p>Translated SQL:</p>
+<pre class="literal-block">
+SELECT ('0.0.0.0'::INET + &quot;iphdr&quot;.&quot;ip_src&quot;),
+       ('0.0.0.0'::INET + &quot;iphdr&quot;.&quot;ip_dst&quot;)
+FROM &quot;public&quot;.&quot;iphdr&quot; AS &quot;iphdr&quot;
+ORDER BY 1 DESC, &quot;iphdr&quot;.&quot;sid&quot; ASC, &quot;iphdr&quot;.&quot;cid&quot; ASC
+LIMIT 10
+</pre>
+</div>
+<div class="slide" id="what-can-htsql-do-for-you">
+<h1>What can HTSQL do for you?</h1>
+<ul class="simple">
+<li>HTSQL makes sharing data very easy.  For example,
+a business analyst can email an HTSQL query to a DBA
+to show what data is needed for an application or report.</li>
+<li>HTSQL queries can be bookmarked, linked on a web page,
+or shared via IM.  Since the query is a URL, you can do
+anything you would normally do with a URL.</li>
+<li>Less technical users can master the basics of HTSQL in a
+few hours.  As we say: &quot;Write a user a query and they will
+go away for a day.  Teach them to query and they will go away.&quot;</li>
+<li>Quickly and easily create dashboards and mashups using HTRAF.</li>
+<li>At Prometheus, HTSQL powers our RexDB application.  RexDB is used by many universities to access/store information about families with Autism.</li>
+</ul>
+</div>
+<div class="slide" id="the-nitty-gritty">
+<h1>The Nitty Gritty</h1>
+<ul class="simple">
+<li>The most common useage of HTSQL is as a WSGI web service listening to an unprivileged TCP port.  The service will respond to anything that can send an HTTP GET request.</li>
+<li>If you use Python, you can import HTSQL directly into your scripts.</li>
+<li>With Perl, you can use LWP.</li>
+<li>With the shell, you can use curl or wget.</li>
+</ul>
+</div>
+<div class="slide" id="id2">
+<h1>The Nitty Gritty</h1>
+<p>Python using HTSQL directly:</p>
+<pre class="literal-block">
+from htsql import HTSQL
+from htsql.request import produce
+htsql = HTSQL('pgsql://user:pw&#64;localhost:5432/snort')
+with htsql:
+    for row in produce('/signature{sig_name}'):
+        print &quot;Signature: &quot; + row[0]
+</pre>
+</div>
+<div class="slide" id="id3">
+<h1>The Nitty Gritty</h1>
+<p>Bash with curl:</p>
+<pre class="literal-block">
+IFS=$'\n'
+HTSQL='http://snort.htsql.org/signature\{sig_name\}/:csv'
+for line in $(curl -s $HTSQL | tr '\r\n' '\n')
+do
+    echo &quot;Signature: $line&quot;
+done
+</pre>
+</div>
+<div class="slide" id="id4">
+<h1>The Nitty Gritty</h1>
+<p>Perl using LWP:</p>
+<pre class="literal-block">
+my $server = 'http://snort.htsql.org';
+my $htsql = '/signature{sig_name}/:csv';
+use LWP::Simple;
+my $results = get $server . $htsql;
+
+&#64;results = split(/\r\n/, $results);
+
+foreach $row (&#64;results)
+{
+    print &quot;Signature: $row\n&quot;;
+}
+</pre>
+</div>
+<div class="slide" id="id5">
+<h1>The Nitty Gritty</h1>
+<p>Partial Output:</p>
+<pre class="literal-block">
+Signature: PSNG_UDP_PORTSCAN
+Signature: (http_inspect) NON-RFC DEFINED CHAR
+Signature: (http_inspect) U ENCODING
+Signature: (http_inspect) OVERSIZE REQUEST-URI DIRECTORY
+Signature: PSNG_UDP_DISTRIBUTED_PORTSCAN
+</pre>
+</div>
+<div class="slide" id="insta-blacklist-example">
+<h1>Insta-Blacklist Example</h1>
+<pre class="literal-block">
+$server='http://snort.htsql.org';
+$htsql='/distinct(event{inet(iphdr.ip_src)}
+?signature.sig_priority=1)/:csv';
+
+use LWP::Simple;
+
+$result = get $server . $htsql;
+&#64;result = split(/\r\n/, $result);
+
+shift(&#64;result); #get rid of the column names
+
+foreach $ip (&#64;result)
+{
+    print &quot;Blocking $ip\n&quot;;
+    system(&quot;ipfw add deny all from $ip to any&quot;);
+}
+</pre>
+</div>
+<div class="slide" id="brief-htsql-tutorial">
+<h1>Brief HTSQL tutorial</h1>
+<ul class="simple">
+<li>The easiest HTSQL query is to get the contents of a table:</li>
+</ul>
+<p>Display the iphdr table from the snort DB:</p>
+<p><tt class="docutils literal">/iphdr</tt></p>
+</div>
+<div class="slide" id="id6">
+<h1>Brief HTSQL tutorial</h1>
+<ul class="simple">
+<li>It's much better if you can only select certain columns in the table.
+This is done with the squiggly brackets { and }</li>
+</ul>
+<p><tt class="docutils literal">/iphdr{ip_src, ip_dst}</tt></p>
+<ul class="simple">
+<li>Note that Snort stores IP addresses as a 32 bit signed interger.  HTSQL
+can convert that to the familiar dotted quad notation with the inet()
+function.</li>
+</ul>
+<p><tt class="docutils literal">/iphdr{inet(ip_src), inet(ip_dst)}</tt></p>
+<ul class="simple">
+<li>Data can be sorted by adding a + or - after the column.</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">/iphdr{inet(ip_src)-,</span> inet(ip_dst)}</tt></p>
+</div>
+<div class="slide" id="id7">
+<h1>Brief HTSQL tutorial</h1>
+<ul class="simple">
+<li>HTSQL allows you to filter data.  A filter goes at the end of the {} selector
+and is seperated with the ?</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">/iphdr{inet(ip_dst)}?inet(ip_src)='216.243.150.122'</span></tt></p>
+<ul class="simple">
+<li>Filter operators include, =, &gt;, &lt;, &gt;=, &lt;=, and ~</li>
+<li>Filters can be combined with AND ( &amp; ) and OR ( | )</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">/tcphdr{tcp_dport}?tcp_dport='21'|tcp_dport='139'</span></tt></p>
+<ul class="simple">
+<li>The ! operator is used for logical negation.</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">/tcphdr{tcp_dport}?tcp_dport!='21'</span></tt></p>
+</div>
+<div class="slide" id="id8">
+<h1>Brief HTSQL tutorial</h1>
+<ul class="simple">
+<li>Databases aren't very useful if you can't join data from different tables
+based on foreign key constraints.  All you have to do is put tablename.column
+in the {} selector or in your filter.</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">/event{signature.sig_name}?cid='1234'</span></tt></p>
+<ul class="simple">
+<li>Multiple tables can be joined:</li>
+</ul>
+<p><tt class="docutils literal">/tcphdr{tcp_sport, <span class="pre">inet(event.iphdr.ip_src)}?cid='1234'</span></tt></p>
+</div>
+<div class="slide" id="id9">
+<h1>Brief HTSQL tutorial</h1>
+<ul class="simple">
+<li>Besides the inet() function, HTSQL includes functions to count and to return distinct rows:</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">/count(iphdr?inet(ip_src)='10.90.90.91')</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">/distinct(iphdr{inet(ip_src)})</span></tt></p>
+<ul class="simple">
+<li>You can also limit rows by placing .limit(x) after the selector.</li>
+</ul>
+<p><tt class="docutils literal">/event.limit(10)</tt></p>
+<ul class="simple">
+<li>You can pretty up your output by putting :as after a column selection</li>
+</ul>
+<p><tt class="docutils literal">/iphdr{inet(ip_src) :as 'IP Source'}</tt></p>
+</div>
+<div class="slide" id="formatters">
+<h1>Formatters</h1>
+<ul class="simple">
+<li>HTSQL can output data in several different formats.</li>
+<li>HTML is the most common.</li>
+<li>You can also output data in JSON, CSV, and TXT formats.</li>
+<li>Select the formatter by adding /:&lt;formatter&gt; at the end of the query.</li>
+<li>/event.limit(10)/:JSON will return the query in JSON format.</li>
+<li>If you select the :TXT formatter, HTSQL will show you the SQL it generates.</li>
+</ul>
+</div>
+<div class="slide" id="learning-curve">
+<h1>Learning Curve</h1>
+<ul class="simple">
+<li>HTSQL does have a learning curve.</li>
+<li>If you know your database well, the curve is small.</li>
+<li>If you don't know your database very well, the curve will be larger.</li>
+<li>It took me about 2 days to really begin to grasp HTSQL at an intermediate level.  A few hours will get you going as a beginner.</li>
+<li>Help is available on the mailing list and IRC channel.</li>
+<li>htsql.org has documentation and examples.</li>
+</ul>
+</div>
+<div class="slide" id="licensing-and-database-support">
+<h1>Licensing and Database Support</h1>
+<ul class="simple">
+<li>HTSQL is dual licensed.</li>
+<li>If you want to use it with a commercial database
+you have to give us money.</li>
+<li>HTSQL is free for use on open source databases.</li>
+<li>HTSQL officially supports: PostgreSQL, MySQL, SQLITE,
+Oracle, and Microsoft SQL Server.</li>
+</ul>
+</div>
+<div class="slide" id="installation">
+<h1>Installation</h1>
+<ul class="simple">
+<li>The latest version is always found on bitbucket.</li>
+<li>Also found in the FreeBSD ports tree, databases/py-htsql</li>
+</ul>
+</div>
+<div class="slide" id="running-htsql">
+<h1>Running HTSQL</h1>
+<ul class="simple">
+<li>HTSQL Requires no root privileges.</li>
+<li>It can run directly as a WSGI server</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">/usr/local/bin/htsql-ctl</span> server <span class="pre">pgsql://user:pw&#64;localhost:5432/snort</span></tt></p>
+<ul class="simple">
+<li>The HTSQL shell is a CLI and is very useful for development.</li>
+</ul>
+<p><tt class="docutils literal"><span class="pre">/usr/local/bin/htsql-ctl</span> shell <span class="pre">pgsql://user:pw&#64;localhost:5432/snort</span></tt></p>
+</div>
+<div class="slide" id="htsql-security">
+<h1>HTSQL Security</h1>
+<ul class="simple">
+<li>HTSQL inherits whatever permission you give to the role it uses
+to log into the database.</li>
+<li>If you are running HTSQL as a WSGI app, you will need a proxy server
+to add things like SSL, or authentication. Varnish or Apache's ProxyPass
+are both solutions. We have our demos running behind Varnish.</li>
+<li>The most secure setup possible would be HTSQL accessed through a proxy running with a database role that doesn't allow INSERT, UPDATE, or DELETE and is only allowed to query specific database views.</li>
+</ul>
+</div>
+<div class="slide" id="development-status">
+<h1>Development Status</h1>
+<ul class="simple">
+<li>HTSQL is mature and stable.  Some features may still be missing that
+are due to be added in within the next year.</li>
+<li>HTSQL doesn't support INSERT, UPDATE, or DELETE.  SELECT only at the moment.</li>
+</ul>
+</div>
+<div class="slide" id="htraf">
+<h1>HTRAF</h1>
+<ul class="simple">
+<li>HTRAF is the HTSQL Rapid Application Framework.</li>
+<li>HTRAF is a client side Javascript library that can run and format HTSQL
+queries into pretty graphs and tables.</li>
+<li>HTRAF makes building dashboards with HTSQL extremely easy.</li>
+<li>HTRAF is released uder the MIT/GPL license.</li>
+</ul>
+<img alt="img/htraf.png" class="align-center" src="img/htraf.png" />
+</div>
+<div class="slide" id="htraf-development-status">
+<h1>HTRAF Development Status</h1>
+<ul class="simple">
+<li>HTRAF is quite functional.</li>
+<li>HTRAF does one thing very well, which is formatting HTSQL queries.</li>
+</ul>
+</div>
+<div class="slide" id="snort-dashboard-demo">
+<h1>Snort Dashboard Demo</h1>
+<p><a class="reference external" href="http://htsql.org/gallery/snort/index.html">http://htsql.org/gallery/snort/index.html</a></p>
+</div>
+<div class="slide" id="conclusion">
+<h1>Conclusion</h1>
+<ul class="simple">
+<li>HTSQL is a mature, robust, and stable database query language.</li>
+<li>HTSQL is free for use with Open Source databases such as MySQL
+and PostgreSQL.</li>
+<li>HTSQL and HTRAF can replace thousands of lines of code in lower level languages.</li>
+</ul>
+</div>
+<div class="slide" id="questions">
+<h1>Questions?</h1>
+<p>Questions?</p>
+<ul class="simple">
+<li>Be sure to check out the reference and tutorial at htsql.org.</li>
+<li>You can always find the latest version of HTSQL on bitbucket: <a class="reference external" href="https://bitbucket.org/prometheus/htsql/overview">https://bitbucket.org/prometheus/htsql/overview</a></li>
+<li>The Snort dashboard is also on bitbucket: <a class="reference external" href="https://bitbucket.org/prometheus/htsql-snort/overview">https://bitbucket.org/prometheus/htsql-snort/overview</a></li>
+<li>We also live on IRC.  Check out #htsql on freenode.</li>
+<li>Subscribe to the mailing list, <a class="reference external" href="http://lists.htsql.org">http://lists.htsql.org</a></li>
+</ul>
+</div>
+</div>
+   <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-11527623-4']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+</body>
+</html>

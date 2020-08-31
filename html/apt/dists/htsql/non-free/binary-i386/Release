@@ -1,0 +1,8 @@
+Archive: unstable
+Component: non-free
+Origin: Prometheus Research, LLC
+Label: HTSQL Releases Repository
+Architecture: i386
+Description: This repository is for the purposes of distributing HTSQL
+related debian package files.  This repository currently tracks work 
+on version 2.2 with regular updates.

@@ -1,0 +1,1785 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTSQL Grammar &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Reference" href="index.html" />
+    <link rel="next" title="Data Model" href="model.html" />
+    <link rel="prev" title="HTSQL Reference" href="index.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-grammar">
+<h1>HTSQL Grammar<a class="headerlink" href="#htsql-grammar" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#encoding" id="id1">Encoding</a></li>
+<li><a class="reference internal" href="#lexical-structure" id="id2">Lexical Structure</a></li>
+<li><a class="reference internal" href="#syntax-structure" id="id3">Syntax Structure</a></li>
+</ul>
+</div>
+<p>A valid input of an HTSQL processor is called an HTSQL query.</p>
+<p>In a regular mode of operation, an HTSQL processor is started as a web
+service and accepts queries as HTTP <tt class="docutils literal"><span class="pre">GET</span></tt> requests.  However, an HTSQL
+query can also be executed using a command-line utility <tt class="docutils literal"><span class="pre">htsql-ctl</span></tt> or
+via internal Python API.</p>
+<div class="section" id="encoding">
+<h2><a class="toc-backref" href="#id1">Encoding</a><a class="headerlink" href="#encoding" title="Permalink to this headline">¶</a></h2>
+<p>An HTSQL query is a string of characters in UTF-8 encoding.  Octets
+composing the string could be written literally or percent-encoded.  A
+percent-encoded octet is serialized as three characters: <tt class="docutils literal"><span class="pre">%</span></tt> followed
+by two hexdecimal digits encoding the octet value.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/%7B'HTSQL',%20%27HTSQL%27,%20%27%48%54%53%51%4C%27%7D" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/%7B'HTSQL',%20%27HTSQL%27,%20%27%48%54%53%51%4C%27%7D" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="s">&#39;HTSQL&#39;</span><span class="p">,</span> <span class="s">%27HTSQL%27</span><span class="p">,</span> <span class="s">%27%48%54%53%51%4C%27</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&#8216;HTSQL&#8217;</th>
+<th class="head">&#8216;HTSQL&#8217;</th>
+<th class="head">&#8216;HTSQL&#8217;</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-untyped-type">HTSQL</td>
+<td class="htsql-untyped-type">HTSQL</td>
+<td class="htsql-untyped-type">HTSQL</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Percent-encoding is useful for transmitting an HTSQL query via channels
+that forbid certain characters in literal form.  The list of characters
+that should be encoded depends on the channel type, but the percent
+(<tt class="docutils literal"><span class="pre">%</span></tt>) character itself must always be percent-encoded.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/%7B'%25'%7D" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/%7B'%25'%7D" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="s">&#39;%25&#39;</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&#8216;%25&#8217;</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-untyped-type">%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>A <tt class="docutils literal"><span class="pre">NUL</span></tt> character cannot appear in an HTSQL query, neither in literal
+nor in percent-encoded form.</p>
+<p>The HTSQL processor decodes percent-encoded octets before parsing the
+query.  As a consequence, a percent-encoded punctuation or operator
+character still plays its syntax role.</p>
+</div>
+<div class="section" id="lexical-structure">
+<h2><a class="toc-backref" href="#id2">Lexical Structure</a><a class="headerlink" href="#lexical-structure" title="Permalink to this headline">¶</a></h2>
+<p>An HTSQL query is parsed into a sequence of tokens.  The following
+tokens are recognized.</p>
+<div class="section" id="name">
+<h3>Name<a class="headerlink" href="#name" title="Permalink to this headline">¶</a></h3>
+<p>A sequence of alphanumeric characters that does not start with a digit.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="69%" />
+<col width="19%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">edu</td>
+<td class="htsql-text-type">College of Education</td>
+<td class="htsql-text-type">old</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="number">
+<h3>Number<a class="headerlink" href="#number" title="Permalink to this headline">¶</a></h3>
+<p>A numeric literal: integer, decimal and exponential notations are
+recognized.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{60,%202.125,%20271828e-5}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{60,%202.125,%20271828e-5}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="m">60</span><span class="p">,</span> <span class="m">2.125</span><span class="p">,</span> <span class="m">271828e-5</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="31%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">60</th>
+<th class="head">2.125</th>
+<th class="head">271828e-5</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-integer-type">60</td>
+<td class="htsql-decimal-type">2.125</td>
+<td class="htsql-float-type">2.71828</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="string">
+<h3>String<a class="headerlink" href="#string" title="Permalink to this headline">¶</a></h3>
+<p>A string literal enclosed in single quotes; any single quote character
+should be doubled.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{'HTSQL',%20'O''Reilly'}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{'HTSQL',%20'O''Reilly'}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="s">&#39;HTSQL&#39;</span><span class="p">,</span> <span class="s">&#39;O&#39;&#39;Reilly&#39;</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="39%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&#8216;HTSQL&#8217;</th>
+<th class="head">&#8216;O&#8217;&#8216;Reilly&#8217;</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-untyped-type">HTSQL</td>
+<td class="htsql-untyped-type">O&#8217;Reilly</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="symbol">
+<h3>Symbol<a class="headerlink" href="#symbol" title="Permalink to this headline">¶</a></h3>
+<p>A valid symbol in the HTSQL grammar; that includes operators and
+punctuation characters.  Some symbols are represented by more than one
+character (e.g. <tt class="docutils literal"><span class="pre">&lt;=</span></tt>, <tt class="docutils literal"><span class="pre">!~</span></tt>).</p>
+<p>Individual tokens may be separated by whitespace characters.</p>
+<p>See <tt class="xref py py-class docutils literal"><span class="pre">htsql.tr.scan.Scanner</span></tt> for detailed description of HTSQL
+tokens.</p>
+</div>
+</div>
+<div class="section" id="syntax-structure">
+<h2><a class="toc-backref" href="#id3">Syntax Structure</a><a class="headerlink" href="#syntax-structure" title="Permalink to this headline">¶</a></h2>
+<p>A sequence of HTSQL tokens must obey the HTSQL grammar.</p>
+<p>An HTSQL query starts is a segment expression optionally followed by a
+sequence of commands.</p>
+<p>The following table lists HTSQL operations in the order of precedence,
+lowest to highest.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="28%" />
+<col width="28%" />
+<col width="22%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Operation</th>
+<th class="head">Description</th>
+<th class="head">Example Input</th>
+<th class="head">Output</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">/</span> <span class="pre">T</span></tt></td>
+<td>segment</td>
+<td><tt class="docutils literal"><span class="pre">/school</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">:fn</span></tt></td>
+<td rowspan="3">infix function call</td>
+<td><tt class="docutils literal"><span class="pre">'HTSQL':length</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">5</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">:fn</span> <span class="pre">y</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">1/3</span> <span class="pre">:round</span> <span class="pre">2</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">0.33</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">:fn</span> <span class="pre">(y,z,...)</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">'HTSQL':slice(1,-1)</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">'TSQ'</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">+</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">-</span></tt></td>
+<td>sorting direction</td>
+<td><tt class="docutils literal"><span class="pre">program{degree+}</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">?</span> <span class="pre">p</span></tt></td>
+<td>sieve</td>
+<td><tt class="docutils literal"><span class="pre">program?degree='ms'</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">^</span> <span class="pre">x</span></tt></td>
+<td>projection</td>
+<td><tt class="docutils literal"><span class="pre">program^degree</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">{x,y,...}</span></tt></td>
+<td>selection</td>
+<td><tt class="docutils literal"><span class="pre">school{code,name}</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">p</span> <span class="pre">|</span> <span class="pre">q</span></tt></td>
+<td>logical <em>OR</em></td>
+<td><tt class="docutils literal"><span class="pre">true|false</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">true</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">p</span> <span class="pre">&amp;</span> <span class="pre">q</span></tt></td>
+<td>logical <em>AND</em></td>
+<td><tt class="docutils literal"><span class="pre">true&amp;false</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">false</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">!</span> <span class="pre">p</span></tt></td>
+<td>logical <em>NOT</em></td>
+<td><tt class="docutils literal"><span class="pre">!true</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">false</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">!=</span> <span class="pre">y</span></tt>,</td>
+<td rowspan="5">comparison</td>
+<td><tt class="docutils literal"><span class="pre">2+2=4</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">true</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">!==</span> <span class="pre">y</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">'HTSQL'==null</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">false</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">~</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">!~</span> <span class="pre">y</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">'HTSQL'~'SQL'</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">true</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">&lt;</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">&lt;=</span> <span class="pre">y</span></tt>,</td>
+<td><tt class="docutils literal"><span class="pre">12&lt;7</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">false</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">&gt;</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">&gt;=</span> <span class="pre">y</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">12&gt;=7</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">true</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">-</span> <span class="pre">y</span></tt></td>
+<td>addition, subtraction</td>
+<td><tt class="docutils literal"><span class="pre">'HT'+'SQL'</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">'HTSQL'</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">/</span> <span class="pre">y</span></tt></td>
+<td>multiplication, division</td>
+<td><tt class="docutils literal"><span class="pre">12*7</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">84</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">-</span> <span class="pre">x</span></tt></td>
+<td>negation</td>
+<td><tt class="docutils literal"><span class="pre">-42</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">T</span></tt></td>
+<td>attachment</td>
+<td><tt class="docutils literal"><span class="pre">'south'</span> <span class="pre">-&gt;</span> <span class="pre">school{campus}</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">:=</span> <span class="pre">x</span></tt></td>
+<td>assignment</td>
+<td><tt class="docutils literal"><span class="pre">num_prog</span> <span class="pre">:=</span> <span class="pre">count(program)</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">S</span> <span class="pre">.</span> <span class="pre">T</span></tt></td>
+<td>composition</td>
+<td><tt class="docutils literal"><span class="pre">school.program</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">[id]</span></tt></td>
+<td>locator</td>
+<td><tt class="docutils literal"><span class="pre">course[comp.304]</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">&#64;</span> <span class="pre">T</span></tt></td>
+<td>detachment</td>
+<td><tt class="docutils literal"><span class="pre">&#64;school</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">{x,y,...}</span></tt></td>
+<td>record</td>
+<td><tt class="docutils literal"><span class="pre">{'bs','ms'}</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">(...)</span></tt></td>
+<td>grouping</td>
+<td><tt class="docutils literal"><span class="pre">(7+4)*2</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">22</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">*</span></tt></td>
+<td rowspan="2">wildcard selection</td>
+<td><tt class="docutils literal"><span class="pre">school.*</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">*</span> <span class="pre">number</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">school.*1</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">^</span></tt></td>
+<td>projection complement</td>
+<td><tt class="docutils literal"><span class="pre">count(^)</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">$</span> <span class="pre">name</span></tt></td>
+<td>reference</td>
+<td><tt class="docutils literal"><span class="pre">$code</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">fn</span> <span class="pre">(...)</span></tt></td>
+<td>function call</td>
+<td><tt class="docutils literal"><span class="pre">round(1/3,2)</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">0.33</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt></td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">school</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">number</span></tt></td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">60</span></tt>, <tt class="docutils literal"><span class="pre">2.125</span></tt>,
+<tt class="docutils literal"><span class="pre">271828e-5</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">string</span></tt></td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">'HTSQL'</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>A command starts with <tt class="docutils literal"><span class="pre">/</span></tt> followed by a function application in infix
+notation.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>code,name,campus
+art,School of Art &amp; Design,old
+bus,School of Business,south
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next we describe individual syntax elements.</p>
+<div class="section" id="atomic-expressions">
+<h3>Atomic Expressions<a class="headerlink" href="#atomic-expressions" title="Permalink to this headline">¶</a></h3>
+<p>An atomic expression is a basic syntax unit.  HTSQL recognizes the
+following atoms.</p>
+<div class="section" id="identifier">
+<h4>Identifier<a class="headerlink" href="#identifier" title="Permalink to this headline">¶</a></h4>
+<p>An identifier is a sequence of characters which contains Latin letters,
+underscores (<tt class="docutils literal"><span class="pre">_</span></tt>), decimal digits and those Unicode characters that
+are classified as alphanumeric.  An identifier must not start with a
+digit.</p>
+<p>In HTSQL, identifiers are <em>case-insensitive</em>.</p>
+<p>Identifiers are used to refer to database entities such as tables and
+attributes, to define calculated attributes, and to call functions.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(department)}/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(department)}/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>name,count(department)
+School of Art &amp; Design,1
+School of Business,3
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>In this example, four identifiers <tt class="docutils literal"><span class="pre">school</span></tt>, <tt class="docutils literal"><span class="pre">name</span></tt>, <tt class="docutils literal"><span class="pre">count</span></tt> and
+<tt class="docutils literal"><span class="pre">department</span></tt> represent respectively a table, a table attribute, a
+built-in function and a table link.</p>
+</div>
+<div class="section" id="literal">
+<h4>Literal<a class="headerlink" href="#literal" title="Permalink to this headline">¶</a></h4>
+<p>HTSQL supports two types of literal values: <em>quoted</em> and <em>unquoted</em>.</p>
+<p>An unquoted (or numeric) literal is a number written in integer, decimal
+or exponential notation.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{60,%202.125,%20271828e-5}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{60,%202.125,%20271828e-5}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="m">60</span><span class="p">,</span> <span class="m">2.125</span><span class="p">,</span> <span class="m">271828e-5</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="31%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">60</th>
+<th class="head">2.125</th>
+<th class="head">271828e-5</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-integer-type">60</td>
+<td class="htsql-decimal-type">2.125</td>
+<td class="htsql-float-type">2.71828</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The range of allowed numeric values depends on the database backend.
+The type of a numeric literal is determined from notation: literals
+written in integer, decimal and exponential notation are assigned to
+<tt class="xref py py-obj docutils literal"><span class="pre">integer</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">decimal</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">float</span></tt> data type respectively.</p>
+<p>A quoted literal is a (possibly empty) sequence of arbitrary characters
+enclosed in single quotes.  Any single quote in the value must be
+doubled.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{'HTSQL',%20'O''Reilly'}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{'HTSQL',%20'O''Reilly'}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="s">&#39;HTSQL&#39;</span><span class="p">,</span> <span class="s">&#39;O&#39;&#39;Reilly&#39;</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="39%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&#8216;HTSQL&#8217;</th>
+<th class="head">&#8216;O&#8217;&#8216;Reilly&#8217;</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-untyped-type">HTSQL</td>
+<td class="htsql-untyped-type">O&#8217;Reilly</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The data type of a quoted literal is inferred from the context in which
+the literal is used; the default data type is <tt class="xref py py-obj docutils literal"><span class="pre">string</span></tt>.</p>
+</div>
+<div class="section" id="wildcard">
+<h4>Wildcard<a class="headerlink" href="#wildcard" title="Permalink to this headline">¶</a></h4>
+<p>A wildcard selection (<tt class="docutils literal"><span class="pre">*</span></tt>) selects all output columns of the table.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school.*,%20*}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school.*,%20*}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">.</span><span class="o">*</span><span class="p">,</span> <span class="o">*</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="43%" />
+<col width="9%" />
+<col width="9%" />
+<col width="16%" />
+<col width="16%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+<th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">bus</td>
+<td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">acc</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">la</td>
+<td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">arthis</td>
+<td class="htsql-text-type">Art History</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ns</td>
+<td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">astro</td>
+<td class="htsql-text-type">Astronomy</td>
+<td class="htsql-text-type">ns</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>When followed by an integer literal <tt class="docutils literal"><span class="pre">N</span></tt>, a wildcard selects <tt class="docutils literal"><span class="pre">N</span></tt>-th
+output column of the table.  <tt class="docutils literal"><span class="pre">N</span></tt> starts from <tt class="docutils literal"><span class="pre">1</span></tt> and should not
+exceed the number of output columns.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(department)}?*2&gt;=4" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(department)}?*2&gt;=4" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span><span class="o">?*</span><span class="m">2</span><span class="o">&gt;=</span><span class="m">4</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="63%" />
+<col width="37%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">count(department)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-integer-type">6</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Music &amp; Dance</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="complement">
+<h4>Complement<a class="headerlink" href="#complement" title="Permalink to this headline">¶</a></h4>
+<p>A projection complement (<tt class="docutils literal"><span class="pre">^</span></tt>) represents a complement link from a
+projection to the projected flow.</p>
+<p>Do not confuse a projection complement with a binary projection
+operator, which is also represented with the <tt class="docutils literal"><span class="pre">^</span></tt> character.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/program^degree{*,%20count(^)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/program^degree{*,%20count(^)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">count(^)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">ba</td>
+<td class="htsql-integer-type">10</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bs</td>
+<td class="htsql-integer-type">10</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ct</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this example, the first and the second occurrences of <tt class="docutils literal"><span class="pre">^</span></tt> indicate
+a projection operator and a projection complement respectively.</p>
+</div>
+<div class="section" id="grouping">
+<h4>Grouping<a class="headerlink" href="#grouping" title="Permalink to this headline">¶</a></h4>
+<p>Any expression enclosed in parentheses (<tt class="docutils literal"><span class="pre">(...)</span></tt>) is treated
+syntactically as a single atom.  Use grouping to override the default
+operator precedence.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(7%2B4)*2" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(7%2B4)*2" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="m">7</span><span class="o">+</span><span class="m">4</span><span class="p">)</span><span class="o">*</span><span class="m">2</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-integer-type">22</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Do not confuse a grouping operation with a function call, which also
+uses parentheses.</p>
+</div>
+<div class="section" id="record">
+<h4>Record<a class="headerlink" href="#record" title="Permalink to this headline">¶</a></h4>
+<p>A comma-separated list of expressions enclosed in curly brackets
+(<tt class="docutils literal"><span class="pre">{...}</span></tt>) is called a record expression.  Some functions and operators
+accept records as a way to specify multiple values.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school?code={'eng','ns'}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school?code={'eng','ns'}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">?</span><span class="nb">code</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;eng&#39;</span><span class="p">,</span><span class="s">&#39;ns&#39;</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="72%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">eng</td>
+<td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">ns</td>
+<td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="reference">
+<h4>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h4>
+<p>A reference is an identifier preceded by a dollar sign (<tt class="docutils literal"><span class="pre">$</span></tt>).  A
+reference is used to access a value defined in a different naming scope.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course?credits&gt;$avg_credits%0A%20:where%20$avg_credits%20:=%20avg(course.credits)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course?credits&gt;$avg_credits%0A%20:where%20$avg_credits%20:=%20avg(course.credits)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span>
+ <span class="p">:</span><span class="nf">where</span> <span class="p">$</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="2%" />
+<col width="13%" />
+<col width="4%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">315</td>
+<td class="htsql-text-type">Financial Accounting</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Integration of the conceptual and computational aspects of asset, liability and stockholders equity accounting.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">511</td>
+<td class="htsql-text-type">Audit</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">This course considers legal, procedural and ethical aspects of audit in accounting.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">620</td>
+<td class="htsql-text-type">Accounting Internship</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Supervised internship in a business or nonprofit organization on an accounting position.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this example, a reference <tt class="docutils literal"><span class="pre">$avg_credits</span></tt> is defined in the root
+scope, but accessed in the scope of <tt class="docutils literal"><span class="pre">course</span></tt>.</p>
+<p>For a more detailed description of references, see the section on
+naming scopes.</p>
+</div>
+</div>
+<div class="section" id="function-calls">
+<h3>Function Calls<a class="headerlink" href="#function-calls" title="Permalink to this headline">¶</a></h3>
+<p>HTSQL has a large library of built-in functions and can be extended with
+user-defined functions.</p>
+<p>A function call is represented as a function name followed by <tt class="docutils literal"><span class="pre">(</span></tt>, a
+comma-separated list of arguments, and <tt class="docutils literal"><span class="pre">)</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/round(1/3,%202)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/round(1/3,%202)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">round</span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="m">3</span><span class="p">,</span> <span class="m">2</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-decimal-type">0.33</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>A function may accept no arguments, but the parentheses are still
+required.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/today()" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/today()" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">today</span><span class="p">()</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-date-type">2013-01-31</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>For functions with at least one argument, HTSQL supports an alternative
+infix call notation.  In this notation, the expression starts with the
+first argument followed by <tt class="docutils literal"><span class="pre">:</span></tt> and a function name, and then the rest
+of the arguments.  The trailing arguments must be enclosed in
+parentheses if their number is greater than one.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{today()%20:year,%201/3%20:round%202,%20'HTSQL'%20:slice(1,%20-1)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{today()%20:year,%201/3%20:round%202,%20'HTSQL'%20:slice(1,%20-1)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">today</span><span class="p">()</span> <span class="p">:</span><span class="nf">year</span><span class="p">,</span> <span class="m">1</span><span class="o">/</span><span class="m">3</span> <span class="p">:</span><span class="nf">round</span> <span class="m">2</span><span class="p">,</span> <span class="s">&#39;HTSQL&#39;</span> <span class="p">:</span><span class="nf">slice</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="o">-</span><span class="m">1</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="27%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">today()&nbsp;:year</th>
+<th class="head">1/3&nbsp;:round&nbsp;2</th>
+<th class="head">&#8216;HTSQL&#8217;&nbsp;:slice(1,-1)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-integer-type">2013</td>
+<td class="htsql-decimal-type">0.33</td>
+<td class="htsql-text-type">TSQ</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This example could be equivalently expressed as</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{year(today()),%20round(1/3,%202),%20slice('HTSQL',%201,%20-1)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{year(today()),%20round(1/3,%202),%20slice('HTSQL',%201,%20-1)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">year</span><span class="p">(</span><span class="nf">today</span><span class="p">()),</span> <span class="nf">round</span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="m">3</span><span class="p">,</span> <span class="m">2</span><span class="p">),</span> <span class="nf">slice</span><span class="p">(</span><span class="s">&#39;HTSQL&#39;</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="o">-</span><span class="m">1</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="27%" />
+<col width="43%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">year(today())</th>
+<th class="head">round(1/3,2)</th>
+<th class="head">slice(&#8216;HTSQL&#8217;,1,-1)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-integer-type">2013</td>
+<td class="htsql-decimal-type">0.33</td>
+<td class="htsql-text-type">TSQ</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Infix function calls are composable and have the lowest precedence among
+the operators.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{'h'%2B't'%2B't'%2B'p'%20:replace('tp',%20'sql')%20:upper}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{'h'%2B't'%2B't'%2B'p'%20:replace('tp',%20'sql')%20:upper}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="s">&#39;h&#39;</span><span class="o">+</span><span class="s">&#39;t&#39;</span><span class="o">+</span><span class="s">&#39;t&#39;</span><span class="o">+</span><span class="s">&#39;p&#39;</span> <span class="p">:</span><span class="nf">replace</span><span class="p">(</span><span class="s">&#39;tp&#39;</span><span class="p">,</span> <span class="s">&#39;sql&#39;</span><span class="p">)</span> <span class="p">:</span><span class="nf">upper</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&#8216;h&#8217;+&#8217;t&#8217;+&#8217;t&#8217;+&#8217;p&#8217;&nbsp;:replace(&#8216;tp&#8217;,&#8217;sql&#8217;)&nbsp;:upper</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">HTSQL</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>A function which argument is a segment expression is called a command.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/csv(/school)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/csv(/school)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">csv</span><span class="p">(</span><span class="o">/</span><span class="nb">school</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>code,name,campus
+art,School of Art &amp; Design,old
+bus,School of Business,south
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>To use infix call notation with a command, prepend the <tt class="docutils literal"><span class="pre">:</span></tt> indicator
+with <tt class="docutils literal"><span class="pre">/</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>code,name,campus
+art,School of Art &amp; Design,old
+bus,School of Business,south
+…
+</pre></div>
+</div>
+</div>
+</div>
+<p>Consider the difference between regular infix function call and
+a command application.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school:top/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school:top/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">:</span><span class="nf">top</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>code,name,campus
+art,School of Art &amp; Design,old
+</pre></div>
+</div>
+</div>
+</div>
+<p>This example could be equivalently expressed as</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/csv(/top(school))" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/csv(/top(school))" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">csv</span><span class="p">(</span><span class="o">/</span><span class="nf">top</span><span class="p">(</span><span class="nb">school</span><span class="p">))</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>code,name,campus
+art,School of Art &amp; Design,old
+</pre></div>
+</div>
+</div>
+</div>
+<p>For a list and description of built-in functions, see <a class="reference internal" href="functions.html"><em>Functions and Operators</em></a>.</p>
+</div>
+<div class="section" id="operators">
+<h3>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h3>
+<p>An HTSQL operator is denoted by a special character or a sequence of
+characters (e.g. <tt class="docutils literal"><span class="pre">+</span></tt>, <tt class="docutils literal"><span class="pre">&lt;=</span></tt>).  HTSQL has infix, prefix and postfix
+operators, and some operators admit all three forms.</p>
+<p>The current version of HTSQL does not support user-defined operators;
+future versions may add this ability.</p>
+<p>In HTSQL, the order in which operators are applied is determined by
+<em>operator precedence</em>.  For example, multiplication and division
+operators have a higher precedence than addition and subtraction.</p>
+<p>Some HTSQL operators are composable (e.g. arithmetic operators) and some
+are not (e.g. equality operators).  We call the former <em>associative</em> and
+the latter <em>non-associative</em>.</p>
+<p>Below we describe the syntax of HTSQL operators.  For a more
+comprehensive description, see <a class="reference internal" href="functions.html"><em>Functions and Operators</em></a>.</p>
+<div class="section" id="logical-operators">
+<h4>Logical Operators<a class="headerlink" href="#logical-operators" title="Permalink to this headline">¶</a></h4>
+<p>HTSQL supports the following logical operators:</p>
+<dl class="docutils">
+<dt>logical <em>OR</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">p</span> <span class="pre">|</span> <span class="pre">q</span></tt></dd>
+<dt>logical <em>AND</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">p</span> <span class="pre">&amp;</span> <span class="pre">q</span></tt></dd>
+<dt>logical <em>NOT</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">!</span> <span class="pre">p</span></tt></dd>
+</dl>
+<p>In this list, the operators are sorted by the order of precedence, from
+lowest to highest.  All logical operators are left-associative.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{true|false,%20true&amp;false,%20!false}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{true|false,%20true&amp;false,%20!false}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nb">true</span><span class="o">|</span><span class="nb">false</span><span class="p">,</span> <span class="nb">true</span><span class="o">&amp;</span><span class="nb">false</span><span class="p">,</span> <span class="o">!</span><span class="nb">false</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="38%" />
+<col width="23%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">true|false</th>
+<th class="head">true&amp;false</th>
+<th class="head">!false</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-boolean-type htsql-true-val">true</td>
+<td class="htsql-boolean-type htsql-false-val">false</td>
+<td class="htsql-boolean-type htsql-true-val">true</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="comparison-operators">
+<h4>Comparison Operators<a class="headerlink" href="#comparison-operators" title="Permalink to this headline">¶</a></h4>
+<p>HTSQL supports the following comparison operators:</p>
+<dl class="docutils">
+<dt><em>equality</em> operators</dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">!=</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">!==</span> <span class="pre">y</span></tt></dd>
+<dt><em>containing</em> operators</dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">~</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">!~</span> <span class="pre">y</span></tt></dd>
+<dt><em>ordering</em> operators</dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">&lt;</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">&lt;=</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">&gt;</span> <span class="pre">y</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">&gt;=</span> <span class="pre">y</span></tt></dd>
+</dl>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{2%2B2=4,%20'HTSQL'~'SQL',%2012&gt;7&amp;7&gt;=2}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{2%2B2=4,%20'HTSQL'~'SQL',%2012&gt;7&amp;7&gt;=2}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="m">2</span><span class="o">+</span><span class="m">2</span><span class="o">=</span><span class="m">4</span><span class="p">,</span> <span class="s">&#39;HTSQL&#39;</span><span class="o">~</span><span class="s">&#39;SQL&#39;</span><span class="p">,</span> <span class="m">12</span><span class="o">&gt;</span><span class="m">7</span><span class="o">&amp;</span><span class="m">7</span><span class="o">&gt;=</span><span class="m">2</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="48%" />
+<col width="33%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">2+2=4</th>
+<th class="head">&#8216;HTSQL&#8217;~&#8217;SQL&#8217;</th>
+<th class="head">12&gt;7&amp;7&gt;=2</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-boolean-type htsql-true-val">true</td>
+<td class="htsql-boolean-type htsql-true-val">true</td>
+<td class="htsql-boolean-type htsql-true-val">true</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>All comparison operators have the same precedence and are not
+associative.</p>
+<p>Future versions of HTSQL may make ordering operators left-associative
+to express <em>between</em> operation (e.g.  <tt class="xref py py-obj docutils literal"><span class="pre">a</span> <span class="pre">&lt;=</span> <span class="pre">x</span> <span class="pre">&lt;=</span> <span class="pre">b</span></tt>).</p>
+</div>
+<div class="section" id="arithmetic-operators">
+<h4>Arithmetic Operators<a class="headerlink" href="#arithmetic-operators" title="Permalink to this headline">¶</a></h4>
+<p>HTSQL supports the usual set of arithmetic operators:</p>
+<dl class="docutils">
+<dt><em>addition</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span></tt></dd>
+<dt><em>subtraction</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">-</span> <span class="pre">y</span></tt></dd>
+<dt><em>multiplication</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">*</span> <span class="pre">y</span></tt></dd>
+<dt><em>division</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">/</span> <span class="pre">y</span></tt></dd>
+<dt><em>negation</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">-</span> <span class="pre">x</span></tt></dd>
+</dl>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{'HT'%2B'SQL',%20today()-1,%20-6*4/5}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{'HT'%2B'SQL',%20today()-1,%20-6*4/5}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="s">&#39;HT&#39;</span><span class="o">+</span><span class="s">&#39;SQL&#39;</span><span class="p">,</span> <span class="nf">today</span><span class="p">()</span><span class="o">-</span><span class="m">1</span><span class="p">,</span> <span class="o">-</span><span class="m">6</span><span class="o">*</span><span class="m">4</span><span class="o">/</span><span class="m">5</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>Arithmetic operators have standard precedence and associativity.</p>
+</div>
+<div class="section" id="flow-operators">
+<h4>Flow Operators<a class="headerlink" href="#flow-operators" title="Permalink to this headline">¶</a></h4>
+<p>HTSQL supports specialized operators to work with flow expressions:</p>
+<dl class="docutils">
+<dt><em>sieve</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">?</span> <span class="pre">p</span></tt></dd>
+<dt><em>projection</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">^</span> <span class="pre">x</span></tt></dd>
+<dt><em>selection</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">{x,y,...}</span></tt></dd>
+</dl>
+<p>The sieve operator (<tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">?</span> <span class="pre">p</span></tt>) produces rows of <tt class="xref py py-obj docutils literal"><span class="pre">T</span></tt> satisfying
+condition <tt class="xref py py-obj docutils literal"><span class="pre">p</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school?campus='south'" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school?campus='south'" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">?</span><span class="nb">campus</span><span class="o">=</span><span class="s">&#39;south&#39;</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="70%" />
+<col width="18%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">bus</td>
+<td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">mus</td>
+<td class="htsql-text-type">School of Music &amp; Dance</td>
+<td class="htsql-text-type">south</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The projection operator (<tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">^</span> <span class="pre">x</span></tt>) produces a flow of unique values of
+<tt class="xref py py-obj docutils literal"><span class="pre">x</span></tt> as it ranges over <tt class="xref py py-obj docutils literal"><span class="pre">T</span></tt>.  Do not confuse the projection operator with
+a projection complement.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/program^degree" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/program^degree" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">ba</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bs</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ct</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The selection operator (<tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">{x,y,...}</span></tt>) specifies output columns.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nb">name</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-text-type">School of Art &amp; Design</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-text-type">School of Business</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">edu</td>
+<td class="htsql-text-type">College of Education</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Sieve, projection and selection operators have the same precedence
+and are left-associative.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school?count(department)&gt;2%0A%20%20%20%20%20%20%20^campus%0A%20%20%20%20%20%20%20{campus,%20avg(school.count(department))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school?count(department)&gt;2%0A%20%20%20%20%20%20%20^campus%0A%20%20%20%20%20%20%20{campus,%20avg(school.count(department))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">?</span><span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)</span><span class="o">&gt;</span><span class="m">2</span>
+       <span class="o">^</span><span class="nb">campus</span>
+       <span class="p">{</span><span class="nb">campus</span><span class="p">,</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">school</span><span class="p">.</span><span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">))}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">campus</th>
+<th class="head">avg(school.count(department))</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">north</td>
+<td class="htsql-decimal-type">4.0</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">old</td>
+<td class="htsql-decimal-type">5.0</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">south</td>
+<td class="htsql-decimal-type">3.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="composition">
+<h4>Composition<a class="headerlink" href="#composition" title="Permalink to this headline">¶</a></h4>
+<p>HTSQL supports a flow <em>composition</em> operator:</p>
+<blockquote>
+<div><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">.</span> <span class="pre">x</span></tt></div></blockquote>
+<p>The composition operator evaluates <tt class="xref py py-obj docutils literal"><span class="pre">x</span></tt> for each row of the flow <tt class="xref py py-obj docutils literal"><span class="pre">T</span></tt>.
+The values of <tt class="xref py py-obj docutils literal"><span class="pre">x</span></tt> form the resulting flow.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.filter(campus='south').department" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.filter(campus='south').department" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">campus</span><span class="o">=</span><span class="s">&#39;south&#39;</span><span class="p">).</span><span class="nb">department</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="59%" />
+<col width="30%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">econ</td>
+<td class="htsql-text-type">Economics</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">mm</td>
+<td class="htsql-text-type">Management &amp; Marketing</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The composition operator is left-associative.</p>
+</div>
+<div class="section" id="locator">
+<h4>Locator<a class="headerlink" href="#locator" title="Permalink to this headline">¶</a></h4>
+<p>The <em>locator</em> operation selects an individual entity by its <em>identity</em>:</p>
+<blockquote>
+<div><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">[id]</span></tt></div></blockquote>
+<p>The identity is a sequence of attributes and links which uniquely
+identify an entity.  Values of separate attributes are separated by a
+period (<tt class="docutils literal"><span class="pre">.</span></tt>).  An individual value could be left unquoted when it
+consists of digits, alphabetical characters or dash (<tt class="docutils literal"><span class="pre">-</span></tt>).  Values
+could be grouped using pairs of brackets (<tt class="docutils literal"><span class="pre">[]</span></tt>) or parentheses
+(<tt class="docutils literal"><span class="pre">()</span></tt>).</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department[comp]" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department[comp]" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">[</span><span class="s">comp</span><span class="p">]</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="52%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">comp</td>
+<td class="htsql-text-type">Computer Science</td>
+<td class="htsql-text-type">eng</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course[comp.515]" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course[comp.515]" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">[</span><span class="s">comp</span><span class="p">.</span><span class="s">515</span><span class="p">]</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="2%" />
+<col width="8%" />
+<col width="4%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">comp</td>
+<td class="htsql-integer-type">515</td>
+<td class="htsql-text-type">Software Design</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-text-type">Study of good software development techniques: UML, object-oriented design, design patterns, GUI design principles, testing, debugging and profiling.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/class[(comp.515).(2010.spring).001]" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/class[(comp.515).(2010.spring).001]" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">class</span><span class="p">[(</span><span class="s">comp</span><span class="p">.</span><span class="s">515</span><span class="p">).(</span><span class="s">2010</span><span class="p">.</span><span class="s">spring</span><span class="p">).</span><span class="s">001</span><span class="p">]</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="14%" />
+<col width="6%" />
+<col width="9%" />
+<col width="11%" />
+<col width="23%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">course_no</th>
+<th class="head">year</th>
+<th class="head">season</th>
+<th class="head">section</th>
+<th class="head">instructor_code</th>
+<th class="head">class_seq</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">comp</td>
+<td class="htsql-integer-type">515</td>
+<td class="htsql-decimal-type">2010</td>
+<td class="htsql-enum-type">spring</td>
+<td class="htsql-text-type">001</td>
+<td class="htsql-text-type">rmejia</td>
+<td class="htsql-integer-type">1405</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="attachment-and-detachment">
+<h4>Attachment and Detachment<a class="headerlink" href="#attachment-and-detachment" title="Permalink to this headline">¶</a></h4>
+<p>HTSQL has two operators for generating ad-hoc links:</p>
+<dl class="docutils">
+<dt><em>detachment</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">&#64;</span> <span class="pre">T</span></tt></dd>
+<dt><em>attachment</em></dt>
+<dd><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">T</span></tt></dd>
+</dl>
+<p>The detachment operator (<tt class="xref py py-obj docutils literal"><span class="pre">&#64;</span> <span class="pre">T</span></tt>) generates an ad-hoc link to <tt class="xref py py-obj docutils literal"><span class="pre">T</span></tt> by
+associating each row from the input flow with all rows from <tt class="xref py py-obj docutils literal"><span class="pre">T</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course?credits&gt;avg(@course.credits)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course?credits&gt;avg(@course.credits)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="nf">avg</span><span class="p">(@</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="2%" />
+<col width="13%" />
+<col width="4%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">315</td>
+<td class="htsql-text-type">Financial Accounting</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Integration of the conceptual and computational aspects of asset, liability and stockholders equity accounting.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">511</td>
+<td class="htsql-text-type">Audit</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">This course considers legal, procedural and ethical aspects of audit in accounting.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">620</td>
+<td class="htsql-text-type">Accounting Internship</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Supervised internship in a business or nonprofit organization on an accounting position.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The precedence of the detachment operator is higher than of any
+other operator.  Therefore, to apply the operator to any expression
+other than an identifier or a function call, use parentheses.</p>
+<p>The attachment operator (<tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">-&gt;</span> <span class="pre">T</span></tt>) generates ad-hoc link to <tt class="xref py py-obj docutils literal"><span class="pre">T</span></tt> by
+associating each row from the input flow with all rows from <tt class="xref py py-obj docutils literal"><span class="pre">T</span></tt> such
+that values of expression <tt class="xref py py-obj docutils literal"><span class="pre">x</span></tt> evaluated against respective rows
+coincide.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/student{name,%20dob%2B}?count(dob%20-&gt;%20student)&gt;2" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/student{name,%20dob%2B}?count(dob%20-&gt;%20student)&gt;2" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">student</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">dob</span><span class="o">+</span><span class="p">}</span><span class="o">?</span><span class="nf">count</span><span class="p">(</span><span class="nb">dob</span> <span class="o">-&gt;</span> <span class="nb">student</span><span class="p">)</span><span class="o">&gt;</span><span class="m">2</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="60%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">dob</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">Virginia Hester</td>
+<td class="htsql-date-type">1986-03-20</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Marvin Hall</td>
+<td class="htsql-date-type">1986-03-20</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Douglas Robles</td>
+<td class="htsql-date-type">1986-03-20</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-date-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="segment-operator">
+<h4>Segment Operator<a class="headerlink" href="#segment-operator" title="Permalink to this headline">¶</a></h4>
+<p>A segment expression is a prefix operator:</p>
+<blockquote>
+<div><tt class="xref py py-obj docutils literal"><span class="pre">/</span> <span class="pre">T</span></tt></div></blockquote>
+<p>A segment expression converts a flow to a list value.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20/department{name}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20/department{name}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">}}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" rowspan="2">name</th>
+<th class="head">department</th>
+</tr>
+<tr class="row-even"><th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-text-type">Studio Art</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type" rowspan="3">School of Business</td>
+<td class="htsql-text-type">Accounting</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Economics</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Management &amp; Marketing</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="sorting-decorators">
+<h4>Sorting Decorators<a class="headerlink" href="#sorting-decorators" title="Permalink to this headline">¶</a></h4>
+<p>The following postfix decorators indicate ascending and descending
+sorting order respectively:</p>
+<blockquote>
+<div><tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">+</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">x</span> <span class="pre">-</span></tt></div></blockquote>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course.sort(department_code%2B,credits-)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course.sort(department_code%2B,credits-)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="nb">department_code</span><span class="o">+</span><span class="p">,</span><span class="nb">credits</span><span class="o">-</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="2%" />
+<col width="13%" />
+<col width="4%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">620</td>
+<td class="htsql-text-type">Accounting Internship</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Supervised internship in a business or nonprofit organization on an accounting position.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">315</td>
+<td class="htsql-text-type">Financial Accounting</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Integration of the conceptual and computational aspects of asset, liability and stockholders equity accounting.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">511</td>
+<td class="htsql-text-type">Audit</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">This course considers legal, procedural and ethical aspects of audit in accounting.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Sorting decorators have the same precedence as infix function call.</p>
+<p>Sorting decorators are only meaningful when used as arguments of the
+<tt class="xref py py-obj docutils literal"><span class="pre">sort()</span></tt> function and in a selector expression.</p>
+</div>
+<div class="section" id="assignment">
+<h4>Assignment<a class="headerlink" href="#assignment" title="Permalink to this headline">¶</a></h4>
+<p>An assignment expression has the form:</p>
+<blockquote>
+<div><tt class="xref py py-obj docutils literal"><span class="pre">T</span> <span class="pre">:=</span> <span class="pre">x</span></tt></div></blockquote>
+<p>The left side of an assignment expression indicates the name and formal
+parameters (if any) of a calculated attribute.  It must be an
+identifier, a reference or a function call and can be preceded by an
+optional dot-separated sequence of identifiers.</p>
+<p>The right side of an assignment is an arbitrary expression indicating
+the value of a calculated attribute.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20num_dept}?num_dept&gt;=4%0A%20:where%20school.num_dept%20:=%20count(department)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20num_dept}?num_dept&gt;=4%0A%20:where%20school.num_dept%20:=%20count(department)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">num_dept</span><span class="p">}</span><span class="o">?</span><span class="nb">num_dept</span><span class="o">&gt;=</span><span class="m">4</span>
+ <span class="p">:</span><span class="nf">where</span> <span class="nb">school</span><span class="p">.</span><span class="nb">num_dept</span> <span class="p">:=</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="78%" />
+<col width="22%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+<th class="head">num_dept</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-integer-type">6</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Music &amp; Dance</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>An assignment expression could be used only as an argument of functions
+<tt class="xref py py-obj docutils literal"><span class="pre">define()</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">where()</span></tt>, or in a selector expression.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

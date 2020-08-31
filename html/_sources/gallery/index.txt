@@ -1,0 +1,496 @@
+*****************
+  HTSQL Gallery
+*****************
+
+.. contents:: Table of Contents
+   :depth: 1
+   :local:
+
+HTSQL can be used in a many ways.  This page demonstrates dashboards
+(using :doc:`/htraf/index`) and ad-hoc query examples.  If you click
+on any of the screen shots below, it will take you to an interactive
+example with the complete source code below.
+
+.. toctree::
+   :hidden:
+
+   edgar/execcomp
+   donorschoose/state
+   donorschoose/subject
+   donorschoose/teacher
+   snort/overview
+   snort/events
+   demo/courses
+
+EDGAR Database
+==============
+
+The EDGAR database contains detailed financial filings from U.S. public
+companies.  The demo includes the most recent (2008) filing information
+from 1,000 public companies, including executive compensation data
+(courtesy of directEDGAR_) and company facts and financials (from `EDGAR
+Online`_).  Perform your own financial analysis to see how executive
+salaries stack up against company performance.
+
+.. _directEDGAR: http://www.directedgar.com/
+.. _EDGAR Online: http://www.edgar-online.com/
+
+EDGAR Dashboard : Executive Compensation
+----------------------------------------
+
+The :doc:`Executive Compensation <edgar/execcomp>` dashboard shows the
+power of HTRAF to create an interactive application by combining HTSQL
+queries with HTRAF elements like selectors and text inputs.  See how
+easy it is to find the top earners by industry, name and title.
+
+.. image:: edgar/execcomp.png
+   :width: 80%
+   :align: center
+   :target: edgar/execcomp.html
+
+EDGAR Schema
+------------
+
+.. diagram:: edgar/edgar-schema.tex
+   :align: center
+
+EDGAR Queries
+-------------
+
+Try these queries to see what compensation packages executives at 1000
+U.S. companies enjoy.
+
+.. htsql-server:: http://edgar.htsql.org
+
+Return a table
+~~~~~~~~~~~~~~
+
+.. htsql:: /officer
+   :cut: 5
+
+Here's the simplest possible HTSQL query --- return all rows and columns
+from the `officer` table.  As with all HTSQL queries, `the URL is the
+query`_.
+
+.. _the URL is the query: http://edgar.htsql.org/officer
+
+Select specific columns
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. htsql:: /officer{officer_name, title}
+   :cut: 5
+
+Here's another simple query that shows selection of two specific
+columns, `officer_name` and `officer_title`, from the `officer` table. 
+
+Add a simple filter
+~~~~~~~~~~~~~~~~~~~
+
+.. htsql::
+   :cut: 5
+
+   /officer{officer_name, title}
+           ?title~'chief technology officer'
+
+Same selector as the previous query, but here we've added a filter.
+This filter finds rows in the `officer` table where the `title` contains
+*chief technology officer*.
+
+Add a simple link
+~~~~~~~~~~~~~~~~~
+
+.. htsql:: /compensation{officer.officer_name, amount}
+   :cut: 5
+
+This illustrates a simple link.  The base table is `compensation`.  The
+first expression in the selector, `officer.officer_name` instructs HTSQL
+to return the `officer_name` column from the (related) `officer` table.
+Note that we don't have to specify the join in any more detail because
+HTSQL already knows how the `officer` table is related to the
+`compensation` table.
+
+Aggregate data
+~~~~~~~~~~~~~~
+
+.. htsql::
+   :cut: 5
+
+   /company{name, count(officer)-, max(officer.sum(compensation.amount))}
+
+This example shows an expression that is straightforward and reasonably
+intuitive in HTSQL --- for each company, we return the number of
+officers and maximum total compensation given to those officers.
+Interestingly, the SQL equivalent is neither intuitive nor simple (go
+ahead, try it.)  This is not an accident.  We've spent the last six
+years working to make sure that HTSQL syntax is intuitive enough for
+business analysts and power users to understand, yet powerful enough for
+developers to use.
+
+
+Donors Choose
+=============
+
+`Donors Choose`_ is a great organization that matches donors with
+classrooms in need.  They're sponsoring the `Hacking Education`_ contest
+(through June 30, 2011) to encourage app developers to find helpful new
+ways to use their project database.  
+
+.. _Hacking Education: http://www.donorschoose.org/hacking-education
+.. _Donors Choose: http://www.donorschoose.org/
+
+Donors Choose : Top Subjects
+----------------------------
+
+The :doc:`Top Subjects <donorschoose/subject>` dashboard provides a
+visualization of which subject areas received the most donation dollars.
+Even simple dashboards like this one provide a greater degree of insight
+into data than tabular data (let alone raw data output).  Using HTSQL
+and HTRAF, anyone familiar with the data (and who has basic HTML skills)
+can create data visualizations.
+
+.. image:: donorschoose/subject.png
+   :align: center
+   :width: 80%
+   :target: donorschoose/subject.html
+
+Donors Choose : Subject by State
+--------------------------------
+
+The :doc:`Subject by State <donorschoose/state>` dashboard shows what
+subject areas and donations are popular for a given state.
+
+.. image:: donorschoose/state.png
+   :align: center
+   :width: 80%
+   :target: donorschoose/state.html
+
+Donors Choose : Top Ten Teachers
+--------------------------------
+
+The :doc:`Top Ten Teachers <donorschoose/teacher>` dashboard provides a
+data driven page that allows a user to select a city and a school, and
+then displays the top ten teachers for that school and all of their
+related projects.
+
+.. image:: donorschoose/teacher.png
+   :align: center
+   :width: 80%
+   :target: donorschoose/teacher.html
+
+Donors Choose Schema
+--------------------
+
+.. diagram:: donorschoose/donorschoose-schema.tex
+   :align: center
+
+Donors Choose Queries
+---------------------
+
+.. htsql-server:: http://donorschoose.htsql.org
+
+The demonstration HTSQL server on top of the Donors Choose data set is
+at http://donorschoose.htsql.org -- it is configured to return no more
+than 1000 rows per request.
+
+Try these queries to get a flavor for what's in the database:
+
+Top 10 projects
+~~~~~~~~~~~~~~~
+
+.. htsql:: 
+   :cut: 5
+
+   /project{_projectid, primary_focus_subject, 
+            primary_focus_area}.limit(10)
+
+This query returns the first 10 rows from the `project` table --- if you
+omit the `.limit(10)` our demo server silently truncates the results to
+1000 rows.
+
+Donations per project
+~~~~~~~~~~~~~~~~~~~~~
+
+.. htsql:: /project{essay.title, count(donation)}
+   :cut: 5
+                  
+This query returns only the title and the number of donations per
+project.
+
+Projects from LA (CSV)
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. htsql:: /project{essay.title}?school.city.state='LA'/:csv
+   :cut: 5
+
+This query will return projects where the school's state is LA (also
+truncated at 1000 rows).  The output format is CSV, replace `/:csv` with
+`/:json` to create your mashups.
+
+Number of teachers, projects, donations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. htsql:: /{count(teacher), count(project), count(donation)}
+   :cut: 5
+
+This query returns the number of teachers, cities, and projects that are
+in the dataset.
+
+Teachers with projects in more than one school
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. htsql:: /count(teacher?count(project^_schoolid)>1)
+   :cut: 5
+
+This query returns the number of teachers sponsoring projects in more
+than one school.
+
+Average donation per focus subject
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. htsql::
+   :cut: 5
+
+   /distinct(project{primary_focus_subject}?num_donors)
+        {*, sum(^.total_donations)/sum(^.num_donors) -}
+
+.. **
+
+This query returns primary focus subjects in descending order by the
+average donation amount.  Unsurprisingly, *College & Career Prep* takes
+the cake with $174 per donor.
+
+Cities with more than 5 schools
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. htsql::
+   :cut: 5
+
+   /(city?count(school)>5)
+        {city, state, sum(school.project.total_donations)/count(school) -}
+
+This query produce cities with more than 5 schools ordered by the number
+of donations per school.
+
+*La Mesa, CA* has by far the highest number of donations per school ---
+$39k. The next closest is *E. Palo Alto* with $22k.
+
+Accounts by number of donations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. htsql::
+   :cut: 5
+
+   /account{city{city, state},
+            count(donation?dollar_amount='100_and_up') -}
+
+This query produce city and state of each donor ordered by the
+number of donations of 100 dollars and up.
+
+*The Gates Foundation* seems to be the single largest donor with 10,298
+donations of $100 and up.
+
+..
+    /project.limit(10)
+    /{min(project.date_posted), max(project.date_posted)}
+    /(project^year(date_posted)){*, count(^)}
+    /(project^{month:=date(year(date_posted),month(date_posted),1)}){*, count(^)}
+    /(project^{month:=date(year(date_posted),month(date_posted),1)}){*, count(^),sum(^.num_donors),count(^.donation)}
+    /(project^{month:=date(year(date_posted),month(date_posted),1)}){*, count(^),sum(^.num_donors),count(^.(donation^_donor_acctid))}
+    /(project^{month:=date(year(date_posted),month(date_posted),1)}){*, count(^),round(avg(^.num_donors),1)}
+    /(project^{month:=date(year(date_posted),month(date_posted),1)}){*, count(^),avg(^.count(donation)):round(1),avg(^.num_donors):round(1),avg(^.count(donation^_donor_acctid)):round(1)}
+    /((project?exists(donation))^{month:=date(year(date_posted),month(date_posted),1)}){*, count(^),avg(^.count(donation)):round(1),avg(^.num_donors):round(1),avg(^.count(donation^_donor_acctid)):round(1)}
+    /{min(project.count(donation)), max(project.count(donation))}
+    /(project^count(donation)){*, count(^)}
+    /project{essay{title,need_statement},count(donation)-}?count(donation)>100
+    /(project^round(total_donations,-1)){*,count(^)}
+    /(project^round(total_donations,-2)){*,count(^)}
+    /project{essay{title,need_statement},total_donations-}?total_donations>10000
+    /(project^count(donation^_donor_acctid)){*,count(^)}
+    /project{essay{title,need_statement},num_donors:=count(donation^_donor_acctid)-}?num_donors>=100
+
+Snort Intrusion Detection
+=========================
+
+`Snort`_ is a free, lightweight intrusion detection system developed by
+Sourcefire.  This demo shows how easy it is to read and visualize
+network logs stored in the Snort database.
+
+.. _Snort: http://www.snort.org/
+
+Snort: Daily Overview
+---------------------
+
+The :doc:`Daily Overview <snort/overview>` dashboard provides a graphical and
+tabular summary of today's activity.  
+
+.. image:: snort/overview.png
+   :align: center
+   :width: 80%
+   :target: snort/overview.html
+
+Snort: Event Detail
+-------------------
+
+The :doc:`Event Detail <snort/events>` dashboard lists the last 10 events,
+where clicking an event shows detail such as protocol header information
+and data payload.
+
+.. image:: snort/events.png
+   :align: center
+   :width: 80%
+   :target: snort/events.html
+
+Snort Queries
+-------------
+
+.. htsql-server:: http://snort.htsql.org
+
+The HTSQL interface for snort data source is at http://snort.htsql.org/.
+
+Last 10 source IPs
+~~~~~~~~~~~~~~~~~~
+
+This query displays source IP addresses from the last 10 events.
+
+.. htsql:: /iphdr{inet(ip_src)}.sort(event.timestamp-).limit(10)
+   :cut: 10
+
+Unique destinations for a given source
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This query displays all distinct destinations IP addresses and TCP ports
+from source IP `216.243.150.122`.
+
+.. htsql::
+   :cut: 5
+
+   /distinct(event{inet(iphdr.ip_src),
+                   inet(iphdr.ip_dst),
+                   tcphdr.tcp_dport}
+                  ?inet(iphdr.ip_src)='216.243.150.122')
+
+Range of IP addressees
+~~~~~~~~~~~~~~~~~~~~~~
+
+This example shows all pairs of source and destination IPs
+where the source IP belongs to the block `10.90.90.0/24`.
+
+.. htsql::
+   :cut: 10
+
+   /distinct(iphdr{inet(ip_src), inet(ip_dst)}
+        ?inet(ip_src)>='10.90.90.0'&inet(ip_src)<='10.90.90.255')
+
+Last 500 events for a specified host (CSV)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This query shows the most recent 500 events for host `216.243.150.122`.
+The output is in CSV format and contains the timestamp, destination IP
+address, TCP destination port, UDP destination port, ICMP type,
+signature name and signature class name.
+
+.. htsql::
+   :cut: 10
+
+   /event{timestamp-,
+          inet(iphdr.ip_dst),
+          tcphdr.tcp_dport,
+          udphdr.udp_dport,
+          icmphdr.icmp_type,
+          signature.sig_name,
+          signature.sig_class.sig_class_name}
+         .filter(inet(iphdr.ip_src)='216.243.150.122')
+         .limit(500)/:csv
+
+Number of IP addresses per signature
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This query displays the number of unique IP addresses for each detected
+signature.
+
+.. htsql::
+   :cut: 10
+
+   /signature{sig_sid, sig_name,
+              count(distinct(event{iphdr.ip_src}))}
+
+Unique IP addresses and signatures
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This query displays all unique IP addresses and detected signature names
+with the number of times the IP has been detected with the signature.
+
+.. htsql::
+   :cut: 10
+
+   /distinct(event{inet(iphdr.ip_src),
+                   signature.sig_name}){*, count(^)-}
+                   
+.. **
+
+High severity events for today
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This query displays all source and destination IPs that caused high
+severity events today along with signature name and timestamp.
+
+.. htsql::
+   :cut: 10
+
+   /event{inet(iphdr.ip_src),
+          inet(iphdr.ip_dst),
+          signature.sig_name,
+          time(timestamp)}
+         ?date(timestamp)=today()&signature.sig_priority=1
+
+
+HTSQL Sample Database
+=====================
+
+This gallery is for examples and dashboards based on our sample database
+which is a dummy university course catalog & enrollment system.
+
+Demo : Course Dashboard
+-----------------------
+
+The :doc:`Course Catalog <demo/courses>` dashboard lets you drill down to
+individual courses by first selecting the school, then clicking on the
+department name.  The dashboard updates in real time and always features
+the most current data because HTSQL pulls it directly from the database.
+
+.. image:: demo/courses.png
+   :align: center
+   :width: 80%
+   :target: demo/courses.html
+
+University Schema
+-----------------
+
+.. diagram:: demo/demo-schema.tex
+   :align: center
+
+University Queries
+------------------
+
+Welcome to HTSQL's test database, where we put HTSQL through its paces
+with a complex database structure.  The courses are fake, but the
+problems solved are real, as these queries show how easy it is to
+aggregate and analyze course data from multiple tables.  For a complete
+tour of this database and HTSQL, visit the :doc:`/doc/tutorial`.
+
+.. htsql-server:: http://demo.htsql.org
+
+Average number of courses per department in each school
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. htsql:: /school{name, avg(department.count(course))}
+   :cut: 4
+
+Courses in the Business School in CSV format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. htsql::
+
+   /(school?code='bus').department.course{no,credits,title}/:csv
+
+

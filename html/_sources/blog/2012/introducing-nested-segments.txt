@@ -1,0 +1,122 @@
+*******************************
+  Introducing Nested Segments
+*******************************
+
+.. blogentry::
+   :date: 2012-03-23
+   :author: cce
+
+HTSQL now supports nested queries!  Generation of
+multi-layered output is now trivial.
+
+.. blogcut::
+
+
+Overview
+--------
+
+Often you want to organize summary and detailed data in a
+single hierarchical structure.  In HTSQL, the segment (``/``)
+operator embeds the result of a correlated query as a nested
+list. For instance, a list of ``school`` records could
+include associated ``department`` records:
+
+.. htsql:: /school{*, /department}
+   :cut: 7  
+.. **
+
+
+Navigation
+----------
+
+To understand this better, let's review how navigation works.
+Suppose we have two related tables, ``school`` and
+``department`` such that each department may be associated
+with a particular school.  Conversely, each school is
+correlated with a list of its associated departments.
+
+The following query first navigates to ``school``, and then
+for each school, navigates to the associated departments.
+These correlated ``department`` records are returned.  
+
+.. htsql:: /school.department
+   :cut: 6
+
+Note this query is *not* the same as ``/department``, even
+though both return records from the ``department`` table.
+The ``/school.department`` query returns only departments
+associated with some school, and orders them by school.
+
+The following example also navigates from ``school`` to
+``department``.  However, this linking happens in the context
+of the ``count()`` aggregate.  Hence, we get schools, and for
+each school, the count of associated departments.
+
+.. htsql:: /school{code, count(department)}
+   :cut: 3
+
+The segment operator is also an aggregate --- instead of
+returning a scalar, it returns a nested list.
+
+.. htsql:: /school{code, count(department), /department}
+   :cut: 7
+
+
+More Examples
+-------------
+
+This mechanism is not a special case, it is an integral part
+of our query language.   For example, it works with
+projections.
+
+.. htsql:: /school^campus{campus, /school{name}}
+
+Nested segments play well with aggregates and variables.
+
+.. htsql:: 
+   :cut: 9
+
+   /department{name+, 
+               $avg_credits := avg(course.credits),
+               /course{credits, title}?credits>$avg_credits }
+
+
+Nesting can be arbitrarily deep.
+
+.. htsql::
+   :cut: 35
+
+   /school{name+, 
+           /department{name, 
+                       /course{title}}}
+
+A query may have adjacent nested segments.
+
+.. htsql:: /school{name, /department{name}, /program{title}}
+   :cut: 12 
+.. **
+
+For tabular formats, we show parallel tables adjacent to each
+other.  In the query above, programs and departments are
+shown side-by-side even though they are not correlated with
+each other.   
+
+Presentation
+------------
+
+Nested segments are supported by all HTSQL output formats.
+The hierarchical structure of the output is very suitable for
+``XML`` and ``JSON`` formats.
+
+.. htsql:: /school{*, /department} /:xml
+   :plain:
+   :cut: 32
+.. **
+
+.. htsql:: /school{*, /department} /:json
+   :plain:
+   :cut: 36
+.. **
+
+
+.. vim: set textwidth=61:

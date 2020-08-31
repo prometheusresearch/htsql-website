@@ -1,0 +1,227 @@
+************************************************************
+  What is Wrong with SQL (and why HTSQL is the way to go)?
+************************************************************
+
+.. blogentry::
+   :date: 2011-05-10
+   :author: xi
+
+SQL was invented with a promise of opening data access to people who
+are not professional programmers -- but ended up as an arcane art
+for database experts.  This transformation didn't go unnoticed,
+but the reason why writing SQL queries is so hard was never properly
+explained.
+
+Frustration on usage of SQL often expressed as complains about
+its bulky syntax, inconsistent semantics, and occasionally
+about SQL violating the relational model.
+
+I believe the problem of SQL, and relational model in general,
+is that it does not respect the structure of business requests.
+takes a form of complains 
+
+.. blogcut::
+
+Writing an analytical SQL query starts with a *business inquiry*,
+an textual description of the required data.  The inquiry could
+be formulated by a business user or a programmer.  The programmer
+then translated the inquiry to a query language.
+
+Often, in the process of database audit or refactoring, it is
+necessary to update existing SQL queries.  To verify correctness
+of an existing SQL query, we need to extract the original business
+inquiry from the SQL.
+
+In the examples below, we will use a fragment of a database
+for student enrollment system.  This database contains four tables:
+
+.. htsql:: /school{code, name, campus}
+   :cut: 3
+
+.. htsql:: /department{code, name, school_code}
+   :cut: 3
+
+.. htsql:: /program{school_code, code, title, degree, part_of_code}
+   :cut: 3
+
+.. htsql:: /course{department_code, no, title, credits, description}
+   :cut: 3
+
+The database contains *schools*, *departments* associated with a school,
+*programs* administered by a school, and *courses* offered by a department.
+
+.. diagram:: dia/administrative-directory-small-schema.tex
+   :align: center
+
+Against this schema, we could ask a number of business inquiries:
+
+- List the names of all schools in the north campus.
+
+- For each department, show the department name and the campus
+  where it is located.
+
+- Show the number of departments.
+
+- For each department, show the department name and the number of courses
+  having more than 2 credit hours.
+
+- How many departments by school campus?
+
+- For each department, show the department name and the number of offered
+  100's, 200's, 300's and 400's courses.
+
+- For each school with a degree program, show the name of the school
+  and the average number of high-credit (>3) courses its departments
+  have.
+
+From the above examples, you can see that a well-defined business
+inquiry usually has a fixed form (or could be reduced to this form)::
+
+    For each row of ...
+        such that ...
+    give me
+        1) ...
+        2) ...
+
+In this form, we see a sentence of a business inquiry clearly splits into
+three parts: selection of the record set (*for each row of ...*)
+filtering on the record set (*such that ...*) and choosing columns
+to output (*give me 1) ..., 2) ...,*).  I believe SQL is confusing
+and hard to use for many people because it does not respect well
+this separation.
+
+On the first sight, it is completely wrong, and indeed a canonical
+form of a SQL query is:
+
+.. sourcecode:: sql
+
+    SELECT ...
+    FROM ...
+    WHERE ...
+
+This form shows that business request clearly separate selection of the
+row set (schools, departments, etc) and selection of the columns to
+output (school name, number of courses, etc).  I believe SQL is confusing
+and hard to use for many people because it does not respect this separation.
+
+On the first sight, it is wrong.  For instance, the request:
+
+    *List the names of all students*
+
+is translated to SQL:
+
+.. sourcecode:: sql
+
+    SELECT student.name
+    FROM ed.student;
+
+Indeed, one may claim that the structure of the SQL query:
+
+.. sourcecode:: sql
+
+    SELECT ...
+    FROM ...
+    WHERE ...
+
+directly reflects the respective structure of the business inquiry.
+
+However that correspondence falls apart when examples become more complicated.
+Consider an inquiry:
+
+    *For each department, show the department name and the campus
+    where it is located.*
+
+
+Here are some examples using our sample database:
+
+- For each department, give me the names of the department and the
+  corresponding school.
+
+- For each school, give the school name and the number of associated programs.
+
+- For every program degree, give me the average number of students per
+  program with this degree.
+
+What's important in this form is that the business request clearly
+separates selection of the row set (students, schools, program degrees)
+and selection of the columns to output (student name, degree, number of
+programs, etc.  I believe for many people SQL is confusing and
+hard to use because it does not respect this separation.
+
+On the first sight, it is incorrect.  For instance, the request:
+
+    *"List the names of all schools in the north campus"*
+
+is translated to
+
+::
+
+    SELECT school.name
+    FROM ad.school
+    WHERE school.campus = 'north';
+
+and here SQL clauses directly correspond to distinct parts of the
+request: SELECT chooses the output column and FROM specifies the row set.
+
+However when the request is changed slightly:
+
+    "Give me the name and the degree of each student"
+
+the respective SQL
+
+::
+
+    SELECT student.name, program.degree
+    FROM ed.student
+    JOIN ad.program ON (student.school = program.school AND
+                        student.program = program.code)
+
+loses this correspondence: now the FROM clause is responsible both for
+the row set and output column selection.  Contrast this with the
+equivalent HTSQL query::
+
+    /student{name, program.degree}
+
+It is not only shorter, but also the names of the tables are located in
+semantically meaningful positions: `student` in the leading position shows
+that every row of the output is associated with a distinct record from
+`student` table; `iphdr` appears in the selector to display a linked
+record from `iphdr` table (and the link event->iphdr is singular,
+otherwise the query would produce an error).
+
+This effect becomes even more apparent in queries with aggregates.  Compare
+
+SELECT signature.sig_name, COUNT(*)
+FROM signature
+JOIN event ON (signature.sig_id = event.signature)
+GROUP BY signature.sig_id, signature.sig_name
+
+with
+
+/signature{sig_name, count(event)}
+
+Note that I could easily read back the original business request out of
+the HTSQL variant even if I don't know the schema, but to do the same
+with SQL, I need to put some effort -- because the row set of the
+request is not manifested clearly in SQL.  To determine the row set from
+SQL, I need to analyze the whole query: SELECT clause for DISTINCT
+indicator and aggregate calls, FROM clause where some tables may
+contribute to the row selection and the others may not, GROUP BY clause
+for projections.
+
+With clear distinction between row and column selection, HTSQL achieves
+the level of composability impossible in SQL.  For instance, the query
+
+/signature{sig_id, count(event)}
+
+could be easily adapted to include extra columns:
+
+/signature{sig_id, sig_name, count(event), count(sig_reference)}
+
+or to add a filter
+
+/signature{sig_id, count(event)}?sig_class.sig_class_name~'protocol'
+
+and these changes are local to the respective operations while making
+similar changes to SQL usually requires modifying the query all over the
+place. 

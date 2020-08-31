@@ -1,0 +1,173 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Deploying HTSQL &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Administration" href="index.html" />
+    <link rel="next" title="HTSQL in the Cloud" href="cloud.html" />
+    <link rel="prev" title="Using and Configuring HTSQL" href="usage.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="deploying-htsql">
+<h1>Deploying HTSQL<a class="headerlink" href="#deploying-htsql" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#deployment" id="id1">Deployment</a></li>
+<li><a class="reference internal" href="#security" id="id2">Security</a></li>
+</ul>
+</div>
+<p>The following instructions assume you&#8217;ve installed HTSQL and wish
+to deploy it to an existing web server.</p>
+<div class="section" id="deployment">
+<h2><a class="toc-backref" href="#id1">Deployment</a><a class="headerlink" href="#deployment" title="Permalink to this headline">¶</a></h2>
+<p>The built-in HTSQL web server was designed for personal and testing use
+and may appear inadequate for production deployment.  In particular,
+it does not not provide any means for authentication and lacks SSL support.</p>
+<div class="section" id="integration-with-apache">
+<span id="index-0"></span><h3>Integration with Apache<a class="headerlink" href="#integration-with-apache" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to integrate HTSQL with <a class="reference external" href="http://httpd.apache.org/">Apache HTTP Server</a> using
+<a class="reference external" href="http://code.google.com/p/modwsgi/">mod_wsgi</a>.  Here we assume that both Apache and mod_wsgi are already
+installed.</p>
+<p>First, create a WSGI script file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">htsql</span> <span class="kn">import</span> <span class="n">HTSQL</span>
+
+<span class="c"># The address of the database in the form:</span>
+<span class="c">#   engine://user:pass@host:port/database</span>
+<span class="n">DB</span> <span class="o">=</span> <span class="s">&#39;...&#39;</span>
+
+<span class="n">application</span> <span class="o">=</span> <span class="n">HTSQL</span><span class="p">(</span><span class="n">DB</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Save this file as <tt class="docutils literal"><span class="pre">htsql.wsgi</span></tt> and place it to a directory
+accessible by Apache (but do not put it below the root of the web
+site so that it cannot be downloaded).</p>
+<p>Next, add the following line to the Apache configuration file:</p>
+<div class="highlight-apache"><div class="highlight"><pre><span class="nb">WSGIScriptAlias</span> <span class="sx">/htsql</span> <span class="sx">/path/to/htsql.wsgi</span>
+</pre></div>
+</div>
+<p>This line should be added to the <tt class="docutils literal"><span class="pre">VirtualHost</span></tt> section of the respective
+web site.  It associates any URL starting with <tt class="docutils literal"><span class="pre">/htsql</span></tt> with the HTSQL
+server.</p>
+<p>For more information of installing and configuring Apache and mod_wsgi,
+see documentation for the respective projects, in particular,
+<a class="reference external" href="http://code.google.com/p/modwsgi/wiki/QuickConfigurationGuide">Quick Configuration Guide for mod_wsgi</a>.</p>
+</div>
+</div>
+<div class="section" id="security">
+<span id="index-1"></span><h2><a class="toc-backref" href="#id2">Security</a><a class="headerlink" href="#security" title="Permalink to this headline">¶</a></h2>
+<p>Giving HTSQL access is practically equivalent to giving an access to
+a read-only SQL console and should be planned accordingly.</p>
+<p>HTSQL, as a gateway between HTTP server and a database server, does
+not provide any security mechanisms.  Any protection should be set
+up on either the HTTP or the database layers.  On the HTTP layer,
+you may put the HTSQL server behind an HTTP server or a proxy
+to provide SSL, authentication and caching.  On the database layer,
+you may restrict access to selected database entities using roles and
+permissions.</p>
+<p>With a proper setup, data leaks should be impossible.  Another
+potential vector of attack is overloading the database server,
+against which we recommend setting up an HTTP caching layer and
+restricting resource usage for the HTSQL database user.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

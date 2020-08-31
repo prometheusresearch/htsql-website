@@ -1,0 +1,86 @@
+************
+  Download
+************
+
+.. toctree::
+   :hidden:
+
+Use of HTSQL with open source databases (PostgreSQL, MySQL, SQLite) is
+royalty free under BSD-style conditions.  Usage of HTSQL with
+proprietary database systems (Oracle, Microsoft SQL) requires a
+commercial license.  See :doc:`/license/index`.
+
+After installing HTSQL, please see our :doc:`/doc/handbook`.
+
+.. highlight:: console
+
+Debian / Ubuntu
+===============
+
+If you're running a Debian_ or Ubuntu_ system, you can install HTSQL
+from our APT repository::
+
+    # wget -q -O - http://dist.htsql.org/misc/build.gpg.key | apt-key add -
+    # echo 'deb http://dist.htsql.org/debian stable free' >> /etc/apt/sources.list
+    # apt-get update
+    # apt-get install htsql
+
+You need to install additional packages to use HTSQL with a database
+other than SQLite.  For PostgreSQL::
+
+    # apt-get install htsql-pgsql
+
+For MySQL::
+
+    # apt-get install htsql-mysql
+
+.. _Debian: http://debian.org/
+.. _Ubuntu: http://ubuntu.com/
+
+
+RedHat EL / CentOS
+==================
+
+We provide RPM packages for `RedHat Enterprise Linux 6`_ or `CentOS 6`_.
+
+.. note::
+
+   You may need to add the EPEL_ repository to satisfy the dependency
+   on PyYAML_.
+
+To include HTSQL RPM repository, run::
+
+    # rpm -Uvh http://dist.htsql.org/redhat/6/i386/HTSQL-release-1.0-1.el6.noarch.rpm
+
+Now you can install HTSQL::
+
+    # yum install HTSQL
+
+To install PostgreSQL or MySQL backend, run::
+
+    # yum install HTSQL-PGSQL
+    # yum install HTSQL-MYSQL
+
+.. _RedHat Enterprise Linux 6: http://redhat.com/
+.. _CentOS 6: http://centos.org/
+.. _EPEL: http://fedoraproject.org/wiki/EPEL
+.. _PyYAML: http://dl.fedoraproject.org/pub/epel/6/i386/repoview/PyYAML.html
+
+
+HTRAF Toolkit
+=============
+
+:doc:`HTRAF </htraf/index>` is a toolkit for embedding data into HTML
+pages. HTRAF is written in Javascript and released under dual MIT/GPL
+license.
+
+The latest build of HTRAF could be downloaded from
+http://dist.htsql.org/source/HTRAF-latest.zip.
+
+
+Install from Source
+===================
+
+To install HTSQL from source, please read :doc:`/doc/admin/install`.  
+
+

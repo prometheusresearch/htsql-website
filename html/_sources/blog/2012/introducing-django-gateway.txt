@@ -1,0 +1,115 @@
+******************************
+  Introducing Django Gateway
+******************************
+
+.. blogentry::
+   :date: 2012-06-14
+   :author: xi
+
+The 2.3.1 release of HTSQL will allow you to easily include
+HTSQL service to your Django projects.
+
+.. blogcut::
+
+
+Background
+==========
+
+The initial support for Django framework was added to HTSQL
+2.2.1.  It replaced standard HTSQL database introspection and
+connection management with ones based on Django model and
+transaction layers.
+
+The new release introduces Django application `htsql_django`,
+which allows you to embed the HTSQL service into your Django
+projects.
+
+
+Installation and Usage
+======================
+
+.. highlight:: console
+
+To use HTSQL-Django gateway, you need to install HTSQL first.
+Using ``pip``, you could do it with a command::
+
+    # pip install HTSQL
+
+Out of the box, HTSQL supports SQLite databases.  If you want
+to run HTSQL on top of other database servers, install
+additional database backends::
+
+    # pip install HTSQL-PGSQL
+    # pip install HTSQL-MYSQL
+
+Now we can install HTSQL-Django gateway::
+
+    # pip install HTSQL-DJANGO
+
+.. highlight:: python
+
+To add HTSQL service to your Django project, open
+``settings.py`` and add ``'htsql_django'`` to the list of
+installed applications::
+
+    INSTALLED_APPS = (
+        # ...
+        'htsql_django',
+    )
+
+The gateway application will configure HTSQL service to serve
+against the default database of your Django project.  You
+could provide additional configuration options to the service
+using parameter ``HTSQL_CONFIG``.  For example, a reasonable
+configuration could be::
+
+    HTSQL_CONFIG = {
+        # Set query timeout in seconds (currently, PostgreSQL only).
+        'tweak.timeout': { 'timeout': 600 },
+        # Set the maximum number of output rows.
+        'tweak.autolimit': { 'limit': 10000 },
+        # Enable the web-based query editor.
+        'tweak.shell.default': {},
+        # Enable meta-data queries.
+        'tweak.meta': {},
+    }
+
+After HTSQL service is installed and configured, we can add
+it to the URL dispatcher.  Open ``urls.py`` and add the
+following line::
+
+    urlpatterns = patterns('',
+        # ...
+        url(r'^htsql/', include('htsql_django.urls')),
+    )
+
+Now all requests that start with ``/htsql/`` prefix will be
+forwarded to the HTSQL service.  The service is available to
+all authenticated users.
+
+
+Invoking HTSQL from Python
+==========================
+
+You could also execute HTSQL queries directly from your view
+functions.  Here is an example which calculates the total
+number of votes per poll for the Django tutorial project::
+
+    >>> from htsql_django import produce
+    >>> query = "/polls_poll{question, total:=sum(polls_choice.votes)}"
+    >>> for row in produce(query):
+    ...     print "%s: %s" % (row.question, row.total)
+    ...
+    What's up?: 6
+
+
+TODO and Limitations
+====================
+
+This is a first release of the Django gateway, so expect some
+bugs and problems to be found.  If we have sufficient demand
+for this work, future releases could bring support for fine-grained
+authorization, template customization, integration with Django
+model layer, and more.
+
+.. vim: set textwidth=61:

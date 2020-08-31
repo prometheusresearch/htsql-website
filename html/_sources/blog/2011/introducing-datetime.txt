@@ -1,0 +1,102 @@
+**************************************
+  Introducing Support for Timestamps
+**************************************
+
+.. blogentry::
+   :date: 2011-03-25
+   :author: xi
+
+The initial 2.0 release only supported the ``date`` type.
+Recently, support for a ``datetime`` and ``time`` data types
+has been added.
+
+.. blogcut::
+
+Usage
+=====
+
+These types provide the following set of operations.
+
+Literals
+--------
+
+Date and datetime literals use the ISO notation: ``YYYY-MM-DD``
+and ``YYYY-MM-DD hh:mm:ss.sss``.
+
+.. htsql:: /{date('2010-04-15'), time('20:13'),
+             datetime('2010-04-15 20:13')}
+   :hide:
+
+Construction
+------------
+
+Date and datetime values could also be constructed from
+individual fields.
+
+.. htsql:: /{date(2010,4,15), datetime(2010,4,15,20,13)}
+   :hide:
+
+Conversion
+----------
+
+You could convert a date to a datetime value and back.
+
+.. htsql:: /{datetime(date('2010-04-15')),
+             date(datetime('2010-04-15 20:13'))}
+   :hide:
+
+Comparison
+----------
+
+Date, datetime and time values could be compared to each other.
+
+.. htsql:: /{date('2010-03-16')<date('2010-04-15')}
+   :hide:
+
+Note that you cannot compare a date to a datetime value directly,
+you need to cast the values to the common type first.
+
+Current date
+------------
+
+Function ``today()`` returns the current date, ``now()`` returns the
+current date and time.
+
+.. htsql:: /{today(), now()}
+   :hide:
+
+Components
+----------
+
+Functions ``year()``, ``month()``, ``day()``, ``hour()``,
+``minute()``, ``second()`` extract individual fields of
+a date or a datetime value.
+
+.. htsql:: /{year(date('2010-04-15')), hour(time('20:13'))}
+   :hide:
+
+Arithmetics
+-----------
+
+Adding an integer ``N`` to a date value advances the date by
+``N`` days.  Similarly, a float number could be added to
+a datetime value to advanced it by the given number of days
+(the integer part) and time (the fractional part).
+
+.. htsql:: /{date('2010-04-15')-30,
+             datetime('2010-04-15 20:13')+0.5}
+   :hide:
+
+You could also subtract one date value from another to get
+the number of days between them.
+
+.. htsql:: /{date('2010-04-25')-date('2010-03-26')}
+   :hide:
+
+Open questions
+==============
+
+``INTERVAL`` data type is not yet supported.
+
+There is no way to advance a date by ``N`` months.
+

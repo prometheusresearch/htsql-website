@@ -1,0 +1,313 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTSQL 2.X Usability Discussion &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="HTSQL Roadmap for May, 2011" href="roadmap-2011-05.html" />
+    <link rel="prev" title="Discussion on Commands" href="discuss-commands.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-2-x-usability-discussion">
+<h1>HTSQL 2.X Usability Discussion<a class="headerlink" href="#htsql-2-x-usability-discussion" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-09-06</em></p>
+<p>This is a brainstorm discussion blog entry on usability items
+needed for HTSQL adoption.   It includes discussion of editor,
+installer, configuration and development.</p>
+<div class="section" id="ui-shell">
+<h2>UI Shell<a class="headerlink" href="#ui-shell" title="Permalink to this headline">¶</a></h2>
+<p>The purpose of the UI Shell is to provide a visual environment
+giving data analysts or programmers an interface to the HTSQL
+system and underlying database.  Specifically, such a shell
+would help the user with the following items:</p>
+<ol class="arabic simple">
+<li>Query Construction<ol class="loweralpha">
+<li>Database Query</li>
+<li>Processing Pipeline</li>
+<li>Query Versioning</li>
+</ol>
+</li>
+<li>Meta-Data Exploration<ol class="loweralpha">
+<li>Listing of Tables &amp; Links</li>
+<li>Detail about a Table</li>
+</ol>
+</li>
+<li>Documentation Access<ol class="loweralpha">
+<li>Function Reference</li>
+<li>Syntax &amp; Tutorials</li>
+</ol>
+</li>
+<li>Sharing of Queries<ol class="loweralpha">
+<li>Saved Queries</li>
+<li>Wiki Like System?</li>
+<li>Parameter Prompting</li>
+</ol>
+</li>
+<li>Integration /w Analysis Tools<ol class="loweralpha">
+<li>Data Export</li>
+<li>Embedded Tools?</li>
+</ol>
+</li>
+<li>Access-Like Features*<ol class="loweralpha">
+<li>Query By Form</li>
+<li>Excel-Like Grid (Auto-Filter, Sort-by-Click)</li>
+<li>Record Editing: By Grid &amp; By Form</li>
+<li>Import Utility /w Column Type Guessing</li>
+<li>Data Navigation ala Finder</li>
+<li>Master Detail / Nested Lookup Views &amp; Editor</li>
+</ol>
+</li>
+<li>Analysis Features*<ol class="loweralpha">
+<li>Pivot Tables</li>
+<li>Rollups &amp; Cubes</li>
+<li>Plotting &amp; Graphing</li>
+<li>Full-Text Search</li>
+</ol>
+</li>
+</ol>
+<p>With the exception of sharing, this is mostly a client-side
+and stateless component.  The access like features are
+explicitly not included in HTSQL&#8217;s distribution.</p>
+</div>
+<div class="section" id="usability">
+<h2>Usability<a class="headerlink" href="#usability" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Couldn&#8217;t Play With It : Editor<ol class="loweralpha">
+<li>Diagram Tables &amp; Links</li>
+<li>Syntax Highlighting</li>
+<li>Ideally Completion*</li>
+</ol>
+</li>
+<li>Couldn&#8217;t Install It : Installer</li>
+<li>Couldn&#8217;t Configure: Configurator<ol class="loweralpha">
+<li>Links to be Specified</li>
+<li>Filter out columns/tables</li>
+<li>Ideally, saved Attributes</li>
+</ol>
+</li>
+</ol>
+<p>Nice to Have:</p>
+<ol class="arabic simple" start="4">
+<li>Build Dashboard &amp; Queries<ol class="loweralpha">
+<li>HTRAF IDE?</li>
+<li>Query Builder</li>
+</ol>
+</li>
+<li>Deploying<ol class="loweralpha">
+<li>Primarily Documentation</li>
+<li>Heroku, Apache, IIS</li>
+<li>Security &amp; Authentication</li>
+</ol>
+</li>
+</ol>
+<div class="section" id="htsql-editor">
+<h3>HTSQL Editor<a class="headerlink" href="#htsql-editor" title="Permalink to this headline">¶</a></h3>
+<p>Critical Path:</p>
+<ol class="arabic simple">
+<li>Create an edit.html resource that uses CM2 text
+area and an iframe for results.</li>
+<li>Add HTSQL syntax highlighting to CM2 text area.</li>
+<li>Integrate this editor as the default formatter.</li>
+<li>Add diagram &amp; meta-data browser to the editor.</li>
+</ol>
+<p>Nice to Have:</p>
+<ol class="arabic simple">
+<li>Add to the editor a scrolling grid using window fetching.</li>
+<li>Add completion to the editor&#8217;s textarea.</li>
+</ol>
+</div>
+<div class="section" id="installer">
+<h3>Installer<a class="headerlink" href="#installer" title="Permalink to this headline">¶</a></h3>
+<p>Critial Path:</p>
+<ol class="arabic simple">
+<li>Ubuntu DEB File / Fedora RPM</li>
+<li>VM Image (AWS, VDK)</li>
+</ol>
+<p>Nice to Have:</p>
+<ol class="arabic simple">
+<li>DEB/RPM Repositories</li>
+<li>Bundled OSX</li>
+<li>Bundled Windows</li>
+<li>Bundled Linux DEB/RPM</li>
+</ol>
+</div>
+<div class="section" id="visual-configurator">
+<h3>Visual Configurator<a class="headerlink" href="#visual-configurator" title="Permalink to this headline">¶</a></h3>
+<p>Visual Editor for Configuring: Database Connection,
+Schema Overrides, and other Plugin Parameters.</p>
+<p>Integrates HTSQL Editor</p>
+<p>Uses Internal Web-Server or Server Configuration</p>
+<p>Works as localhost:port or as local app using
+something like XULRunner.</p>
+</div>
+<div class="section" id="command-line-workflow">
+<h3>Command-Line Workflow<a class="headerlink" href="#command-line-workflow" title="Permalink to this headline">¶</a></h3>
+<p>Review how a new user would discover how to use <tt class="docutils literal"><span class="pre">htsql-ctl</span></tt>
+to connect and ensure that the documentation, <tt class="docutils literal"><span class="pre">--help</span></tt> and
+error messages are informative.</p>
+<p>Documentation for how to make a configuration file and a
+good hooks for the PyYAML parser to report on any problems
+that they may have (such as using tabs, or missing keys.)</p>
+<p>Documentation for how to make table/schema configuration
+file plus hooks for good error messages.</p>
+<p>Ensure that <tt class="docutils literal"><span class="pre">htsql-ctl</span> <span class="pre">shell</span></tt> and <tt class="docutils literal"><span class="pre">htsql-ctl</span> <span class="pre">serve</span></tt> work
+and are well documented.  Document shell &amp; serve features.</p>
+</div>
+<div class="section" id="slide-show-for-website">
+<h3>Slide Show for Website<a class="headerlink" href="#slide-show-for-website" title="Permalink to this headline">¶</a></h3>
+<p>Some way to have N page slideshow for reStructuredText
+website content, so that donors choose examples can
+be turned into single-point-at-a-time.</p>
+</div>
+<div class="section" id="htsql-editor-detail">
+<h3>HTSQL Editor Detail<a class="headerlink" href="#htsql-editor-detail" title="Permalink to this headline">¶</a></h3>
+<p>The problem the HTSQL editor solves is that a URL is
+a horrible place to make a query.  So this sort of
+editor</p>
+<p>The core idea with this particular deliverable is a
+formatter that is divided in two parts.  The top half
+is the query, and the bottom half is the output.
+What&#8217;s important is that the formatter loads
+immediately and sends an async request to run the
+query itself, and this works with errors as well.</p>
+<p>This only works when the user agent support
+text/html, so other user agents will get other
+formatters.  Ideally this would be the default
+formatter for web browsers, however, it&#8217;d require
+javascript and support for changing the URL location
+when you press ENTER to load a new page.  For IE,
+it could redirect to new page for other browsers
+it could directly modify the location bar without
+re-loading to preserver the user&#8217;s cursor.</p>
+<p>The first pass can be very simple, it could be an
+editor.html which is a static file, using hash-tags
+to pass the query and an iframe to show the results.
+This could go into the demo directory for the 1st
+pass and integrated with CodeMirror.</p>
+<p>Later passes could use a scrollable grid, clever
+magic to change the URL, and become the default
+formatter.  In this case, we&#8217;d probably have a
+server-side <tt class="docutils literal"><span class="pre">execute</span></tt> function which took the
+unadultrated query with a page number and either
+returned the JSON to be rendered... or a 302 if
+the query doesn&#8217;t support a producer interface.</p>
+<p>This could go into the demo server.  I&#8217;d like
+this integrated with tutorial.</p>
+</div>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/discuss-usability";
+var disqus_title = "HTSQL 2.X Usability Discussion";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

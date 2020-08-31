@@ -1,0 +1,421 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2011 HTSQL News Archive &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="Latest News" href="../index.html" />
+    <link rel="next" title="HTSQL 2.2.1 is released" href="htsql-2.2-final.html" />
+    <link rel="prev" title="HTSQL 2.3.0 is released" href="../2012/htsql-2.3.0.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-news-archive">
+<h1>2011 HTSQL News Archive<a class="headerlink" href="#htsql-news-archive" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="section" id="htsql-2-2-1-is-released">
+<h2><a class="blog-ref reference internal" href="htsql-2.2-final.html#htsql-2-2-1-is-released">HTSQL 2.2.1 is released</a><a class="headerlink" href="#htsql-2-2-1-is-released" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-12-15</em></p>
+<p>The final release for 2.2 series is now available.  This release
+was focused on usability improvements, metadata functionality gaps,
+and better Python integration.  In this release we include:</p>
+<ul class="simple">
+<li>support for configuration files and plugin parameters</li>
+<li>a web-based query editor with highlighting &amp; auto-completion (<tt class="xref py py-obj docutils literal"><span class="pre">tweak.shell</span></tt>)</li>
+<li>a <em>meta</em> database for querying tables, columns and links (<tt class="xref py py-obj docutils literal"><span class="pre">tweak.meta</span></tt>)</li>
+<li>integration with Django and SQLAlchemy (<tt class="xref py py-obj docutils literal"><span class="pre">tweak.django</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">tweak.sqlalchemy</span></tt>)</li>
+<li>an API for making parameterized queries from Python applications</li>
+<li>improved database introspection, error messages, and usability fixes</li>
+<li>binary packages for Debian and RHEL</li>
+</ul>
+<p>We also added a <tt class="xref py py-obj docutils literal"><span class="pre">tweak.override</span></tt> plugin to provide granular control
+over the introspected database catalog; this plugin allows you to:</p>
+<ul class="simple">
+<li>restrict access to particular tables and columns</li>
+<li>provide missing unique and foreign key constraints</li>
+<li>change table, column and link labels</li>
+<li>define calculated fields and table methods</li>
+</ul>
+<p><a class="blog-more reference internal" href="htsql-2.2-final.html#htsql-2-2-1-is-released">Read more…</a></p>
+</div>
+<div class="section" id="htsql-2-2-0rc1-is-released">
+<h2><a class="blog-ref reference internal" href="htsql-2.2-rc1.html#htsql-2-2-0rc1-is-released">HTSQL 2.2.0rc1 is released</a><a class="headerlink" href="#htsql-2-2-0rc1-is-released" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-11-22</em></p>
+<p>The first release candidate for the 2.2 release is now available.
+The primary change from the last beta is the introduction of a
+new <tt class="xref py py-obj docutils literal"><span class="pre">tweak.override</span></tt> addon which provides detailed control over
+the database metadata:</p>
+<ul class="simple">
+<li>restrict access to particular tables and columns</li>
+<li>configure missing unique and foreign keys</li>
+<li>change table, column and link labels</li>
+<li>define calculated fields</li>
+</ul>
+<p>The other major change is auto completion of table, column and link
+names in the htsql-ctl shell and the web-based editor.  We also added
+a <tt class="xref py py-obj docutils literal"><span class="pre">&#64;</span></tt> scope reset operator.  Finally, we now have binary packages
+for Debian and RedHat GNU/Linux systems.</p>
+<p><a class="blog-more reference internal" href="htsql-2.2-rc1.html#htsql-2-2-0rc1-is-released">Read more…</a></p>
+</div>
+<div class="section" id="discussion-of-json-csv-headers">
+<h2><a class="blog-ref reference internal" href="discuss-headers.html#discussion-of-json-csv-headers">Discussion of JSON/CSV Headers</a><a class="headerlink" href="#discussion-of-json-csv-headers" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-10-01</em></p>
+<p>In recent months, we&#8217;ve added hierarchical headers to
+the text formatter, the HTML formatter and the custom
+table formatter found in the HTSQL command shell.  What
+lags behind is the JSON formatter.  This is a discussion
+of what sort of headers we wish for JSON/CSV outputs.</p>
+<p><a class="blog-more reference internal" href="discuss-headers.html#discussion-of-json-csv-headers">Read more…</a></p>
+</div>
+<div class="section" id="discussion-on-location">
+<h2><a class="blog-ref reference internal" href="discuss-locator.html#discussion-on-location">Discussion on Location</a><a class="headerlink" href="#discussion-on-location" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-08-28</em></p>
+<p>In htsql, we would like a short-hand notation to locate a
+given row in a table without having to mention the
+primary key columns.  This is especially important for
+insert, update and delete operations.</p>
+<p><a class="blog-more reference internal" href="discuss-locator.html#discussion-on-location">Read more…</a></p>
+</div>
+<div class="section" id="htsql-2-2-0b1-is-released">
+<h2><a class="blog-ref reference internal" href="htsql-2.2-beta1.html#htsql-2-2-0b1-is-released">HTSQL 2.2.0b1 is released</a><a class="headerlink" href="#htsql-2-2-0b1-is-released" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-09-20</em></p>
+<p>The first beta of the 2.2 release is now available.</p>
+<p>The new release brings two major features:</p>
+<ul class="simple">
+<li>a mechanism to query HTSQL&#8217;s system catalog</li>
+<li>a query editor for the web /w syntax highlighting</li>
+</ul>
+<p><a class="blog-more reference internal" href="htsql-2.2-beta1.html#htsql-2-2-0b1-is-released">Read more…</a></p>
+</div>
+<div class="section" id="htsql-2-2-roadmap">
+<h2><a class="blog-ref reference internal" href="htsql-2.2-roadmap.html#htsql-2-2-roadmap">HTSQL 2.2 Roadmap</a><a class="headerlink" href="#htsql-2-2-roadmap" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-08-31</em></p>
+<p>The theme for HTSQL 2.2 is &#8220;Form Applications&#8221;.
+Our focus for this release will be on functionality
+gaps that hinder use of HTSQL by developers to
+create Javascript based &#8220;CRUD&#8221; applications.</p>
+<p><a class="blog-more reference internal" href="htsql-2.2-roadmap.html#htsql-2-2-roadmap">Read more…</a></p>
+</div>
+<div class="section" id="htsql-2-1-1-is-released">
+<h2><a class="blog-ref reference internal" href="htsql-2.1-final.html#htsql-2-1-1-is-released">HTSQL 2.1.1 is released</a><a class="headerlink" href="#htsql-2-1-1-is-released" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-08-30</em></p>
+<p>This is the final release of HTSQL 2.1 aka &#8220;Query Power&#8221;.  This release
+focuses on supporting analytical queries with projections and calculated
+attributes.</p>
+<p><a class="blog-more reference internal" href="htsql-2.1-final.html#htsql-2-1-1-is-released">Read more…</a></p>
+</div>
+<div class="section" id="htsql-roadmap-for-august-2011">
+<h2><a class="blog-ref reference internal" href="roadmap-2011-08.html#htsql-roadmap-for-august-2011">HTSQL Roadmap for August, 2011</a><a class="headerlink" href="#htsql-roadmap-for-august-2011" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-08-09</em></p>
+<p>This month we improved the generated SQL for projections and
+multiple-aggregates.  We intend to release 2.1-FINAL this
+month, after additional code cleanup and documention work.
+Additionally, we&#8217;re scoping features for 2.2, including
+configuration files, plugin parameters, commands, introspection,
+catalog extensions, and record-based CRUD operations.</p>
+</div>
+<div class="section" id="htsql-2-1-0rc1-is-released">
+<h2><a class="blog-ref reference internal" href="htsql-2.1-rc1.html#htsql-2-1-0rc1-is-released">HTSQL 2.1.0rc1 is released</a><a class="headerlink" href="#htsql-2-1-0rc1-is-released" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-06-21</em></p>
+<p>The first release candidate for the 2.1 release is now available.
+Changes since the last beta:</p>
+<ul class="simple">
+<li>Added <tt class="xref py py-obj docutils literal"><span class="pre">/:tsv</span></tt> formatter that generates output in tab-separated format
+(thank to Andrey Popp).</li>
+<li>A lot of updates to the tutorial, the reference and other documentation.</li>
+<li>Minor code updates and bug fixes.</li>
+</ul>
+<p><a class="blog-more reference internal" href="htsql-2.1-rc1.html#htsql-2-1-0rc1-is-released">Read more…</a></p>
+</div>
+<div class="section" id="htsql-roadmap-for-june-2011">
+<h2><a class="blog-ref reference internal" href="roadmap-2011-06.html#htsql-roadmap-for-june-2011">HTSQL Roadmap for June, 2011</a><a class="headerlink" href="#htsql-roadmap-for-june-2011" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-06-08</em></p>
+<p>This month we have been working on documentation in preparation
+for a 2.1 release.  In particular, we&#8217;ve been focusing on the
+reference and incorporating HTRAF documentation into the website.
+Time permitting we will work on various query optimizations,
+especially for projections.</p>
+</div>
+<div class="section" id="htsql-2-1-0b3-is-released">
+<h2><a class="blog-ref reference internal" href="htsql-2.1-beta3.html#htsql-2-1-0b3-is-released">HTSQL 2.1.0b3 is released</a><a class="headerlink" href="#htsql-2-1-0b3-is-released" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-05-13</em></p>
+<p>A new beta of the 2.1 release is now available.</p>
+<p><a class="blog-more reference internal" href="htsql-2.1-beta3.html#htsql-2-1-0b3-is-released">Read more…</a></p>
+</div>
+<div class="section" id="introducing-references">
+<h2><a class="blog-ref reference internal" href="introducing-references.html#introducing-references">Introducing References</a><a class="headerlink" href="#introducing-references" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-05-12</em></p>
+<p>Recently we introduced calculated attributes and table methods.  Today
+we introduce references, denoted with a dollar-sign <tt class="docutils literal"><span class="pre">$</span></tt> to provide a
+separate aliasing mechanism that cascades through scope boundaries.</p>
+<p><a class="blog-more reference internal" href="introducing-references.html#introducing-references">Read more…</a></p>
+</div>
+<div class="section" id="discussion-on-catalog">
+<h2><a class="blog-ref reference internal" href="discuss-catalog.html#discussion-on-catalog">Discussion on Catalog</a><a class="headerlink" href="#discussion-on-catalog" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-08-09</em></p>
+<p>This is a brainstorm topic on catalog structure, extensions, and access.
+On startup, HTSQL introspects the database to find catalog information.
+Sometimes this information needs to be augmented with additional detail,
+including missing information, renaming links, providing for calculated
+attributes and custom application data.</p>
+<p><a class="blog-more reference internal" href="discuss-catalog.html#discussion-on-catalog">Read more…</a></p>
+</div>
+<div class="section" id="discussion-on-commands">
+<h2><a class="blog-ref reference internal" href="discuss-commands.html#discussion-on-commands">Discussion on Commands</a><a class="headerlink" href="#discussion-on-commands" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-07-26</em></p>
+<p>In HTSQL, we&#8217;d like commands and functions to have the same syntax.
+How do we make this work?</p>
+<p><a class="blog-more reference internal" href="discuss-commands.html#discussion-on-commands">Read more…</a></p>
+</div>
+<div class="section" id="htsql-2-x-usability-discussion">
+<h2><a class="blog-ref reference internal" href="discuss-usability.html#htsql-2-x-usability-discussion">HTSQL 2.X Usability Discussion</a><a class="headerlink" href="#htsql-2-x-usability-discussion" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-09-06</em></p>
+<p>This is a brainstorm discussion blog entry on usability items
+needed for HTSQL adoption.   It includes discussion of editor,
+installer, configuration and development.</p>
+<p><a class="blog-more reference internal" href="discuss-usability.html#htsql-2-x-usability-discussion">Read more…</a></p>
+</div>
+<div class="section" id="htsql-roadmap-for-may-2011">
+<h2><a class="blog-ref reference internal" href="roadmap-2011-05.html#htsql-roadmap-for-may-2011">HTSQL Roadmap for May, 2011</a><a class="headerlink" href="#htsql-roadmap-for-may-2011" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-05-02</em></p>
+<p>This month we are going to add a linking operator (<tt class="xref py py-obj docutils literal"><span class="pre">-&gt;</span></tt>), a concept
+of references (<tt class="xref py py-obj docutils literal"><span class="pre">$</span> <span class="pre">name</span></tt>), a shortcut syntax that combines selection
+and definition (<tt class="xref py py-obj docutils literal"><span class="pre">{</span> <span class="pre">attr</span> <span class="pre">:=</span> <span class="pre">(expr)</span> <span class="pre">}</span></tt>) and automatically populate
+the namespace of projection.</p>
+<p><a class="blog-more reference internal" href="roadmap-2011-05.html#htsql-roadmap-for-may-2011">Read more…</a></p>
+</div>
+<div class="section" id="improving-the-htsql-grammar">
+<h2><a class="blog-ref reference internal" href="introducing-improved-grammar.html#improving-the-htsql-grammar">Improving the HTSQL Grammar</a><a class="headerlink" href="#improving-the-htsql-grammar" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-04-30</em></p>
+<p>These past few weeks we significantly updated the grammar to reduce the
+learning curve of HTSQL by making it more regular.  The introduction of
+the tutorial and syntax reference have been updated appropriately.</p>
+<p><a class="blog-more reference internal" href="introducing-improved-grammar.html#improving-the-htsql-grammar">Read more…</a></p>
+</div>
+<div class="section" id="what-is-wrong-with-sql-and-why-htsql-is-the-way-to-go">
+<h2><a class="blog-ref reference internal" href="what-is-wrong-with-sql.html#what-is-wrong-with-sql-and-why-htsql-is-the-way-to-go">What is Wrong with SQL (and why HTSQL is the way to go)?</a><a class="headerlink" href="#what-is-wrong-with-sql-and-why-htsql-is-the-way-to-go" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-05-10</em></p>
+<p>SQL was invented with a promise of opening data access to people who
+are not professional programmers &#8211; but ended up as an arcane art
+for database experts.  This transformation didn&#8217;t go unnoticed,
+but the reason why writing SQL queries is so hard was never properly
+explained.</p>
+<p>Frustration on usage of SQL often expressed as complains about
+its bulky syntax, inconsistent semantics, and occasionally
+about SQL violating the relational model.</p>
+<p>I believe the problem of SQL, and relational model in general,
+is that it does not respect the structure of business requests.
+takes a form of complains</p>
+<p><a class="blog-more reference internal" href="what-is-wrong-with-sql.html#what-is-wrong-with-sql-and-why-htsql-is-the-way-to-go">Read more…</a></p>
+</div>
+<div class="section" id="htsql-roadmap-for-april-2011">
+<h2><a class="blog-ref reference internal" href="roadmap-2011-04.html#htsql-roadmap-for-april-2011">HTSQL Roadmap for April, 2011</a><a class="headerlink" href="#htsql-roadmap-for-april-2011" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-03-31</em></p>
+<p>The HTSQL 2.1 release is scoped to deliver extended query functionality
+for advanced queries.  The previous betas of 2.1 added support for more
+backends, datetime, projections, and calculated attributes.  Here we
+discuss features yet to be implemented for the HTSQL 2.1 final release.</p>
+<p><a class="blog-more reference internal" href="roadmap-2011-04.html#htsql-roadmap-for-april-2011">Read more…</a></p>
+</div>
+<div class="section" id="htsql-2-1-0b2-is-released">
+<h2><a class="blog-ref reference internal" href="htsql-2.1-beta2.html#htsql-2-1-0b2-is-released">HTSQL 2.1.0b2 is released</a><a class="headerlink" href="#htsql-2-1-0b2-is-released" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-03-29</em></p>
+<p>A new beta of the 2.1 release is now available.  Changes since the last beta:</p>
+<ul class="simple">
+<li>Added support for <tt class="xref py py-obj docutils literal"><span class="pre">datetime</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">time</span></tt> date types; see <a class="reference internal" href="introducing-datetime.html"><em>Introducing Support for Timestamps</em></a>
+for more details.</li>
+<li>Added support for calculated attributes, <tt class="xref py py-obj docutils literal"><span class="pre">define()</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">where()</span></tt>
+macros; see <a class="reference internal" href="introducing-calculated-attributes.html"><em>Introducing Calculated Attributes</em></a> for more details.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.pgsql.catalog</span></tt>: configure primary and foreign keys
+for <tt class="xref py py-obj docutils literal"><span class="pre">pg_catalog.*</span></tt> tables.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.schema</span></tt>: allow addressing a table in a specified schema
+as <tt class="xref py py-obj docutils literal"><span class="pre">&lt;schema&gt;_</span></tt> identifier.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.autolimit</span></tt>: add <tt class="docutils literal"><span class="pre">LIMIT</span></tt> clause to each query.</li>
+<li>Added addon <tt class="xref py py-obj docutils literal"><span class="pre">tweak.pgsql.timeout</span></tt>: set statement timeout for each query.</li>
+<li>Added Jinja integration demo.</li>
+<li>Many minor fixes and updates.</li>
+</ul>
+</div>
+<div class="section" id="introducing-support-for-timestamps">
+<h2><a class="blog-ref reference internal" href="introducing-datetime.html#introducing-support-for-timestamps">Introducing Support for Timestamps</a><a class="headerlink" href="#introducing-support-for-timestamps" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-03-25</em></p>
+<p>The initial 2.0 release only supported the <tt class="docutils literal"><span class="pre">date</span></tt> type.
+Recently, support for a <tt class="docutils literal"><span class="pre">datetime</span></tt> and <tt class="docutils literal"><span class="pre">time</span></tt> data types
+has been added.</p>
+<p><a class="blog-more reference internal" href="introducing-datetime.html#introducing-support-for-timestamps">Read more…</a></p>
+</div>
+<div class="section" id="introducing-calculated-attributes">
+<h2><a class="blog-ref reference internal" href="introducing-calculated-attributes.html#introducing-calculated-attributes">Introducing Calculated Attributes</a><a class="headerlink" href="#introducing-calculated-attributes" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-03-14</em></p>
+<p>During our work converting SQL queries to HTSQL, we found a need for
+re-usable query fragments.  This week we introduce <tt class="docutils literal"><span class="pre">define()</span></tt> which
+names a calculated column or parameterized expression.</p>
+<p><a class="blog-more reference internal" href="introducing-calculated-attributes.html#introducing-calculated-attributes">Read more…</a></p>
+</div>
+<div class="section" id="htsql-2-1-0b1-is-released">
+<h2><a class="blog-ref reference internal" href="htsql-2.1-beta1.html#htsql-2-1-0b1-is-released">HTSQL 2.1.0b1 is released</a><a class="headerlink" href="#htsql-2-1-0b1-is-released" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-03-09</em></p>
+<p>The first beta of the 2.1 release is now available.</p>
+<p>The new release brings two major features:</p>
+<ul class="simple">
+<li>MySQL, Oracle and MS SQL Server backends.</li>
+<li>Support for projections; see <a class="reference internal" href="introducing-projections.html"><em>Introducing Projections</em></a> for details.</li>
+</ul>
+</div>
+<div class="section" id="introducing-projections">
+<h2><a class="blog-ref reference internal" href="introducing-projections.html#introducing-projections">Introducing Projections</a><a class="headerlink" href="#introducing-projections" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-02-18</em></p>
+<p>This past week we committed provisional code for projections,
+a virtual table which consists of distinct values from a particular
+expression.  This is comparable to SQL&#8217;s DISTINCT / GROUP BY.</p>
+<p><a class="blog-more reference internal" href="introducing-projections.html#introducing-projections">Read more…</a></p>
+</div>
+<div class="section" id="discussion-on-link-chains">
+<h2><a class="blog-ref reference internal" href="discuss-link-chains.html#discussion-on-link-chains">Discussion on Link Chains</a><a class="headerlink" href="#discussion-on-link-chains" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-04-22</em></p>
+<p>In HTSQL, linking expressions are generalized so that they can occur in
+several contexts.   A top-level expression is one of the places where
+this could be a bit confusing.  This note attempts to explain a bit.</p>
+<p><a class="blog-more reference internal" href="discuss-link-chains.html#discussion-on-link-chains">Read more…</a></p>
+</div>
+<div class="section" id="htsql-roadmap-for-april-2011">
+<h2><a class="blog-ref reference internal" href="htsql-2011-april.html#htsql-roadmap-for-april-2011">HTSQL Roadmap for April, 2011</a><a class="headerlink" href="#htsql-roadmap-for-april-2011" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-03-31</em></p>
+<p>The HTSQL 2.1 release is scoped to deliver extended query functionality
+for advanced queries.  The previous betas of 2.1 added support for more
+backends, datetime, projections, and calculated attributes.  Here we
+discuss features yet to be implemented for the HTSQL 2.1 final release.</p>
+<p><a class="blog-more reference internal" href="htsql-2011-april.html#htsql-roadmap-for-april-2011">Read more…</a></p>
+</div>
+<div class="section" id="htsql-2-1-development-update">
+<h2><a class="blog-ref reference internal" href="htsql-2011-march.html#htsql-2-1-development-update">HTSQL 2.1 Development Update</a><a class="headerlink" href="#htsql-2-1-development-update" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-03-20</em></p>
+<p>This is a development status update for HTSQL 2.1, including a
+statement of scope, notes on projections, database backends and
+numerous other features that we&#8217;re currently working on.</p>
+<p><a class="blog-more reference internal" href="htsql-2011-march.html#htsql-2-1-development-update">Read more…</a></p>
+</div>
+<div class="section" id="open-question-ambiguous-names">
+<h2><a class="blog-ref reference internal" href="discuss-ambiguous-names.html#open-question-ambiguous-names">Open question: ambiguous names</a><a class="headerlink" href="#open-question-ambiguous-names" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-03-30</em></p>
+<p>In HTSQL, tables are addressed by name while the table schema is ignored.
+This creates an ambiguity when the same table name exists in more than
+one schema.  This article describes several workarounds and possible
+solutions.</p>
+<p><a class="blog-more reference internal" href="discuss-ambiguous-names.html#open-question-ambiguous-names">Read more…</a></p>
+</div>
+<div class="section" id="htsql-2-0-1-is-released">
+<h2><a class="blog-ref reference internal" href="htsql-2.0-final.html#htsql-2-0-1-is-released">HTSQL 2.0.1 is released</a><a class="headerlink" href="#htsql-2-0-1-is-released" title="Permalink to this headline">¶</a></h2>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-02-01</em></p>
+<p>Today we&#8217;ve tagged the final release of HTSQL 2.0 &#8212; a high-level
+query language and web service gateway for relational databases.
+This release supports SQLite and PostgreSQL.  We wrote this tool
+so that business analysts could actually use a database.</p>
+<p>We&#8217;re curious what you think.</p>
+<p>Fixed since the release candidate:</p>
+<ul class="simple">
+<li>Merged <tt class="xref py py-obj docutils literal"><span class="pre">/:json</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">/:jsonex</span></tt> renderers; use <tt class="xref py py-obj docutils literal"><span class="pre">/:jsonex</span></tt> layout
+to avoid CSRF issues.</li>
+<li>Documentation updates.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

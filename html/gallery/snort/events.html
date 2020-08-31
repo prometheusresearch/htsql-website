@@ -1,0 +1,308 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Snort Demo : Event Detail &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Gallery" href="../index.html" />
+    <link rel="next" title="HTSQL Sample Database : Courses by Department" href="../demo/courses.html" />
+    <link rel="prev" title="Snort Demo : Daily Overview" href="overview.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="snort-demo-event-detail">
+<h1>Snort Demo : Event Detail<a class="headerlink" href="#snort-demo-event-detail" title="Permalink to this headline">¶</a></h1>
+<div class="demo-block compound">
+<div class="demo-area compound-first"><script type="text/javascript"
+    src="/htraf/htraf.js"
+    data-htsql-version="2"
+    data-htsql-prefix="/@snort">
+</script>
+
+<h3>Last 10 Detected Events</h3>
+<table id="evt"
+    data-htsql="/event{cid :as 'Event CID',
+                       signature.sig_priority :as 'Pr',
+                       sensor.hostname :as 'Sensor',
+                       inet(iphdr.ip_src) :as 'Source IP',
+                       inet(iphdr.ip_dst) :as 'Destination IP',
+                       signature.sig_name :as 'Signature',
+                       time(timestamp) :as 'Time'}
+                      .sort(timestamp-).limit(10)">
+</table>
+<h3>Selected Event ASCII Payload</h3>
+<table id="evtascii" width="100%"
+    data-htsql="/event{data.data_payload :as 'Payload'}?cid=$evt"
+    data-ref="evt"
+    data-onafterload="fixasciipayload()">
+</table>
+<h3>Selected Event IP Header</h3>
+<table id="evtip"
+    data-htsql="/event{inet(iphdr.ip_src) :as 'Source',
+                       inet(iphdr.ip_dst) :as 'Destination',
+                       iphdr.ip_ver :as 'Version',
+                       iphdr.ip_hlen :as 'Header Length',
+                       iphdr.ip_tos :as 'DCSP / TOS',
+                       iphdr.ip_len :as 'Length',
+                       iphdr.ip_id :as 'IP ID',
+                       iphdr.ip_flags :as 'Flags',
+                       iphdr.ip_off :as 'Frag Offset',
+                       iphdr.ip_ttl :as 'TTL',
+                       iphdr.ip_proto :as 'IP Proto'}?cid=$evt"
+    data-ref="evt">
+</table>
+<h3>Selected Event TCP Header</h3>
+<table id="evttcp"
+    data-htsql="/event{tcphdr.tcp_sport :as 'Source Port',
+                       tcphdr.tcp_dport :as 'Destination Port',
+                       tcphdr.tcp_seq :as 'Seq',
+                       tcphdr.tcp_ack :as 'Ack',
+                       tcphdr.tcp_off :as 'Offset',
+                       tcphdr.tcp_res :as 'Reserved',
+                       tcphdr.tcp_flags :as 'Flags',
+                       tcphdr.tcp_win :as 'Window',
+                       tcphdr.tcp_csum :as 'Checksum',
+                       tcphdr.tcp_urp :as 'Urgent Pointer'}?cid=$evt"
+    data-ref="evt">
+</table>
+<h3>Selected Event UDP Header</h3>
+<table id="evtudp"
+    data-htsql="/event{udphdr.udp_sport :as 'Source Port',
+                       udphdr.udp_dport :as 'Destination Port',
+                       udphdr.udp_len :as 'Length',
+                       udphdr.udp_csum :as 'Checksum'}?cid=$evt"
+    data-ref="evt">
+</table>
+<h3>Selected Event ICMP Header</h3>
+<table id="evticmp"
+    data-htsql="/event{icmphdr.icmp_type :as 'ICMP Type',
+                       icmphdr.icmp_code :as 'ICMP Code',
+                       icmphdr.icmp_csum :as 'Checksum',
+                       icmphdr.icmp_id :as 'ICMP ID',
+                       icmphdr.icmp_seq :as 'Sequence'}?cid=$evt"
+    data-ref="evt">
+</table>
+<script type="text/javascript">
+
+    function fixasciipayload()
+    {
+        var payload = $("#evtascii td").text();
+        var newpayload = "";
+        var line = 0;
+        for(var i=0; i<payload.length; i+=2)
+        {
+            var val = parseInt(payload.substr(i, 2), 16);
+            newpayload += '&'+'#'+val+';';
+            line += 1;
+            if (val == 10) {
+                newpayload += '<br>';
+                line = 0;
+            }
+            if (line > 80) {
+                newpayload += '<span style="font-family: sans"><br>&nbsp;</span>';
+                line = 0;
+            }
+        };
+        newpayload = "<code>"+newpayload+"</code>";
+
+        $("#evtascii td").html(newpayload);
+    };
+
+</script></div><tt class="demo-switch compound-middle docutils literal"><span class="pre">[-</span> <span class="pre">view</span> <span class="pre">source]</span></tt><div class="demo-source compound-last highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span>
+    <span class="na">src=</span><span class="s">&quot;/htraf/htraf.js&quot;</span>
+    <span class="na">data-htsql-version=</span><span class="s">&quot;2&quot;</span>
+    <span class="na">data-htsql-prefix=</span><span class="s">&quot;/@snort&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;h3&gt;</span>Last 10 Detected Events<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;evt&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/event{cid :as &#39;Event CID&#39;,</span>
+<span class="s">                       signature.sig_priority :as &#39;Pr&#39;,</span>
+<span class="s">                       sensor.hostname :as &#39;Sensor&#39;,</span>
+<span class="s">                       inet(iphdr.ip_src) :as &#39;Source IP&#39;,</span>
+<span class="s">                       inet(iphdr.ip_dst) :as &#39;Destination IP&#39;,</span>
+<span class="s">                       signature.sig_name :as &#39;Signature&#39;,</span>
+<span class="s">                       time(timestamp) :as &#39;Time&#39;}</span>
+<span class="s">                      .sort(timestamp-).limit(10)&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Selected Event ASCII Payload<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;evtascii&quot;</span> <span class="na">width=</span><span class="s">&quot;100%&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/event{data.data_payload :as &#39;Payload&#39;}?cid=$evt&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;evt&quot;</span>
+    <span class="na">data-onafterload=</span><span class="s">&quot;fixasciipayload()&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Selected Event IP Header<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;evtip&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/event{inet(iphdr.ip_src) :as &#39;Source&#39;,</span>
+<span class="s">                       inet(iphdr.ip_dst) :as &#39;Destination&#39;,</span>
+<span class="s">                       iphdr.ip_ver :as &#39;Version&#39;,</span>
+<span class="s">                       iphdr.ip_hlen :as &#39;Header Length&#39;,</span>
+<span class="s">                       iphdr.ip_tos :as &#39;DCSP / TOS&#39;,</span>
+<span class="s">                       iphdr.ip_len :as &#39;Length&#39;,</span>
+<span class="s">                       iphdr.ip_id :as &#39;IP ID&#39;,</span>
+<span class="s">                       iphdr.ip_flags :as &#39;Flags&#39;,</span>
+<span class="s">                       iphdr.ip_off :as &#39;Frag Offset&#39;,</span>
+<span class="s">                       iphdr.ip_ttl :as &#39;TTL&#39;,</span>
+<span class="s">                       iphdr.ip_proto :as &#39;IP Proto&#39;}?cid=$evt&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;evt&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Selected Event TCP Header<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;evttcp&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/event{tcphdr.tcp_sport :as &#39;Source Port&#39;,</span>
+<span class="s">                       tcphdr.tcp_dport :as &#39;Destination Port&#39;,</span>
+<span class="s">                       tcphdr.tcp_seq :as &#39;Seq&#39;,</span>
+<span class="s">                       tcphdr.tcp_ack :as &#39;Ack&#39;,</span>
+<span class="s">                       tcphdr.tcp_off :as &#39;Offset&#39;,</span>
+<span class="s">                       tcphdr.tcp_res :as &#39;Reserved&#39;,</span>
+<span class="s">                       tcphdr.tcp_flags :as &#39;Flags&#39;,</span>
+<span class="s">                       tcphdr.tcp_win :as &#39;Window&#39;,</span>
+<span class="s">                       tcphdr.tcp_csum :as &#39;Checksum&#39;,</span>
+<span class="s">                       tcphdr.tcp_urp :as &#39;Urgent Pointer&#39;}?cid=$evt&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;evt&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Selected Event UDP Header<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;evtudp&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/event{udphdr.udp_sport :as &#39;Source Port&#39;,</span>
+<span class="s">                       udphdr.udp_dport :as &#39;Destination Port&#39;,</span>
+<span class="s">                       udphdr.udp_len :as &#39;Length&#39;,</span>
+<span class="s">                       udphdr.udp_csum :as &#39;Checksum&#39;}?cid=$evt&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;evt&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;h3&gt;</span>Selected Event ICMP Header<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;evticmp&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/event{icmphdr.icmp_type :as &#39;ICMP Type&#39;,</span>
+<span class="s">                       icmphdr.icmp_code :as &#39;ICMP Code&#39;,</span>
+<span class="s">                       icmphdr.icmp_csum :as &#39;Checksum&#39;,</span>
+<span class="s">                       icmphdr.icmp_id :as &#39;ICMP ID&#39;,</span>
+<span class="s">                       icmphdr.icmp_seq :as &#39;Sequence&#39;}?cid=$evt&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;evt&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+
+    <span class="kd">function</span> <span class="nx">fixasciipayload</span><span class="p">()</span>
+    <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">payload</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#evtascii td&quot;</span><span class="p">).</span><span class="nx">text</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">newpayload</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">line</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">payload</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">+=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="nx">payload</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">16</span><span class="p">);</span>
+            <span class="nx">newpayload</span> <span class="o">+=</span> <span class="s1">&#39;&amp;&#39;</span><span class="o">+</span><span class="s1">&#39;#&#39;</span><span class="o">+</span><span class="nx">val</span><span class="o">+</span><span class="s1">&#39;;&#39;</span><span class="p">;</span>
+            <span class="nx">line</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">val</span> <span class="o">==</span> <span class="mi">10</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">newpayload</span> <span class="o">+=</span> <span class="s1">&#39;&lt;br&gt;&#39;</span><span class="p">;</span>
+                <span class="nx">line</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">line</span> <span class="o">&gt;</span> <span class="mi">80</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">newpayload</span> <span class="o">+=</span> <span class="s1">&#39;&lt;span style=&quot;font-family: sans&quot;&gt;&lt;br&gt;&amp;nbsp;&lt;/span&gt;&#39;</span><span class="p">;</span>
+                <span class="nx">line</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">};</span>
+        <span class="nx">newpayload</span> <span class="o">=</span> <span class="s2">&quot;&lt;code&gt;&quot;</span><span class="o">+</span><span class="nx">newpayload</span><span class="o">+</span><span class="s2">&quot;&lt;/code&gt;&quot;</span><span class="p">;</span>
+
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#evtascii td&quot;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">newpayload</span><span class="p">);</span>
+    <span class="p">};</span>
+
+<span class="nt">&lt;/script&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

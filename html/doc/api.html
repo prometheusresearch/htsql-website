@@ -1,0 +1,1603 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Internal API &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../index.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="internal-api">
+<h1>Internal API<a class="headerlink" href="#internal-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-htsql.core.util">
+<span id="assorted-utilities"></span><h2>Assorted Utilities<a class="headerlink" href="#module-htsql.core.util" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="htsql.core.util.maybe">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">maybe</tt><big>(</big><em>value_type</em><big>)</big><a class="headerlink" href="#htsql.core.util.maybe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a value is either <tt class="docutils literal"><span class="pre">None</span></tt> or an instance of the specified type.</p>
+<p>Use with <tt class="docutils literal"><span class="pre">isinstance()</span></tt> as in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">maybe</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.oneof">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">oneof</tt><big>(</big><em>*value_types</em><big>)</big><a class="headerlink" href="#htsql.core.util.oneof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a value is an instance of one of the specified types.</p>
+<p>Use with <tt class="docutils literal"><span class="pre">isinstance()</span></tt> as in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">oneof</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="o">...</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.listof">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">listof</tt><big>(</big><em>item_type</em><big>)</big><a class="headerlink" href="#htsql.core.util.listof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a value is a list containing elements of the specified type.</p>
+<p>Use with <tt class="docutils literal"><span class="pre">isinstance()</span></tt> as in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">listof</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.setof">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">setof</tt><big>(</big><em>item_type</em><big>)</big><a class="headerlink" href="#htsql.core.util.setof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a value is a set containing elements of the specified type.</p>
+<p>Use with <tt class="docutils literal"><span class="pre">isinstance()</span></tt> as in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">setof</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.tupleof">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">tupleof</tt><big>(</big><em>*item_types</em><big>)</big><a class="headerlink" href="#htsql.core.util.tupleof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a value is a tuple with the fixed number of elements
+of the specified types.</p>
+<p>Use with <tt class="docutils literal"><span class="pre">isinstance()</span></tt> as in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">tupleof</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">TN</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.dictof">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">dictof</tt><big>(</big><em>key_type</em>, <em>item_type</em><big>)</big><a class="headerlink" href="#htsql.core.util.dictof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a value is a dictionary with keys and elements of
+the specified types.</p>
+<p>Use with <tt class="docutils literal"><span class="pre">isinstance()</span></tt> as in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dictof</span><span class="p">(</span><span class="n">T1</span><span class="p">,</span> <span class="n">T2</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.omapof">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">omapof</tt><big>(</big><em>item_type</em><big>)</big><a class="headerlink" href="#htsql.core.util.omapof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a value is an <a class="reference internal" href="#htsql.core.util.omap" title="htsql.core.util.omap"><tt class="xref py py-class docutils literal"><span class="pre">omap</span></tt></a> object with elements of the specified
+type.</p>
+<p>Use with <tt class="docutils literal"><span class="pre">isinstance()</span></tt> as in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">omapof</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.subclassof">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">subclassof</tt><big>(</big><em>class_type</em><big>)</big><a class="headerlink" href="#htsql.core.util.subclassof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a value is a subclass of the specified class.</p>
+<p>Use with <tt class="docutils literal"><span class="pre">isinstance()</span></tt> as in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">subclassof</span><span class="p">(</span><span class="n">T</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.filelike">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">filelike</tt><a class="headerlink" href="#htsql.core.util.filelike" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if a value is a file or a file-like object.</p>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">filelike</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.util.aresubclasses">
+<tt class="descclassname">htsql.core.util.</tt><tt class="descname">aresubclasses</tt><big>(</big><em>subclasses</em>, <em>superclasses</em><big>)</big><a class="headerlink" href="#htsql.core.util.aresubclasses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes two lists; checks if each element of the first list is
+a subclass of the corresponding element in the second list.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">subclasses</span></tt>: sequence of <tt class="docutils literal"><span class="pre">type</span></tt></dt>
+<dd>A list of potential subclasses.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">superclasses</span></tt>: sequence of <tt class="docutils literal"><span class="pre">type</span></tt></dt>
+<dd>A list of potential superclasses.</dd>
+<dt><em>Returns</em>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">True</span></tt> if the check succeeds; <tt class="docutils literal"><span class="pre">False</span></tt> otherwise.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.util.isfinite">
+<tt class="descclassname">htsql.core.util.</tt><tt class="descname">isfinite</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#htsql.core.util.isfinite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies that the given value is a finite number.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.util.trim_doc">
+<tt class="descclassname">htsql.core.util.</tt><tt class="descname">trim_doc</tt><big>(</big><em>doc</em><big>)</big><a class="headerlink" href="#htsql.core.util.trim_doc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Strips indentation from a docstring; also removes leading and trailing
+blank lines.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">doc</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>A docstring.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.util.to_name">
+<tt class="descclassname">htsql.core.util.</tt><tt class="descname">to_name</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.util.to_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a string to a valid HTSQL identifier.</p>
+<p>The given <tt class="xref py py-obj docutils literal"><span class="pre">text</span></tt> value is transformed as follows:</p>
+<ul class="simple">
+<li>translated to Unicode normal form C;</li>
+<li>converted to lowercase;</li>
+<li>has non-alphanumeric characters replaced with underscores;</li>
+<li>preceded with an underscore if it starts with a digit;</li>
+<li>an empty string is replaced with <tt class="docutils literal"><span class="pre">'_'</span></tt>.</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.util.urlquote">
+<tt class="descclassname">htsql.core.util.</tt><tt class="descname">urlquote</tt><big>(</big><em>text</em>, <em>reserved=';/?:&#64;&amp;=+$</em>, <em>'</em><big>)</big><a class="headerlink" href="#htsql.core.util.urlquote" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces non-printable and reserved characters with <tt class="docutils literal"><span class="pre">%XX</span></tt> sequences.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.util.to_literal">
+<tt class="descclassname">htsql.core.util.</tt><tt class="descname">to_literal</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.util.to_literal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the text value to a valid string literal.</p>
+<p>This function escapes all non-printable characters and
+wraps the text value in single quotes.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.util.similar">
+<tt class="descclassname">htsql.core.util.</tt><tt class="descname">similar</tt><big>(</big><em>model</em>, <em>sample</em><big>)</big><a class="headerlink" href="#htsql.core.util.similar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if <tt class="xref py py-obj docutils literal"><span class="pre">model</span></tt> is similar to <tt class="xref py py-obj docutils literal"><span class="pre">sample</span></tt>.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">model</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>A model string.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">sample</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>A sample string.</dd>
+<dt><em>Returns</em>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">True</span></tt> if <tt class="xref py py-obj docutils literal"><span class="pre">model</span></tt> is not too much different from <tt class="xref py py-obj docutils literal"><span class="pre">sample</span></tt>;
+<tt class="docutils literal"><span class="pre">False</span></tt> otherwise.</dd>
+</dl>
+<p>Use for error reporting to suggest alternatives for an unknown <tt class="xref py py-obj docutils literal"><span class="pre">model</span></tt>
+identifier.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.TextBuffer">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">TextBuffer</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.util.TextBuffer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the input text in blocks matching some regular expressions.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">text</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>The input text.</dd>
+</dl>
+<dl class="attribute">
+<dt id="htsql.core.util.TextBuffer.skip_regexp">
+<tt class="descname">skip_regexp</tt><em class="property"> = &lt;_sre.SRE_Pattern object at 0x29d8a1e0&gt;</em><a class="headerlink" href="#htsql.core.util.TextBuffer.skip_regexp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="htsql.core.util.TextBuffer.reset">
+<tt class="descname">reset</tt><big>(</big><big>)</big><a class="headerlink" href="#htsql.core.util.TextBuffer.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rewinds to the beginning of the text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="htsql.core.util.TextBuffer.peek">
+<tt class="descname">peek</tt><big>(</big><em>pattern</em><big>)</big><a class="headerlink" href="#htsql.core.util.TextBuffer.peek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the head of the buffer matches the given pattern.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">pattern</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>A regular expression pattern.</dd>
+<dt><em>Returns</em>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">True</span></tt> if the buffer head matches the given pattern; <tt class="docutils literal"><span class="pre">False</span></tt>
+otherwise.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="htsql.core.util.TextBuffer.pull">
+<tt class="descname">pull</tt><big>(</big><em>pattern</em><big>)</big><a class="headerlink" href="#htsql.core.util.TextBuffer.pull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a text block matching the given pattern from the head of the
+buffer.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">pattern</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>A regular expression pattern.</dd>
+<dt><em>Returns</em>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">unicode</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>A text block; <tt class="docutils literal"><span class="pre">None</span></tt> if the buffer head does not match the
+pattern.</dd>
+</dl>
+<p><a class="reference internal" href="#htsql.core.util.TextBuffer.pull" title="htsql.core.util.TextBuffer.pull"><tt class="xref py py-meth docutils literal"><span class="pre">pull()</span></tt></a> skips whitespace characters and comments at the head of
+the buffer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="htsql.core.util.TextBuffer.fail">
+<tt class="descname">fail</tt><big>(</big><em>message</em><big>)</big><a class="headerlink" href="#htsql.core.util.TextBuffer.fail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates an exception with a fragment of the buffer at the current
+position included in the error message.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">message</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt></dt>
+<dd>The error message.</dd>
+</dl>
+<p><em>Returns</em>: <tt class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></tt> instance</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.util.toposort">
+<tt class="descclassname">htsql.core.util.</tt><tt class="descname">toposort</tt><big>(</big><em>elements</em>, <em>order</em>, <em>is_total=False</em><big>)</big><a class="headerlink" href="#htsql.core.util.toposort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sorts elements with respect to the given partial order.</p>
+<p>Takes a list of elements and a partial order relation.  Returns
+the elements reordered to satisfy the given order.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">elements</span></tt></dt>
+<dd>A list of elements.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">order</span></tt></dt>
+<dd>A function which represents the partial order relation.  <tt class="docutils literal"><span class="pre">order(x)</span></tt>
+takes an element <tt class="xref py py-obj docutils literal"><span class="pre">x</span></tt> and produces a list of elements that must
+preceed <tt class="xref py py-obj docutils literal"><span class="pre">x</span></tt>.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">is_total</span></tt>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd>If set, validates that the given partial order is, in fact, total.</dd>
+</dl>
+<p>This function raises <tt class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></tt> if <tt class="xref py py-obj docutils literal"><span class="pre">order</span></tt> is not a valid
+partial order (contains loops) or when <tt class="xref py py-obj docutils literal"><span class="pre">is_total</span></tt> is set and <tt class="xref py py-obj docutils literal"><span class="pre">order</span></tt>
+is not a valid total order.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="htsql.core.util.cachedproperty">
+<tt class="descclassname">htsql.core.util.</tt><tt class="descname">cachedproperty</tt><a class="headerlink" href="#htsql.core.util.cachedproperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements a cached property decorator.</p>
+<p>The decorator calls the <tt class="xref py py-obj docutils literal"><span class="pre">getter</span></tt> function on the first access to the
+property and saves the result.  Any subsequent access to the property
+returns the saved value.</p>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">C</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="nd">@cachedproperty</span>
+    <span class="k">def</span> <span class="nf">field</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># Called once to calculate the field value.</span>
+        <span class="c"># [...]</span>
+        <span class="k">return</span> <span class="n">value</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.frozenomap">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">frozenomap</tt><big>(</big><em>iterable=None</em><big>)</big><a class="headerlink" href="#htsql.core.util.frozenomap" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ordered immutable mapping.</p>
+<p>This container behaves like an immutable <tt class="docutils literal"><span class="pre">dict</span></tt> object with one
+exception: iterating over the container produces <em>values</em> (rather than
+<em>keys</em>) in the order they were added to the container.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.omap">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">omap</tt><big>(</big><em>iterable=None</em><big>)</big><a class="headerlink" href="#htsql.core.util.omap" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ordered mutable mapping.</p>
+<p>This container behaves like a <tt class="docutils literal"><span class="pre">dict</span></tt> object with one exception: iterating
+over the container produces <em>values</em> (rather than <em>keys</em>) in the order they
+were added to the container.</p>
+<p>Overriding an entry does not change its position; delete and insert the
+entry to move it to the end.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.Clonable">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">Clonable</tt><a class="headerlink" href="#htsql.core.util.Clonable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A clonable object.</p>
+<p>Subclasses of <a class="reference internal" href="#htsql.core.util.Clonable" title="htsql.core.util.Clonable"><tt class="xref py py-class docutils literal"><span class="pre">Clonable</span></tt></a> can use <a class="reference internal" href="#htsql.core.util.Clonable.clone" title="htsql.core.util.Clonable.clone"><tt class="xref py py-meth docutils literal"><span class="pre">clone()</span></tt></a> and <a class="reference internal" href="#htsql.core.util.Clonable.clone_to" title="htsql.core.util.Clonable.clone_to"><tt class="xref py py-meth docutils literal"><span class="pre">clone_to()</span></tt></a>
+methods to create a clone of the given object with a specified set of
+attributes replaced.</p>
+<p>Subclasses of <a class="reference internal" href="#htsql.core.util.Clonable" title="htsql.core.util.Clonable"><tt class="xref py py-class docutils literal"><span class="pre">Clonable</span></tt></a> must follow the following conventions:</p>
+<ol class="arabic simple">
+<li>Clonable objects must be immutable.</li>
+<li>Each subclass must reimplement the <tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt> constructor.  All
+arguments of <tt class="docutils literal"><span class="pre">__init__</span></tt> must be stored as instance attributes
+unchanged (or, if changed, must still be in the form acceptable by the
+constructor).</li>
+<li>The constructor must not expect a <tt class="docutils literal"><span class="pre">*</span></tt>-wildcard argument.</li>
+<li>The constructor may take a <tt class="docutils literal"><span class="pre">**</span></tt>-wildcard argument.  In this case,
+the argument itself and all its entries must be stored as instance
+attributes.</li>
+</ol>
+<dl class="method">
+<dt id="htsql.core.util.Clonable.clone">
+<tt class="descname">clone</tt><big>(</big><em>**replacements</em><big>)</big><a class="headerlink" href="#htsql.core.util.Clonable.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clones the object assigning new values to selected attributes.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">replacements</span></tt></dt>
+<dd>New attribute values.</dd>
+<dt><em>Returns</em></dt>
+<dd>A new object of the same type that has the same attribute values
+except those for which new values are specified.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="htsql.core.util.Clonable.clone_to">
+<tt class="descname">clone_to</tt><big>(</big><em>clone_type</em>, <em>**replacements</em><big>)</big><a class="headerlink" href="#htsql.core.util.Clonable.clone_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clones the object changing its type and assigning new values to
+selected attributes.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">clone_type</span></tt>: <tt class="docutils literal"><span class="pre">type</span></tt></dt>
+<dd>The type of the new object.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">replacements</span></tt></dt>
+<dd>New attribute values.</dd>
+<dt><em>Returns</em></dt>
+<dd>A new object of the specified type which has the same attribute
+values as the original object except those for which new values are
+provided.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.Hashable">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">Hashable</tt><a class="headerlink" href="#htsql.core.util.Hashable" title="Permalink to this definition">¶</a></dt>
+<dd><p>An immutable object with by-value comparison semantics.</p>
+<p>A subclass of <a class="reference internal" href="#htsql.core.util.Hashable" title="htsql.core.util.Hashable"><tt class="xref py py-class docutils literal"><span class="pre">Hashable</span></tt></a> should reimplement <tt class="xref py py-meth docutils literal"><span class="pre">__basis__()</span></tt>
+to produce a tuple of all object attributes which uniquely identify
+the object.</p>
+<p>Two <a class="reference internal" href="#htsql.core.util.Hashable" title="htsql.core.util.Hashable"><tt class="xref py py-class docutils literal"><span class="pre">Hashable</span></tt></a> instances are considered equal if they are of
+the same type and their basis vectors are equal.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.Printable">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">Printable</tt><a class="headerlink" href="#htsql.core.util.Printable" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object with default string representation.</p>
+<p>A subclass of <a class="reference internal" href="#htsql.core.util.Printable" title="htsql.core.util.Printable"><tt class="xref py py-class docutils literal"><span class="pre">Printable</span></tt></a> is expected to reimplement the
+<tt class="xref py py-meth docutils literal"><span class="pre">__unicode__()</span></tt> method.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.util.DB">
+<em class="property">class </em><tt class="descclassname">htsql.core.util.</tt><tt class="descname">DB</tt><big>(</big><em>engine</em>, <em>database</em>, <em>username=None</em>, <em>password=None</em>, <em>host=None</em>, <em>port=None</em>, <em>options=None</em><big>)</big><a class="headerlink" href="#htsql.core.util.DB" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameters of a database connection.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">engine</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt></dt>
+<dd>The type of the database server; e.g., <tt class="docutils literal"><span class="pre">'pgsql'</span></tt> or <tt class="docutils literal"><span class="pre">'sqlite'</span></tt>.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">database</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt></dt>
+<dd>The name of the database; the path to the database file for SQLite.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">username</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>The user name used for authentication; <tt class="docutils literal"><span class="pre">None</span></tt> to use the default.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">password</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>The password used for authentication; <tt class="docutils literal"><span class="pre">None</span></tt> to authenticate
+without providing a password.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">host</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>The host address; <tt class="docutils literal"><span class="pre">None</span></tt> to use the default or when not applicable.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">port</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>The port number; <tt class="docutils literal"><span class="pre">None</span></tt> to use the default or when not applicable.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">options</span></tt>: <tt class="docutils literal"><span class="pre">dict</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>A dictionary containing extra connection parameters; currently unused.</dd>
+</dl>
+<dl class="attribute">
+<dt id="htsql.core.util.DB.regexp">
+<tt class="descname">regexp</tt><em class="property"> = &lt;_sre.SRE_Pattern object at 0x296c3700&gt;</em><a class="headerlink" href="#htsql.core.util.DB.regexp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="htsql.core.util.DB.parse">
+<em class="property">classmethod </em><tt class="descname">parse</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#htsql.core.util.DB.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses a connection URI and returns a corresponding <a class="reference internal" href="#htsql.core.util.DB" title="htsql.core.util.DB"><tt class="xref py py-class docutils literal"><span class="pre">DB</span></tt></a>
+instance.</p>
+<p><tt class="xref py py-obj docutils literal"><span class="pre">value</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt>, <tt class="docutils literal"><span class="pre">unicode</span></tt>, <tt class="docutils literal"><span class="pre">dict</span></tt> or <a class="reference internal" href="#htsql.core.util.DB" title="htsql.core.util.DB"><tt class="xref py py-class docutils literal"><span class="pre">DB</span></tt></a></p>
+<p><em>Returns</em>: <a class="reference internal" href="#htsql.core.util.DB" title="htsql.core.util.DB"><tt class="xref py py-class docutils literal"><span class="pre">DB</span></tt></a></p>
+<p>A connection URI is a string of the form:</p>
+<div class="highlight-python"><pre>engine://username:password@host:port/database?options</pre>
+</div>
+<p>The <tt class="xref py py-obj docutils literal"><span class="pre">engine</span></tt> and <tt class="xref py py-obj docutils literal"><span class="pre">database</span></tt> fragments are mandatory; the others could
+be omitted.</p>
+<p>If a fragment contains separator characters which cannot be represented
+literally (such as <tt class="docutils literal"><span class="pre">:</span></tt>, <tt class="docutils literal"><span class="pre">/</span></tt>, <tt class="docutils literal"><span class="pre">&#64;</span></tt> or <tt class="docutils literal"><span class="pre">?</span></tt>), the characters should
+be escaped using <tt class="docutils literal"><span class="pre">%</span></tt>-encoding.</p>
+<p>If the connection URI is not in a valid format, <tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt>
+is raised.</p>
+<p><a class="reference internal" href="#htsql.core.util.DB.parse" title="htsql.core.util.DB.parse"><tt class="xref py py-meth docutils literal"><span class="pre">parse()</span></tt></a> also accepts:</p>
+<ul class="simple">
+<li>a dictionary with keys <tt class="docutils literal"><span class="pre">'engine'</span></tt>, <tt class="docutils literal"><span class="pre">'database'</span></tt>, <tt class="docutils literal"><span class="pre">'username'</span></tt>,
+<tt class="docutils literal"><span class="pre">'password'</span></tt>, <tt class="docutils literal"><span class="pre">'host'</span></tt>, <tt class="docutils literal"><span class="pre">'port'</span></tt>, <tt class="docutils literal"><span class="pre">'options'</span></tt>;</li>
+<li>an instance of <a class="reference internal" href="#htsql.core.util.DB" title="htsql.core.util.DB"><tt class="xref py py-class docutils literal"><span class="pre">DB</span></tt></a>.</li>
+</ul>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.util.autoimport">
+<tt class="descclassname">htsql.core.util.</tt><tt class="descname">autoimport</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#htsql.core.util.autoimport" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports all modules (including subpackages) in a package.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt></dt>
+<dd>The package name.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-htsql.core.error">
+<span id="error-types"></span><h2>Error Types<a class="headerlink" href="#module-htsql.core.error" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="htsql.core.error.HTTPError">
+<em class="property">exception </em><tt class="descclassname">htsql.core.error.</tt><tt class="descname">HTTPError</tt><a class="headerlink" href="#htsql.core.error.HTTPError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An exception as an HTTP response.</p>
+<p>An instance of <a class="reference internal" href="#htsql.core.error.HTTPError" title="htsql.core.error.HTTPError"><tt class="xref py py-class docutils literal"><span class="pre">HTTPError</span></tt></a> serves as a simple WSGI application
+generating an appropriate HTTP error code and displaying the error
+message.</p>
+<dl class="attribute">
+<dt id="htsql.core.error.HTTPError.status">
+<tt class="descname">status</tt><em class="property"> = None</em><a class="headerlink" href="#htsql.core.error.HTTPError.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>HTTP status line.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="htsql.core.error.BadRequestError">
+<em class="property">exception </em><tt class="descclassname">htsql.core.error.</tt><tt class="descname">BadRequestError</tt><a class="headerlink" href="#htsql.core.error.BadRequestError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents <tt class="docutils literal"><span class="pre">400</span> <span class="pre">Bad</span> <span class="pre">Request</span></tt>.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="htsql.core.error.ForbiddenError">
+<em class="property">exception </em><tt class="descclassname">htsql.core.error.</tt><tt class="descname">ForbiddenError</tt><a class="headerlink" href="#htsql.core.error.ForbiddenError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents <tt class="docutils literal"><span class="pre">403</span> <span class="pre">Forbidden</span></tt>.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="htsql.core.error.NotFoundError">
+<em class="property">exception </em><tt class="descclassname">htsql.core.error.</tt><tt class="descname">NotFoundError</tt><a class="headerlink" href="#htsql.core.error.NotFoundError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents <tt class="docutils literal"><span class="pre">404</span> <span class="pre">Not</span> <span class="pre">Found</span></tt>.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="htsql.core.error.ConflictError">
+<em class="property">exception </em><tt class="descclassname">htsql.core.error.</tt><tt class="descname">ConflictError</tt><a class="headerlink" href="#htsql.core.error.ConflictError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents <tt class="docutils literal"><span class="pre">409</span> <span class="pre">Conflict</span></tt>.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="htsql.core.error.InternalServerError">
+<em class="property">exception </em><tt class="descclassname">htsql.core.error.</tt><tt class="descname">InternalServerError</tt><a class="headerlink" href="#htsql.core.error.InternalServerError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents <tt class="docutils literal"><span class="pre">500</span> <span class="pre">Internal</span> <span class="pre">Server</span> <span class="pre">Error</span></tt>.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="htsql.core.error.NotImplementedError">
+<em class="property">exception </em><tt class="descclassname">htsql.core.error.</tt><tt class="descname">NotImplementedError</tt><a class="headerlink" href="#htsql.core.error.NotImplementedError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents <tt class="docutils literal"><span class="pre">501</span> <span class="pre">Not</span> <span class="pre">Implemented</span></tt>.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="htsql.core.error.EngineError">
+<em class="property">exception </em><tt class="descclassname">htsql.core.error.</tt><tt class="descname">EngineError</tt><big>(</big><em>message</em>, <em>quote=None</em><big>)</big><a class="headerlink" href="#htsql.core.error.EngineError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An error generated by the database driver.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="htsql.core.error.PermissionError">
+<em class="property">exception </em><tt class="descclassname">htsql.core.error.</tt><tt class="descname">PermissionError</tt><big>(</big><em>message</em>, <em>quote=None</em><big>)</big><a class="headerlink" href="#htsql.core.error.PermissionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>An error caused by lack of read or write permissions.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.error.Mark">
+<em class="property">class </em><tt class="descclassname">htsql.core.error.</tt><tt class="descname">Mark</tt><big>(</big><em>text</em>, <em>start</em>, <em>end</em><big>)</big><a class="headerlink" href="#htsql.core.error.Mark" title="Permalink to this definition">¶</a></dt>
+<dd><p>A fragment of an HTSQL query.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">text</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>The input query string.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">start</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt></dt>
+<dd>The starting position of the fragment.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">end</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt></dt>
+<dd>The ending position of the fragment.</dd>
+</dl>
+<p>A <a class="reference internal" href="#htsql.core.error.Mark" title="htsql.core.error.Mark"><tt class="xref py py-class docutils literal"><span class="pre">Mark</span></tt></a> object represents a fragment of an HTSQL query to be
+used as an error context for error reporting.</p>
+<dl class="classmethod">
+<dt id="htsql.core.error.Mark.union">
+<em class="property">classmethod </em><tt class="descname">union</tt><big>(</big><em>*nodes</em><big>)</big><a class="headerlink" href="#htsql.core.error.Mark.union" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a new <a class="reference internal" href="#htsql.core.error.Mark" title="htsql.core.error.Mark"><tt class="xref py py-class docutils literal"><span class="pre">Mark</span></tt></a> object as a cover for a fragment
+collection.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">nodes</span></tt></dt>
+<dd>A list of <a class="reference internal" href="#htsql.core.error.Mark" title="htsql.core.error.Mark"><tt class="xref py py-class docutils literal"><span class="pre">Mark</span></tt></a> instances or objects with a <tt class="xref py py-obj docutils literal"><span class="pre">mark</span></tt>
+attribute; <tt class="docutils literal"><span class="pre">None</span></tt> entries are ignored.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="htsql.core.error.Mark.excerpt">
+<tt class="descname">excerpt</tt><big>(</big><big>)</big><a class="headerlink" href="#htsql.core.error.Mark.excerpt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of lines that forms an excerpt of the original query
+string with <tt class="docutils literal"><span class="pre">^</span></tt> characters underlining the marked fragment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-htsql.core.syn">
+<span id="syntax-parsing"></span><h2>Syntax Parsing<a class="headerlink" href="#module-htsql.core.syn" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="#module-htsql.core.syn" title="htsql.core.syn"><tt class="xref py py-mod docutils literal"><span class="pre">htsql.core.syn</span></tt></a> package defines the grammar of HTSQL and implements
+the HTSQL parser.  Call <a class="reference internal" href="#htsql.core.syn.parse.parse" title="htsql.core.syn.parse.parse"><tt class="xref py py-func docutils literal"><span class="pre">parse.parse()</span></tt></a> to convert a raw query string
+to a syntax tree.  This conversion is performed in three steps:</p>
+<ul class="simple">
+<li><em>Decoding</em>: transmission artefacts are removed from the input stream of
+characters.</li>
+<li><em>Lexical scanning</em>: the input stream of characters is converted to a
+sequence of lexical tokens.</li>
+<li><em>Syntax parsing</em>: a sequence of lexical tokens is converted to a syntax
+tree.</li>
+</ul>
+<div class="section" id="module-htsql.core.syn.token">
+<span id="data-nodes"></span><h3>Data nodes<a class="headerlink" href="#module-htsql.core.syn.token" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="htsql.core.syn.token.Token">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.token.</tt><tt class="descname">Token</tt><big>(</big><em>code</em>, <em>text</em><big>)</big><a class="headerlink" href="#htsql.core.syn.token.Token" title="Permalink to this definition">¶</a></dt>
+<dd><p>A lexical token.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">code</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>The token type indicator; for operator symbols and punctuation
+characters, coincides with the token value.  By convention, code
+equal to <tt class="xref py py-obj docutils literal"><span class="pre">&quot;&quot;</span></tt> indicates EOF.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">text</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>The token value.</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-htsql.core.syn.syntax"></span><dl class="class">
+<dt id="htsql.core.syn.syntax.Syntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">Syntax</tt><a class="headerlink" href="#htsql.core.syn.syntax.Syntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>A syntax node.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.VoidSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">VoidSyntax</tt><a class="headerlink" href="#htsql.core.syn.syntax.VoidSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a syntax node with no meaning.</p>
+<p>Use when a syntax node is required structurally, but no regular nodes are
+available.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.SkipSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">SkipSyntax</tt><a class="headerlink" href="#htsql.core.syn.syntax.SkipSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>A skip symbol.</p>
+<div class="highlight-python"><pre>/</pre>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.AssignSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">AssignSyntax</tt><big>(</big><em>larm</em>, <em>rarm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.AssignSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Assignment expression.</p>
+<div class="highlight-python"><pre>&lt;larm&gt; := &lt;rarm&gt;</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">larm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.SpecifySyntax" title="htsql.core.syn.syntax.SpecifySyntax"><tt class="xref py py-class docutils literal"><span class="pre">SpecifySyntax</span></tt></a></dt>
+<dd>The left-hand side of assignment.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">rarm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The assigned value.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.SpecifySyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">SpecifySyntax</tt><big>(</big><em>larms</em>, <em>rarms</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.SpecifySyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Left-hand side of an assignment expression.</p>
+<div class="highlight-python"><pre>&lt;larm&gt;
+&lt;larm&gt; . &lt;larm&gt; ...
+&lt;larm&gt; . &lt;larm&gt; ... (&lt;rarm&gt;, ...)</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">larms</span></tt>: [<a class="reference internal" href="#htsql.core.syn.syntax.IdentifierSyntax" title="htsql.core.syn.syntax.IdentifierSyntax"><tt class="xref py py-class docutils literal"><span class="pre">IdentifierSyntax</span></tt></a> or <a class="reference internal" href="#htsql.core.syn.syntax.ReferenceSyntax" title="htsql.core.syn.syntax.ReferenceSyntax"><tt class="xref py py-class docutils literal"><span class="pre">ReferenceSyntax</span></tt></a>]</dt>
+<dd>A chain of identifiers or references separated by <tt class="docutils literal"><span class="pre">.</span></tt> symbol.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">rarms</span></tt>: [<a class="reference internal" href="#htsql.core.syn.syntax.IdentifierSyntax" title="htsql.core.syn.syntax.IdentifierSyntax"><tt class="xref py py-class docutils literal"><span class="pre">IdentifierSyntax</span></tt></a> or <a class="reference internal" href="#htsql.core.syn.syntax.ReferenceSyntax" title="htsql.core.syn.syntax.ReferenceSyntax"><tt class="xref py py-class docutils literal"><span class="pre">ReferenceSyntax</span></tt></a>] or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>Formal parameters; <tt class="docutils literal"><span class="pre">None</span></tt> if no <tt class="docutils literal"><span class="pre">()</span></tt>.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">identifier</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.IdentifierSyntax" title="htsql.core.syn.syntax.IdentifierSyntax"><tt class="xref py py-class docutils literal"><span class="pre">IdentifierSyntax</span></tt></a></dt>
+<dd>Set only if the specifier is an identifier.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">reference</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.ReferenceSyntax" title="htsql.core.syn.syntax.ReferenceSyntax"><tt class="xref py py-class docutils literal"><span class="pre">ReferenceSyntax</span></tt></a></dt>
+<dd>Set only if the specifier is a reference.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.ApplySyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">ApplySyntax</tt><big>(</big><em>name</em>, <em>arguments</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.ApplySyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function or operator application.</p>
+<p>This is an abstract class; concrete subclasses correspond to different
+syntax forms of functions and operators.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>Normalized function name or operator symbol.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">arguments</span></tt>: list of <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>Function arguments or operands of the operator.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.FunctionSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">FunctionSyntax</tt><big>(</big><em>identifier</em>, <em>arms</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.FunctionSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function call notation.</p>
+<div class="highlight-python"><pre>&lt;identifier&gt; (&lt;arm&gt;, ...)</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">identifier</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.IdentifierSyntax" title="htsql.core.syn.syntax.IdentifierSyntax"><tt class="xref py py-class docutils literal"><span class="pre">IdentifierSyntax</span></tt></a></dt>
+<dd>The function name.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">arms</span></tt>: list of <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>Function arguments.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.PipeSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">PipeSyntax</tt><big>(</big><em>identifier</em>, <em>larm</em>, <em>rarms</em>, <em>is_flow</em>, <em>is_open</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.PipeSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pipe notation for function application.</p>
+<div class="highlight-python"><pre>&lt;larm&gt; :&lt;identifier&gt;
+&lt;larm&gt; :&lt;identifier&gt; &lt;rarm&gt;
+&lt;larm&gt; :&lt;identifier&gt; (&lt;rarm&gt;, ...)
+&lt;larm&gt; /:&lt;identifier&gt; (&lt;rarm&gt;, ...)</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">identifier</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.IdentifierSyntax" title="htsql.core.syn.syntax.IdentifierSyntax"><tt class="xref py py-class docutils literal"><span class="pre">IdentifierSyntax</span></tt></a></dt>
+<dd>The function name.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">larm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The first argument.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">rarms</span></tt>: [<a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a>]</dt>
+<dd>The rest of the arguments.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">is_flow</span></tt>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">True</span></tt> for flow (<tt class="docutils literal"><span class="pre">:</span></tt>), <tt class="docutils literal"><span class="pre">False</span></tt> for segment (<tt class="docutils literal"><span class="pre">/:</span></tt>) notation.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">is_open</span></tt>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">True</span></tt> if no right-hand arguments or a single right-hand argument not
+enclosed in parentheses.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.OperatorSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">OperatorSyntax</tt><big>(</big><em>symbol</em>, <em>larm</em>, <em>rarm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.OperatorSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binary operator.</p>
+<div class="highlight-python"><pre>&lt;larm&gt; &lt;symbol&gt; &lt;rarm&gt;</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">symbol</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>The operator symbol.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">larm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The left-hand operand.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">rarm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The right-hand operand.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.PrefixSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">PrefixSyntax</tt><big>(</big><em>symbol</em>, <em>arm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.PrefixSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unary operator.</p>
+<div class="highlight-python"><pre>&lt;symbol&gt; &lt;arm&gt;</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">symbol</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>The operator symbol.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">arm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The operand.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.FilterSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">FilterSyntax</tt><big>(</big><em>larm</em>, <em>rarm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.FilterSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filtering operator.</p>
+<div class="highlight-python"><pre>&lt;larm&gt; ? &lt;rarm&gt;</pre>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.ProjectSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">ProjectSyntax</tt><big>(</big><em>larm</em>, <em>rarm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.ProjectSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projection operator.</p>
+<div class="highlight-python"><pre>&lt;larm&gt; ^ &lt;rarm&gt;</pre>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.LinkSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">LinkSyntax</tt><big>(</big><em>larm</em>, <em>rarm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.LinkSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linking operator (deprecated).</p>
+<div class="highlight-python"><pre>&lt;larm&gt; -&gt; &lt;rarm&gt;</pre>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.AttachSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">AttachSyntax</tt><big>(</big><em>larm</em>, <em>rarm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.AttachSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attachment operator.</p>
+<div class="highlight-python"><pre>&lt;larm&gt; @ &lt;rarm&gt;</pre>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.DetachSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">DetachSyntax</tt><big>(</big><em>arm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.DetachSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detachment operator.</p>
+<div class="highlight-python"><pre>@ &lt;arm&gt;</pre>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.CollectSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">CollectSyntax</tt><big>(</big><em>arm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.CollectSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collection operator.</p>
+<div class="highlight-python"><pre>/ &lt;arm&gt;</pre>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.DirectSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">DirectSyntax</tt><big>(</big><em>symbol</em>, <em>arm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.DirectSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sorting direction indicator.</p>
+<div class="highlight-python"><pre>&lt;arm&gt; +
+&lt;arm&gt; -</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">symbol</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt> (<tt class="docutils literal"><span class="pre">'+'</span></tt> or <tt class="docutils literal"><span class="pre">'-'</span></tt>)</dt>
+<dd>The indicator.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">arm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The operand.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.ComposeSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">ComposeSyntax</tt><big>(</big><em>larm</em>, <em>rarm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.ComposeSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Composition expression.</p>
+<div class="highlight-python"><pre>&lt;larm&gt; . &lt;rarm&gt;</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">larm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The left-hand operand.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">rarm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The right-hand operand.</dd>
+</dl>
+<dl class="attribute">
+<dt id="htsql.core.syn.syntax.ComposeSyntax.endswithint_regexp">
+<tt class="descname">endswithint_regexp</tt><em class="property"> = &lt;_sre.SRE_Pattern object at 0x296f7860&gt;</em><a class="headerlink" href="#htsql.core.syn.syntax.ComposeSyntax.endswithint_regexp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.UnpackSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">UnpackSyntax</tt><big>(</big><em>index</em>, <em>is_open</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.UnpackSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpacking expression.</p>
+<div class="highlight-python"><pre>*
+* &lt;index&gt;
+* (&lt;index&gt;)</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">index</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt>, <tt class="docutils literal"><span class="pre">long</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>The number of the field to unpack (1-based).</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">is_open</span></tt>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">True</span></tt> if no <tt class="docutils literal"><span class="pre">()</span></tt>.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.LiftSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">LiftSyntax</tt><a class="headerlink" href="#htsql.core.syn.syntax.LiftSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>The lift symbol.</p>
+<div class="highlight-python"><pre>^</pre>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.GroupSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">GroupSyntax</tt><big>(</big><em>arm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.GroupSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>An expression in parentheses.</p>
+<div class="highlight-python"><pre>(&lt;arm&gt;)</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">arm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The expression.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.SelectSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">SelectSyntax</tt><big>(</big><em>larm</em>, <em>rarm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.SelectSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Selection operator.</p>
+<div class="highlight-python"><pre>&lt;larm&gt; {...}</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">larm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The operand.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">rarm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.RecordSyntax" title="htsql.core.syn.syntax.RecordSyntax"><tt class="xref py py-class docutils literal"><span class="pre">RecordSyntax</span></tt></a></dt>
+<dd>The selection record.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.LocateSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">LocateSyntax</tt><big>(</big><em>larm</em>, <em>rarm</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.LocateSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Location operator.</p>
+<div class="highlight-python"><pre>&lt;larm&gt; [...]</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">larm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The operand.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">rarm</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.IdentitySyntax" title="htsql.core.syn.syntax.IdentitySyntax"><tt class="xref py py-class docutils literal"><span class="pre">IdentitySyntax</span></tt></a></dt>
+<dd>The identity.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.RecordSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">RecordSyntax</tt><big>(</big><em>arms</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.RecordSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Record constructor.</p>
+<div class="highlight-python"><pre>{&lt;arm&gt;, ...}</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">arms</span></tt>: [<a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a>]</dt>
+<dd>Record fields.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.ListSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">ListSyntax</tt><big>(</big><em>arms</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.ListSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>List constructor.</p>
+<div class="highlight-python"><pre>(&lt;arm&gt;, ...)</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">arms</span></tt>: [<a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a>]</dt>
+<dd>List elements.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.IdentitySyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">IdentitySyntax</tt><big>(</big><em>arms</em>, <em>is_hard</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.IdentitySyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identity constructor.</p>
+<div class="highlight-python"><pre>[&lt;arm&gt; . ...]
+(&lt;arm&gt; . ...)</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">arms</span></tt>: [<a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a>]</dt>
+<dd>Identity labels.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">is_hard</span></tt>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd><tt class="docutils literal"><span class="pre">True</span></tt> for square brackets (<tt class="docutils literal"><span class="pre">[]</span></tt>), <tt class="docutils literal"><span class="pre">False</span></tt> for parentheses
+(<tt class="docutils literal"><span class="pre">()</span></tt>).</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.ReferenceSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">ReferenceSyntax</tt><big>(</big><em>identifier</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.ReferenceSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reference expression.</p>
+<div class="highlight-python"><pre>$ &lt;identifier&gt;</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">identifier</span></tt>: <a class="reference internal" href="#htsql.core.syn.syntax.IdentifierSyntax" title="htsql.core.syn.syntax.IdentifierSyntax"><tt class="xref py py-class docutils literal"><span class="pre">IdentifierSyntax</span></tt></a></dt>
+<dd>The reference name.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>Normalized identifier name.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.IdentifierSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">IdentifierSyntax</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.IdentifierSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>An identifier.</p>
+<div class="highlight-python"><pre>&lt;text&gt;</pre>
+</div>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">text</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>The raw identifier name.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>Normalized name.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.LiteralSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">LiteralSyntax</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.LiteralSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>A literal expression.</p>
+<p>This is an abstract class; concrete subclasses for different forms of
+literal expressions.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">text</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>The value of the literal.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.StringSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">StringSyntax</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.StringSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string literal.</p>
+<p>A string literal is a sequence of characters enclosed in single quotes.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.LabelSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">LabelSyntax</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.LabelSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>A label literal.</p>
+<p>A label literal is a sequence of alphanumeric characters or <tt class="docutils literal"><span class="pre">-</span></tt> in an
+identity constructor.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.NumberSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">NumberSyntax</tt><big>(</big><em>text</em>, <em>value</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.NumberSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>A number literal.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">value</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt>, <tt class="docutils literal"><span class="pre">long</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">decimal.Decimal</span></tt>, or <tt class="docutils literal"><span class="pre">float</span></tt>.</dt>
+<dd>The numeric value.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.IntegerSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">IntegerSyntax</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.IntegerSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>An integer literal.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.DecimalSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">DecimalSyntax</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.DecimalSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>A decimal literal.</p>
+<p>A decimal literal is a number with a decimal point.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.syntax.FloatSyntax">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.syntax.</tt><tt class="descname">FloatSyntax</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.syn.syntax.FloatSyntax" title="Permalink to this definition">¶</a></dt>
+<dd><p>A float literal.</p>
+<p>A float literal is a number in exponential notation.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-htsql.core.syn.decode">
+<span id="processes"></span><h3>Processes<a class="headerlink" href="#module-htsql.core.syn.decode" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="htsql.core.syn.decode.decode">
+<tt class="descclassname">htsql.core.syn.decode.</tt><tt class="descname">decode</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.syn.decode.decode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes transmission artefacts.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">text</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>A raw query string.</dd>
+<dt><em>Returns</em>: <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>A processed string; ready for syntax analysis.</dd>
+</dl>
+<p><tt class="docutils literal"><span class="pre">%</span></tt>-encoded octets are decoded; the input text is converted to Unicode.</p>
+</dd></dl>
+
+<span class="target" id="module-htsql.core.syn.scan"></span><dl class="function">
+<dt id="htsql.core.syn.scan.prepare_scan">
+<tt class="descclassname">htsql.core.syn.scan.</tt><tt class="descname">prepare_scan</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#htsql.core.syn.scan.prepare_scan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a lexical scanner for HTSQL grammar.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.syn.scan.scan">
+<tt class="descclassname">htsql.core.syn.scan.</tt><tt class="descname">scan</tt><big>(</big><em>text</em>, <em>start=None</em><big>)</big><a class="headerlink" href="#htsql.core.syn.scan.scan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tokenizes the input query string.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">text</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>A raw query string.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">start</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>The initial lexical rule (by default, the first rule in the grammar).</dd>
+<dt><em>Returns</em>: [<a class="reference internal" href="#htsql.core.syn.token.Token" title="htsql.core.syn.token.Token"><tt class="xref py py-class docutils literal"><span class="pre">Token</span></tt></a>]</dt>
+<dd>List of tokens.</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-htsql.core.syn.parse"></span><dl class="function">
+<dt id="htsql.core.syn.parse.prepare_parse">
+<tt class="descclassname">htsql.core.syn.parse.</tt><tt class="descname">prepare_parse</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="headerlink" href="#htsql.core.syn.parse.prepare_parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a syntax parser for HTSQL grammar.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="htsql.core.syn.parse.parse">
+<tt class="descclassname">htsql.core.syn.parse.</tt><tt class="descname">parse</tt><big>(</big><em>text</em>, <em>start=None</em><big>)</big><a class="headerlink" href="#htsql.core.syn.parse.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the input query string into a syntax tree.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">text</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">unicode</span></tt></dt>
+<dd>A raw query string.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">start</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>The initial production rule (by default, the first rule in the grammar).</dd>
+<dt><em>Returns</em>: <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a></dt>
+<dd>The corresponding syntax tree.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-htsql.core.syn.grammar">
+<span id="scanner-and-parser-generators"></span><h3>Scanner and parser generators<a class="headerlink" href="#module-htsql.core.syn.grammar" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="htsql.core.syn.grammar.LexicalGrammar">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.grammar.</tt><tt class="descname">LexicalGrammar</tt><a class="headerlink" href="#htsql.core.syn.grammar.LexicalGrammar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines a lexical grammar and generates a tokenizer.</p>
+<dl class="method">
+<dt id="htsql.core.syn.grammar.LexicalGrammar.add_rule">
+<tt class="descname">add_rule</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#htsql.core.syn.grammar.LexicalGrammar.add_rule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds and returns a new tokenizer rule.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="htsql.core.syn.grammar.LexicalGrammar.add_signal">
+<tt class="descname">add_signal</tt><big>(</big><em>descriptor</em><big>)</big><a class="headerlink" href="#htsql.core.syn.grammar.LexicalGrammar.add_signal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds and returns a signal rule.</p>
+<p>A signal rule injects a signal token in front of a matched sequence of
+tokens.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">descriptor</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt></dt>
+<dd><p class="first">A string of the form:</p>
+<div class="highlight-python"><pre>&lt;name&gt;: &lt;pattern&gt;</pre>
+</div>
+<p class="last">where <tt class="docutils literal"><span class="pre">&lt;name&gt;</span></tt> is the name of a defined signal token,
+<tt class="docutils literal"><span class="pre">&lt;pattern&gt;</span></tt> is a regular expression for matching a sequence of
+tokens.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.grammar.LexicalRule">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.grammar.</tt><tt class="descname">LexicalRule</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#htsql.core.syn.grammar.LexicalRule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tokenizer context for a lexical grammar.</p>
+<dl class="method">
+<dt id="htsql.core.syn.grammar.LexicalRule.add_token">
+<tt class="descname">add_token</tt><big>(</big><em>descriptor</em>, <em>error=None</em>, <em>is_junk=False</em>, <em>is_symbol=False</em>, <em>unquote=None</em>, <em>pop=None</em>, <em>push=None</em><big>)</big><a class="headerlink" href="#htsql.core.syn.grammar.LexicalRule.add_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a token pattern.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">descriptor</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt></dt>
+<dd><p class="first">A string of the form:</p>
+<div class="highlight-python"><pre>&lt;name&gt;: &lt;pattern&gt;</pre>
+</div>
+<p class="last">where <tt class="docutils literal"><span class="pre">&lt;name&gt;</span></tt> is the token code, <tt class="docutils literal"><span class="pre">&lt;pattern&gt;</span></tt> is a regular
+expression for matching input characters.</p>
+</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">error</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>If set, an error is raised when the token is recognized.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">is_junk</span></tt>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd>If set, the token is not emitted.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">is_symbol</span></tt>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd>If set, <tt class="docutils literal"><span class="pre">&lt;name&gt;</span></tt> is ignored and the token code is equal to
+the token value.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">unquote</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt> -&gt; <tt class="docutils literal"><span class="pre">unicode</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>If set, apply to the token value.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">pop</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>If set, exit from the <tt class="docutils literal"><span class="pre">pop</span></tt> top tokenizer contexts.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">push</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>If set, enter a new tokenizer context.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.grammar.SyntaxGrammar">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.grammar.</tt><tt class="descname">SyntaxGrammar</tt><a class="headerlink" href="#htsql.core.syn.grammar.SyntaxGrammar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines a syntax grammar and generates a parser.</p>
+<dl class="method">
+<dt id="htsql.core.syn.grammar.SyntaxGrammar.add_rule">
+<tt class="descname">add_rule</tt><big>(</big><em>descriptor</em>, <em>match=None</em>, <em>fail=None</em><big>)</big><a class="headerlink" href="#htsql.core.syn.grammar.SyntaxGrammar.add_rule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds and returns a production rule.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">descriptor</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt></dt>
+<dd><p class="first">A string of the form:</p>
+<div class="highlight-python"><pre>&lt;name&gt;: &lt;pattern&gt;</pre>
+</div>
+<p class="last">where <tt class="docutils literal"><span class="pre">&lt;name&gt;</span></tt> is the production name, <tt class="docutils literal"><span class="pre">&lt;pattern&gt;</span></tt> is a regular
+expression for matching tokens and other productions.</p>
+</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">match</span></tt>: <a class="reference internal" href="#htsql.core.syn.grammar.ParseStream" title="htsql.core.syn.grammar.ParseStream"><tt class="xref py py-class docutils literal"><span class="pre">ParseStream</span></tt></a> -&gt; [<a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a>]</dt>
+<dd>A function called when the rule matches a sequence of tokens.
+The function returns syntax nodes to replace the matched tokens.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">fail</span></tt>: (<a class="reference internal" href="#htsql.core.syn.grammar.ParseStream" title="htsql.core.syn.grammar.ParseStream"><tt class="xref py py-class docutils literal"><span class="pre">ParseStream</span></tt></a>, <a class="reference internal" href="#htsql.core.syn.token.Token" title="htsql.core.syn.token.Token"><tt class="xref py py-class docutils literal"><span class="pre">Token</span></tt></a>) -&gt; exception</dt>
+<dd>A function called when the rule is unable to finish matching a
+sequence of tokens.  The function takes a stream of nodes and a
+blocking token and returns an exception object.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.syn.grammar.ParseStream">
+<em class="property">class </em><tt class="descclassname">htsql.core.syn.grammar.</tt><tt class="descname">ParseStream</tt><big>(</big><em>nodes</em><big>)</big><a class="headerlink" href="#htsql.core.syn.grammar.ParseStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>A buffer of <a class="reference internal" href="#htsql.core.syn.token.Token" title="htsql.core.syn.token.Token"><tt class="xref py py-class docutils literal"><span class="pre">Token</span></tt></a> and <a class="reference internal" href="#htsql.core.syn.syntax.Syntax" title="htsql.core.syn.syntax.Syntax"><tt class="xref py py-class docutils literal"><span class="pre">Syntax</span></tt></a> nodes.</p>
+<dl class="method">
+<dt id="htsql.core.syn.grammar.ParseStream.reset">
+<tt class="descname">reset</tt><big>(</big><big>)</big><a class="headerlink" href="#htsql.core.syn.grammar.ParseStream.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rewinds to the beginning of the buffer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="htsql.core.syn.grammar.ParseStream.pull">
+<tt class="descname">pull</tt><big>(</big><big>)</big><a class="headerlink" href="#htsql.core.syn.grammar.ParseStream.pull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pulls the next node from the buffer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="htsql.core.syn.grammar.ParseStream.peek">
+<tt class="descname">peek</tt><big>(</big><em>code</em><big>)</big><a class="headerlink" href="#htsql.core.syn.grammar.ParseStream.peek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the next node is a <a class="reference internal" href="#htsql.core.syn.token.Token" title="htsql.core.syn.token.Token"><tt class="xref py py-class docutils literal"><span class="pre">Token</span></tt></a> object
+with the given <tt class="xref py py-obj docutils literal"><span class="pre">code</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-htsql.core.domain">
+<span id="data-types"></span><h2>Data Types<a class="headerlink" href="#module-htsql.core.domain" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="htsql.core.domain.Domain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">Domain</tt><a class="headerlink" href="#htsql.core.domain.Domain" title="Permalink to this definition">¶</a></dt>
+<dd><p>An HTSQL data type.</p>
+<p>A domain specifies the type of a value.  Most HTSQL domains correspond to
+SQL data types, others represent HTSQL containers (record, list) or
+used only in special circumstances.</p>
+<p>A value of a specific domain could be represented in two forms:</p>
+<ul class="simple">
+<li>as an HTSQL literal (<tt class="docutils literal"><span class="pre">text</span></tt>);</li>
+<li>as a native Python object (<tt class="docutils literal"><span class="pre">data</span></tt>).</li>
+</ul>
+<p>Methods <a class="reference internal" href="#htsql.core.domain.Domain.parse" title="htsql.core.domain.Domain.parse"><tt class="xref py py-meth docutils literal"><span class="pre">parse()</span></tt></a> and <a class="reference internal" href="#htsql.core.domain.Domain.dump" title="htsql.core.domain.Domain.dump"><tt class="xref py py-meth docutils literal"><span class="pre">dump()</span></tt></a> translate values from one form
+to the other.</p>
+<dl class="staticmethod">
+<dt id="htsql.core.domain.Domain.parse">
+<em class="property">static </em><tt class="descname">parse</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#htsql.core.domain.Domain.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an HTSQL literal to a native Python object.</p>
+<p>Raises <tt class="xref py py-exc docutils literal"><span class="pre">ValueError</span></tt> if the literal is not in a valid format.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">text</span></tt>: <tt class="docutils literal"><span class="pre">unicode</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>An HTSQL literal representing a value of the given domain.</dd>
+<dt><em>Returns</em></dt>
+<dd>A native Python object representing the same value.</dd>
+</dl>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="htsql.core.domain.Domain.dump">
+<em class="property">static </em><tt class="descname">dump</tt><big>(</big><em>data</em><big>)</big><a class="headerlink" href="#htsql.core.domain.Domain.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a native Python object to an HTSQL literal.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">data</span></tt>: (acceptable types depend on the domain)</dt>
+<dd>A native Python object representing a value of the given domain.</dd>
+<dt><em>Returns</em>: <tt class="docutils literal"><span class="pre">unicode</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>An HTSQL literal representing the same value.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.Value">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">Value</tt><big>(</big><em>domain</em>, <em>data</em><big>)</big><a class="headerlink" href="#htsql.core.domain.Value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents data and its type.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">domain</span></tt>: <a class="reference internal" href="#htsql.core.domain.Domain" title="htsql.core.domain.Domain"><tt class="xref py py-class docutils literal"><span class="pre">Domain</span></tt></a></dt>
+<dd>The data type.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">data</span></tt></dt>
+<dd>The data value.</dd>
+</dl>
+<p>Instances of <a class="reference internal" href="#htsql.core.domain.Value" title="htsql.core.domain.Value"><tt class="xref py py-class docutils literal"><span class="pre">Value</span></tt></a> are iterable and permit <tt class="docutils literal"><span class="pre">len()</span></tt>
+operator when the data type is <a class="reference internal" href="#htsql.core.domain.ListDomain" title="htsql.core.domain.ListDomain"><tt class="xref py py-class docutils literal"><span class="pre">ListDomain</span></tt></a>.</p>
+<p>In Boolean context, an instance of <a class="reference internal" href="#htsql.core.domain.Value" title="htsql.core.domain.Value"><tt class="xref py py-class docutils literal"><span class="pre">Value</span></tt></a> evaluates
+to <tt class="docutils literal"><span class="pre">False</span></tt> if and only if <tt class="docutils literal"><span class="pre">data</span></tt> is <tt class="docutils literal"><span class="pre">None</span></tt>.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.Profile">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">Profile</tt><big>(</big><em>domain</em>, <em>**attributes</em><big>)</big><a class="headerlink" href="#htsql.core.domain.Profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Describes the structure of data.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">domain</span></tt>: <a class="reference internal" href="#htsql.core.domain.Domain" title="htsql.core.domain.Domain"><tt class="xref py py-class docutils literal"><span class="pre">Domain</span></tt></a></dt>
+<dd>The data type.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">attributes</span></tt></dt>
+<dd>Extra stuctural metadata.  Each entry of <tt class="docutils literal"><span class="pre">attributes</span></tt> becomes
+an attribute of the <a class="reference internal" href="#htsql.core.domain.Profile" title="htsql.core.domain.Profile"><tt class="xref py py-class docutils literal"><span class="pre">Profile</span></tt></a> instance.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.Product">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">Product</tt><big>(</big><em>meta</em>, <em>data</em>, <em>**attributes</em><big>)</big><a class="headerlink" href="#htsql.core.domain.Product" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents data and associated metadata.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">meta</span></tt>: <a class="reference internal" href="#htsql.core.domain.Profile" title="htsql.core.domain.Profile"><tt class="xref py py-class docutils literal"><span class="pre">Profile</span></tt></a></dt>
+<dd>Structure of the data.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">data</span></tt></dt>
+<dd>The data value.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">attributes</span></tt></dt>
+<dd>Extra runtime metadata.  Each entry of <tt class="docutils literal"><span class="pre">attributes</span></tt>
+becomes an attribute of the <a class="reference internal" href="#htsql.core.domain.Product" title="htsql.core.domain.Product"><tt class="xref py py-class docutils literal"><span class="pre">Product</span></tt></a> instance.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.NullDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">NullDomain</tt><a class="headerlink" href="#htsql.core.domain.NullDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A domain with no values (except <tt class="docutils literal"><span class="pre">null</span></tt>).</p>
+<p>This is an abstract class.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.VoidDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">VoidDomain</tt><a class="headerlink" href="#htsql.core.domain.VoidDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A domain without any valid values.</p>
+<p>This domain is could be used when a domain object is required structurally,
+but has no semantics.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.EntityDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">EntityDomain</tt><a class="headerlink" href="#htsql.core.domain.EntityDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>The type of class entities.</p>
+<p>Since class entities are not observable directly in HTSQL model,
+this domain does not support any values.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.UntypedDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">UntypedDomain</tt><a class="headerlink" href="#htsql.core.domain.UntypedDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a yet undetermined type.</p>
+<p>This domain is assigned to HTSQL literals temporarily until the actual
+domain could be derived from the context.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.BooleanDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">BooleanDomain</tt><a class="headerlink" href="#htsql.core.domain.BooleanDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Boolean data type.</p>
+<p>Valid literals: <tt class="docutils literal"><span class="pre">'true'</span></tt>, <tt class="docutils literal"><span class="pre">'false'</span></tt>.</p>
+<p>Valid native objects: <tt class="docutils literal"><span class="pre">bool</span></tt> values.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.NumberDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">NumberDomain</tt><a class="headerlink" href="#htsql.core.domain.NumberDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A numeric data type.</p>
+<p>This is an abstract superclass for integer, float and decimal numbers.</p>
+<p>Class attributes:</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">is_exact</span></tt>: <tt class="docutils literal"><span class="pre">bool</span></tt></dt>
+<dd>Indicates whether the domain represents exact values.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">radix</span></tt>: <tt class="docutils literal"><span class="pre">2</span></tt> or <tt class="docutils literal"><span class="pre">10</span></tt></dt>
+<dd>Indicates whether the values are stored in binary or decimal form.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.IntegerDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">IntegerDomain</tt><big>(</big><em>size=None</em><big>)</big><a class="headerlink" href="#htsql.core.domain.IntegerDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A binary integer data type.</p>
+<p>Valid literals: integers (in base 10) with an optional sign.</p>
+<p>Valid native objects: <tt class="docutils literal"><span class="pre">int</span></tt> or <tt class="docutils literal"><span class="pre">long</span></tt> values.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">size</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>Number of bits used to store a value; <tt class="docutils literal"><span class="pre">None</span></tt> if not known.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.FloatDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">FloatDomain</tt><big>(</big><em>size=None</em><big>)</big><a class="headerlink" href="#htsql.core.domain.FloatDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>An IEEE 754 float data type.</p>
+<p>Valid literals: floating-point numbers in decimal or exponential format.</p>
+<p>Valid native objects: <tt class="docutils literal"><span class="pre">float</span></tt> values.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">size</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>Number of bits used to store a value; <tt class="docutils literal"><span class="pre">None</span></tt> if not known.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.DecimalDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">DecimalDomain</tt><big>(</big><em>precision=None</em>, <em>scale=None</em><big>)</big><a class="headerlink" href="#htsql.core.domain.DecimalDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>An exact decimal data type.</p>
+<p>Valid literals: floating-point numbers in decimal or exponential format.</p>
+<p>Valid native objects: <tt class="docutils literal"><span class="pre">decimal.Decimal</span></tt> objects.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">precision</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>Number of significant digits; <tt class="docutils literal"><span class="pre">None</span></tt> if infinite or not known.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">scale</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>Number of significant digits in the fractional part; zero for integers,
+<tt class="docutils literal"><span class="pre">None</span></tt> if infinite or not known.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.TextDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">TextDomain</tt><big>(</big><em>length=None</em>, <em>is_varying=True</em><big>)</big><a class="headerlink" href="#htsql.core.domain.TextDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A text data type.</p>
+<p>Valid literals: any.</p>
+<p>Valid native object: <tt class="xref py py-obj docutils literal"><span class="pre">unicode</span></tt> values; the <tt class="xref py py-obj docutils literal"><span class="pre">NUL</span></tt> character is not allowed.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">length</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt></dt>
+<dd>The maximum length of the value; <tt class="docutils literal"><span class="pre">None</span></tt> if infinite or not known.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">is_varying</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt></dt>
+<dd>Indicates whether values are fixed-length or variable-length.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.EnumDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">EnumDomain</tt><big>(</big><em>labels</em><big>)</big><a class="headerlink" href="#htsql.core.domain.EnumDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration data type.</p>
+<p>An enumeration domain has a predefined finite set of valid text values.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">labels</span></tt>: [<tt class="docutils literal"><span class="pre">unicode</span></tt>]</dt>
+<dd>List of valid values.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.DateDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">DateDomain</tt><a class="headerlink" href="#htsql.core.domain.DateDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A date data type.</p>
+<p>Valid literals: valid dates in the form <tt class="docutils literal"><span class="pre">YYYY-MM-DD</span></tt>.</p>
+<p>Valid native objects: <tt class="docutils literal"><span class="pre">datetime.date</span></tt> values.</p>
+<dl class="attribute">
+<dt id="htsql.core.domain.DateDomain.regexp">
+<tt class="descname">regexp</tt><em class="property"> = &lt;_sre.SRE_Pattern object at 0x29fd6780&gt;</em><a class="headerlink" href="#htsql.core.domain.DateDomain.regexp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.TimeDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">TimeDomain</tt><a class="headerlink" href="#htsql.core.domain.TimeDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A time data type.</p>
+<p>Valid literals: valid time values in the form <tt class="docutils literal"><span class="pre">HH:MM[:SS[.SSSSSS]]</span></tt>.</p>
+<p>Valid native objects: <tt class="docutils literal"><span class="pre">datetime.time</span></tt> values.</p>
+<dl class="attribute">
+<dt id="htsql.core.domain.TimeDomain.regexp">
+<tt class="descname">regexp</tt><em class="property"> = &lt;_sre.SRE_Pattern object at 0x2a1e6000&gt;</em><a class="headerlink" href="#htsql.core.domain.TimeDomain.regexp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.DateTimeDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">DateTimeDomain</tt><a class="headerlink" href="#htsql.core.domain.DateTimeDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A date+time data type.</p>
+<p>Valid literals: valid date+time values in the form
+<tt class="docutils literal"><span class="pre">YYYY-MM-DD</span> <span class="pre">HH:MM[:SS[.SSSSSS]]</span></tt>.</p>
+<p>Valid native objects: <tt class="docutils literal"><span class="pre">datetime.datetime</span></tt> values.</p>
+<dl class="attribute">
+<dt id="htsql.core.domain.DateTimeDomain.regexp">
+<tt class="descname">regexp</tt><em class="property"> = &lt;_sre.SRE_Pattern object at 0x296c4b00&gt;</em><a class="headerlink" href="#htsql.core.domain.DateTimeDomain.regexp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.OpaqueDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">OpaqueDomain</tt><a class="headerlink" href="#htsql.core.domain.OpaqueDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>An unsupported SQL data type.</p>
+<p>This domain is used for SQL data types not supported by HTSQL.</p>
+<p>Valid literals: any.</p>
+<p>Valid native objects: any.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.Record">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">Record</tt><a class="headerlink" href="#htsql.core.domain.Record" title="Permalink to this definition">¶</a></dt>
+<dd><p>A record value.</p>
+<p><a class="reference internal" href="#htsql.core.domain.Record" title="htsql.core.domain.Record"><tt class="xref py py-class docutils literal"><span class="pre">Record</span></tt></a> is implemented as a tuple with named fields.</p>
+<dl class="classmethod">
+<dt id="htsql.core.domain.Record.make">
+<em class="property">classmethod </em><tt class="descname">make</tt><big>(</big><em>name</em>, <em>fields</em>, <em>_cache=&lt;WeakValueDictionary at 692651852&gt;</em><big>)</big><a class="headerlink" href="#htsql.core.domain.Record.make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a <a class="reference internal" href="#htsql.core.domain.Record" title="htsql.core.domain.Record"><tt class="xref py py-class docutils literal"><span class="pre">Record</span></tt></a> subclass with the given fields.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt>: <tt class="docutils literal"><span class="pre">str</span></tt>, <tt class="docutils literal"><span class="pre">unicode</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt>.</dt>
+<dd>The name of the new class.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">fields</span></tt>: list of <tt class="docutils literal"><span class="pre">str</span></tt>, <tt class="docutils literal"><span class="pre">unicode</span></tt> or <tt class="docutils literal"><span class="pre">None</span></tt>.</dt>
+<dd><p class="first">List of desired field names (<tt class="docutils literal"><span class="pre">None</span></tt> for a field to have no name).</p>
+<p class="last">A field may get no or another name assigned if the desired field
+name is not available for some reason; e.g., if it is is already
+taked by another field or if it coincides with a Python keyword.</p>
+</dd>
+<dt><em>Returns</em>: subclass of <a class="reference internal" href="#htsql.core.domain.Record" title="htsql.core.domain.Record"><tt class="xref py py-class docutils literal"><span class="pre">Record</span></tt></a></dt>
+<dd>The generated class.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.ContainerDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">ContainerDomain</tt><a class="headerlink" href="#htsql.core.domain.ContainerDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A container type.</p>
+<p>This is an abstract superclass for container domains.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.ListDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">ListDomain</tt><big>(</big><em>item_domain</em><big>)</big><a class="headerlink" href="#htsql.core.domain.ListDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A variable-size collection of homogenous entries.</p>
+<p>Valid literals: quoted entries, comma-separated and wrapped in
+<tt class="docutils literal"><span class="pre">(</span></tt> and <tt class="docutils literal"><span class="pre">)</span></tt>.</p>
+<p>Valid native objects: <tt class="docutils literal"><span class="pre">list</span></tt> values.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">item_domain</span></tt>: <a class="reference internal" href="#htsql.core.domain.Domain" title="htsql.core.domain.Domain"><tt class="xref py py-class docutils literal"><span class="pre">Domain</span></tt></a></dt>
+<dd>The type of entries.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.RecordDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">RecordDomain</tt><big>(</big><em>fields</em><big>)</big><a class="headerlink" href="#htsql.core.domain.RecordDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A fixed-size collection of heterogenous entries.</p>
+<p>Valid literals: quoted entries, comma-separated and wrapped in
+<tt class="docutils literal"><span class="pre">{</span></tt> and <tt class="docutils literal"><span class="pre">}</span></tt>.</p>
+<p>Valid native objects: <tt class="docutils literal"><span class="pre">tuple</span></tt> values.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">fields</span></tt>: [<a class="reference internal" href="#htsql.core.domain.Profile" title="htsql.core.domain.Profile"><tt class="xref py py-class docutils literal"><span class="pre">Profile</span></tt></a>]</dt>
+<dd>The types and other structural metadata of the record fields.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.ID">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">ID</tt><a class="headerlink" href="#htsql.core.domain.ID" title="Permalink to this definition">¶</a></dt>
+<dd><p>An identity value.</p>
+<p><a class="reference internal" href="#htsql.core.domain.ID" title="htsql.core.domain.ID"><tt class="xref py py-class docutils literal"><span class="pre">ID</span></tt></a> is a tuple with a string representation that produces
+the identity value in literal form.</p>
+<dl class="classmethod">
+<dt id="htsql.core.domain.ID.make">
+<em class="property">classmethod </em><tt class="descname">make</tt><big>(</big><em>dump</em>, <em>_cache=&lt;WeakValueDictionary at 704140204&gt;</em><big>)</big><a class="headerlink" href="#htsql.core.domain.ID.make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a <a class="reference internal" href="#htsql.core.domain.ID" title="htsql.core.domain.ID"><tt class="xref py py-class docutils literal"><span class="pre">ID</span></tt></a> subclass with the given string serialization.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">dump</span></tt></dt>
+<dd>Implementation of <tt class="docutils literal"><span class="pre">unicode()</span></tt> operator.</dd>
+<dt><em>Returns</em>: subclass of <a class="reference internal" href="#htsql.core.domain.ID" title="htsql.core.domain.ID"><tt class="xref py py-class docutils literal"><span class="pre">ID</span></tt></a></dt>
+<dd>The generated class.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="htsql.core.domain.IdentityDomain">
+<em class="property">class </em><tt class="descclassname">htsql.core.domain.</tt><tt class="descname">IdentityDomain</tt><big>(</big><em>labels</em><big>)</big><a class="headerlink" href="#htsql.core.domain.IdentityDomain" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unique identifier of a database entity.</p>
+<p>Valid literals: identity constructors as in HTSQL grammar; outer brackets
+are optional and always stripped.</p>
+<p>Valid native objects: <tt class="docutils literal"><span class="pre">tuple</span></tt> values.</p>
+<dl class="docutils">
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">labels</span></tt>: [<a class="reference internal" href="#htsql.core.domain.Domain" title="htsql.core.domain.Domain"><tt class="xref py py-class docutils literal"><span class="pre">Domain</span></tt></a>]</dt>
+<dd>The type of labels that form the identity value.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">width</span></tt>: <tt class="docutils literal"><span class="pre">int</span></tt></dt>
+<dd>The number of leaf labels.</dd>
+<dt><tt class="xref py py-obj docutils literal"><span class="pre">leaves</span></tt>: [[<tt class="docutils literal"><span class="pre">int</span></tt>]]</dt>
+<dd>Paths (as tuple indexes) to leaf labels.</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

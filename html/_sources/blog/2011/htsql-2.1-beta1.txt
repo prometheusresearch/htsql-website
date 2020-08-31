@@ -1,0 +1,15 @@
+*****************************
+  HTSQL 2.1.0b1 is released
+*****************************
+
+.. blogentry::
+   :date: 2011-03-09
+   :author: xi
+
+The first beta of the 2.1 release is now available.
+
+The new release brings two major features:
+
+* MySQL, Oracle and MS SQL Server backends.
+* Support for projections; see :doc:`introducing-projections` for details.
+

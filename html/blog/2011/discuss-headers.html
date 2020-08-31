@@ -1,0 +1,609 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Discussion of JSON/CSV Headers &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Discussion on Location" href="discuss-locator.html" />
+    <link rel="prev" title="HTSQL 2.2.0rc1 is released" href="htsql-2.2-rc1.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="discussion-of-json-csv-headers">
+<h1>Discussion of JSON/CSV Headers<a class="headerlink" href="#discussion-of-json-csv-headers" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-10-01</em></p>
+<p>In recent months, we&#8217;ve added hierarchical headers to
+the text formatter, the HTML formatter and the custom
+table formatter found in the HTSQL command shell.  What
+lags behind is the JSON formatter.  This is a discussion
+of what sort of headers we wish for JSON/CSV outputs.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>The JSON output of HTSQL models tabular output, rather
+like a CSV file with column headers and row data that
+does not repeat each header.  Let&#8217;s consider:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school{name,campus},%20name}/:json" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school{name,campus},%20name}/:json" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span><span class="nb">campus</span><span class="p">},</span> <span class="nb">name</span><span class="p">}</span><span class="o">/</span><span class="p">:</span><span class="nf">json</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>Since the above query output has changed since it was
+written, here is a historical snapshot of what this
+query result use to look like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&quot;cols&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;school.name&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;school.campus&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">},</span>
+  <span class="p">],</span>
+  <span class="s">&quot;rows&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">[</span><span class="s">&quot;School of Business&quot;</span><span class="p">,</span> <span class="s">&quot;south&quot;</span><span class="p">,</span> <span class="s">&quot;Accounting&quot;</span><span class="p">],</span>
+    <span class="p">[</span><span class="s">&quot;School of Art &amp; Design&quot;</span><span class="p">,</span> <span class="s">&quot;old&quot;</span><span class="p">,</span> <span class="s">&quot;Art History&quot;</span><span class="p">],</span>
+    <span class="o">...</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The output of this format has two parts, the list of
+column headers, and then a list of row values.  This
+kind of format is especially useful for tools that show
+tables, do charting or other processing.  The output
+follows what you&#8217;d see in a spreadsheet or CSV file.
+Let&#8217;s contrast this with the hierarchical text output:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school{name,campus},%20name}/:txt" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school{name,campus},%20name}/:txt" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span><span class="nb">campus</span><span class="p">},</span> <span class="nb">name</span><span class="p">}</span><span class="o">/</span><span class="p">:</span><span class="nf">txt</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre> | department                                                      |
+ +----------------------------------------+------------------------+
+ | school                                 |                        |
+ +-------------------------------+--------+                        |
+ | name                          | campus | name                   |
+-+-------------------------------+--------+------------------------+-
+ | School of Business            | south  | Accounting             |
+ | School of Arts and Humanities | old    | Art History            |
+ | School of Natural Sciences    | old    | Astronomy              |
+ | School of Engineering         | north  | Bioengineering         |
+ :                               :        | Bursar&#39;s Office        |
+ :                               :        | Career Development     |
+ | School of Natural Sciences    | old    | Chemistry              |
+ | School of Engineering         | north  | Computer Science       |
+ | School of Business            | south  | Economics              |
+ | College of Education          | old    | Educational Policy     |
+ | School of Engineering         | north  | Electrical Engineering |
+ | School of Arts and Humanities | old    | English                |
+ | School of Arts and Humanities | old    | History                |
+ | School of Arts and Humanities | old    | Foreign Languages      |
+ | School of Engineering         | north  | Mechanical Engineering |
+ | School of Business            | south  | Management &amp; Marketing |
+ | School of Natural Sciences    | old    | Mathematics            |
+ :                               :        | Parents &amp; Alumni       |
+ | School of Natural Sciences    | old    | Physics                |
+ | School of Music &amp; Dance       | south  | Piano                  |
+ | School of Arts and Humanities | old    | Political Science      |
+ | School of Arts and Humanities | old    | Psychology             |
+ | School of Art &amp; Design        | old    | Studio Art             |
+ | School of Music &amp; Dance       | south  | Strings                |
+ | College of Education          | old    | Teacher Education      |
+ | School of Music &amp; Dance       | south  | Vocals                 |
+ | School of Music &amp; Dance       | south  | Wind                   |
+</pre></div>
+</div>
+</div>
+</div>
+<p>Currently, the JSON/CSV output for this query does not
+include any indication that the first two columns in the
+result set are from correlated <tt class="docutils literal"><span class="pre">school</span></tt> records, nor does
+it tell us we have <tt class="docutils literal"><span class="pre">department</span></tt> records.</p>
+</div>
+<div class="section" id="options-for-csv">
+<h2>Options for CSV<a class="headerlink" href="#options-for-csv" title="Permalink to this headline">¶</a></h2>
+<p>For the CSV output, it seems OK to omit the driving
+<tt class="docutils literal"><span class="pre">department</span></tt> table &#8211; but incorrect to omit that the
+first two columns belong to the correlated <tt class="docutils literal"><span class="pre">school</span></tt>
+record.  The options aren&#8217;t great.</p>
+<p>One alternative is to have N header rows:</p>
+<div class="highlight-python"><pre>school,school,
+name,campus,name
+School of Business,south,Accounting
+School of Art and Design,old,Art History</pre>
+</div>
+<p>This sort of deviates from what Excel would expect and
+requires extra work to setup.  While a specific <tt class="docutils literal"><span class="pre">.xls</span></tt>
+formatter (with a way to define headers &amp; table data)
+could pull this off, it isn&#8217;t great for <tt class="docutils literal"><span class="pre">.csv</span></tt>.</p>
+<p>Another alternative is to delimit the <tt class="docutils literal"><span class="pre">school</span></tt> as part
+of the header.  Using a period seems reasonable:</p>
+<div class="highlight-python"><pre>school.name,school.campus,name
+School of Business,south,Accounting
+School of Art and Design,old,Art History</pre>
+</div>
+<p>If the title contains a period, there&#8217;s little we
+could actually do about it.  For CSV this seems
+reasonable, but we must do better for JSON.</p>
+</div>
+<div class="section" id="exploring-json-options">
+<h2>Exploring JSON Options<a class="headerlink" href="#exploring-json-options" title="Permalink to this headline">¶</a></h2>
+<p>So, we have the same problem with the current JSON
+formatter.  However, since JSON has a richer structure,
+it seems less reasonable to omit that each row in the
+output represents a <tt class="docutils literal"><span class="pre">department</span></tt>.  Let&#8217;s once again
+consider:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{school{name,campus},%20name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{school{name,campus},%20name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span><span class="nb">campus</span><span class="p">},</span> <span class="nb">name</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="51%" />
+<col width="11%" />
+<col width="39%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" colspan="2">school</th>
+<th class="head" rowspan="2">name</th>
+</tr>
+<tr class="row-even"><th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">Accounting</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Art History</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Astronomy</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+<td class="htsql-text-type">Bioengineering</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type">Bursar&#8217;s Office</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type">Career Development</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Chemistry</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+<td class="htsql-text-type">Computer Science</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">Economics</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">College of Education</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Educational Policy</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+<td class="htsql-text-type">Electrical Engineering</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">English</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">History</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Foreign Languages</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Engineering</td>
+<td class="htsql-text-type">north</td>
+<td class="htsql-text-type">Mechanical Engineering</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Business</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">Management &amp; Marketing</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Mathematics</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type htsql-null-val"></td>
+<td class="htsql-text-type">Parents &amp; Alumni</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Natural Sciences</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Physics</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Music &amp; Dance</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">Piano</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Political Science</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Psychology</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Studio Art</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Music &amp; Dance</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">Strings</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">College of Education</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">Teacher Education</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Music &amp; Dance</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">Vocals</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Music &amp; Dance</td>
+<td class="htsql-text-type">south</td>
+<td class="htsql-text-type">Wind</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>There are 3 options.  The most obvious is to change the
+header definition to make the labels be a list.  This
+approach is simple, but duplicates header contexts:</p>
+<div class="highlight-python"><pre>"cols": [
+  {"title": ["department", "school", "name"],
+   "domain": "string"},
+  {"title": ["department", "school", "campus"],
+   "domain": "string"},
+  {"title": ["department", "name"],
+   "domain": "string"}]</pre>
+</div>
+<p>Another approach is to remove header label information
+completely from the column definition.  We could instead
+provide what you&#8217;d need to build an HTML header block:</p>
+<div class="highlight-python"><pre>"cols": [
+  { "domain": "string"},
+  { "domain": "string"},
+  { "domain": "string"}]
+"headers": [
+  [{"title": "department", "colspan": 3}],
+  [{"title": "school", "colspan": 2},
+   {"title": "name", "rowspan": 2}],
+  [{"title": "name"},
+   {"title": "campus"}]</pre>
+</div>
+<p>For large numbers of headers, this should be much more
+space-efficient.  However, it is harder to understand,
+unless you&#8217;re familiar with how HTML table headers are
+constructed, it&#8217;s not great.  If someone wants table
+headers, perhaps this should be a separate command that
+returns the HTML header block?</p>
+<p>Another option would be to distinguish between the
+context of the column label and the last item in the
+label.  This option is unsatisfactory since it would
+separate the label hierarchy.</p>
+</div>
+<div class="section" id="a-complication-nested-segments">
+<h2>A Complication: Nested Segments<a class="headerlink" href="#a-complication-nested-segments" title="Permalink to this headline">¶</a></h2>
+<p>In a future version of HTSQL, we&#8217;ll add hierarchical
+output.  In this case, we&#8217;d have queries such as:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{%20school{name,%20campus},%20name,%0A%20%20%20%20%20%20%20%20%20%20%20%20/course{no,%20credits,%20title}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{%20school{name,%20campus},%20name,%0A%20%20%20%20%20%20%20%20%20%20%20%20/course{no,%20credits,%20title}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span> <span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">campus</span><span class="p">},</span> <span class="nb">name</span><span class="p">,</span>
+            <span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">no</span><span class="p">,</span> <span class="nb">credits</span><span class="p">,</span> <span class="nb">title</span><span class="p">}}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>This kind of query will return one row per department,
+with a nested tabular value (array of tuples) for
+correlated course rows.  Something like:</p>
+<div class="highlight-python"><pre>{
+  "cols": [
+    {"title": "school.name", "domain": "string"},
+    {"title": "school.campus", "domain": "string"},
+    {"title": "name", "domain": "string"},
+    {"title": "course", "domain": "table",
+     "cols": [
+        {"title": "no", "domain": "integer"},
+        {"title": "credits", "domain": "integer"},
+        {"title": "title", "domain": "string"}
+      ]}
+  ],
+  "rows": [
+    ["School of Business", "south", "Accounting",[
+      [100, 2, "Practical Bookkeeping"],
+      [200, 3, "Introduction to Accounting"],
+      [234, 3, "Accounting Information Systems"],
+      [315, 5, "Financial Accounting"],
+    ]],
+    ["School of Art and Design", "old", "Art History"],[
+      ...
+    ]],
+    ...
+  ]
+}</pre>
+</div>
+<p>It&#8217;s not clear at all how this would map onto CSV, so
+perhaps limiting ourselves to tabular structures, while
+short term convenient, doesn&#8217;t scale that well.</p>
+</div>
+<div class="section" id="record-type">
+<h2>Record Type<a class="headerlink" href="#record-type" title="Permalink to this headline">¶</a></h2>
+<p>One way to look at this problem is to think of the nested
+<tt class="docutils literal"><span class="pre">school</span></tt> context as a record type.  This would change
+the JSON output entirely:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&quot;cols&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;school&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;record&quot;</span><span class="p">,</span>
+     <span class="s">&quot;parts&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;campus&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">}</span>
+      <span class="p">]},</span>
+    <span class="p">{</span><span class="s">&quot;title&quot;</span><span class="p">:</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">}</span>
+  <span class="p">],</span>
+  <span class="s">&quot;rows&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">[[</span><span class="s">&quot;School of Business&quot;</span><span class="p">,</span> <span class="s">&quot;south&quot;</span><span class="p">],</span> <span class="s">&quot;Accounting&quot;</span><span class="p">],</span>
+    <span class="p">[[</span><span class="s">&quot;School of Art and Design&quot;</span><span class="p">,</span> <span class="s">&quot;old&quot;</span><span class="p">],</span> <span class="s">&quot;Art History&quot;</span><span class="p">],</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A <em>record</em> type could be seen as a mapping of keys onto
+values, but it&#8217;s not really accurate, it&#8217;s more like a
+&#8220;C&#8221; Structure.  It would be modeled as a meta-data tuple
+plus zero or more data tuples of the same length.  We
+then have three kinds of domains, <em>list</em>, <em>record</em> and
+<em>scalar</em>.  This is the structured version of the JSON
+model, the primary difference being that arbitrary map
+would be a strictly typed record.</p>
+<p>In this way, HTSQL&#8217;s top-level production would be a
+list, since all queries start with <tt class="docutils literal"><span class="pre">/</span></tt> and <tt class="docutils literal"><span class="pre">/</span></tt> is our
+listing operator.   Let&#8217;s consider the JSON output of
+<tt class="docutils literal"><span class="pre">/department{school{name,campus},name,/course{no,title}}</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s">&quot;meta&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">&quot;label&quot;</span><span class="p">:</span> <span class="s">&quot;department&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;list&quot;</span><span class="p">,</span>
+    <span class="s">&quot;of&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;record&quot;</span><span class="p">,</span>
+      <span class="s">&quot;slots&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s">&quot;label&quot;</span><span class="p">:</span> <span class="s">&quot;school&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;record&quot;</span><span class="p">,</span>
+         <span class="s">&quot;slots&quot;</span><span class="p">:</span> <span class="p">[</span>
+           <span class="p">{</span><span class="s">&quot;label&quot;</span><span class="p">:</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">},</span>
+           <span class="p">{</span><span class="s">&quot;label&quot;</span><span class="p">:</span> <span class="s">&quot;campus&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">}]},</span>
+        <span class="p">{</span><span class="s">&quot;label&quot;</span><span class="p">:</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s">&quot;label&quot;</span><span class="p">:</span> <span class="s">&quot;course&quot;</span><span class="p">,</span> <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;list&quot;</span><span class="p">,</span>
+         <span class="s">&quot;of&quot;</span><span class="p">:</span> <span class="p">{</span>
+           <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;record&quot;</span><span class="p">,</span>
+           <span class="s">&quot;slots&quot;</span><span class="p">:</span> <span class="p">[</span>
+             <span class="p">{</span><span class="s">&quot;label&quot;</span><span class="p">:</span> <span class="s">&quot;title&quot;</span><span class="p">,</span>
+              <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;string&quot;</span><span class="p">},</span>
+             <span class="p">{</span><span class="s">&quot;label&quot;</span><span class="p">:</span> <span class="s">&quot;no&quot;</span><span class="p">,</span>
+              <span class="s">&quot;domain&quot;</span><span class="p">:</span> <span class="s">&quot;integer&quot;</span><span class="p">}]}}</span>
+      <span class="p">]}},</span>
+  <span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">[[</span><span class="s">&quot;School of Business&quot;</span><span class="p">,</span> <span class="s">&quot;south&quot;</span><span class="p">],</span> <span class="s">&quot;Accounting&quot;</span><span class="p">,</span>
+     <span class="p">[[</span><span class="mi">100</span><span class="p">,</span> <span class="s">&quot;Practical Bookkeeping&quot;</span><span class="p">],</span>
+      <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="s">&quot;Introduction to Accounting&quot;</span><span class="p">]],</span>
+      <span class="o">...</span>
+    <span class="p">],</span>
+    <span class="p">[[</span><span class="s">&quot;School of Art and Design&quot;</span><span class="p">,</span> <span class="s">&quot;old&quot;</span><span class="p">],</span> <span class="s">&quot;Art History&quot;</span><span class="p">,</span>
+     <span class="p">[[</span><span class="mi">100</span><span class="p">,</span> <span class="s">&quot;Learning to Look Closely&quot;</span><span class="p">],</span>
+      <span class="p">[</span><span class="mi">204</span><span class="p">,</span> <span class="s">&quot;North American Native Art&quot;</span><span class="p">]],</span>
+      <span class="o">...</span>
+    <span class="p">],</span>
+    <span class="o">...</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In this model, some levels won&#8217;t have a label,
+particularly, records that are subordinate to lists.</p>
+</div>
+<div class="section" id="object-mapping">
+<h2>Object Mapping<a class="headerlink" href="#object-mapping" title="Permalink to this headline">¶</a></h2>
+<p>One nice thing about using list/record structure rather
+than nested tables is that it more easily maps onto more
+traditional object structures.  Consider a native <tt class="docutils literal"><span class="pre">:js</span></tt>
+formatter for Javascript, permitting navigation
+expressions such as <tt class="docutils literal"><span class="pre">department[0].school.campus</span></tt>:</p>
+<div class="highlight-python"><pre>department: [
+  { school: { name: "School of Business",
+              campus: "south" },
+    name: "Accounting",
+    course: [
+      { no: 100, title: "Practical Bookkeeping" },
+      { no: 200, title: "Introduction to Accounting" },
+      ...
+    ]},
+  { school: { name: "School of Art and Design",
+              campus: "old" },
+    name: "Art History",
+    course: [
+      { no: 100, title: "Learning to Look Closely" },
+      { no: 204, title: "North American Native Art"},
+      ...
+    ]},
+  ...
+]</pre>
+</div>
+<p>Or an XML equivalent:</p>
+<div class="highlight-python"><pre>&lt;result-set&gt;
+  &lt;department name="Accounting"&gt;
+    &lt;school name="School of Business" campus="south" /&gt;
+    &lt;course no="100", title="Pratical Bookkeeping" /&gt;
+    &lt;course no="200", title="Introduction to Accounting" /&gt;
+    ...
+  &lt;/department&gt;
+  &lt;department name="Art History"&gt;
+    &lt;school name="School of Art and Design" campus="old" /&gt;
+    &lt;course no="100" title="Learning to Look Closely" /&gt;
+    &lt;course no="204" title="North American Native Art" /&gt;
+    ...
+  &lt;/department&gt;
+  ...
+&lt;/result-set&gt;</pre>
+</div>
+<p>For mappings such as these to work, a stable and predictable
+name-mangling algorithm would have to be articulated.</p>
+</div>
+<div class="section" id="semantic-changes">
+<h2>Semantic Changes<a class="headerlink" href="#semantic-changes" title="Permalink to this headline">¶</a></h2>
+<p>By adding a <em>record</em> type to the product semantics, there
+are several changes that are indicated.  Currently, there
+are a few changes.</p>
+<p>Currently <tt class="docutils literal"><span class="pre">/department{school}</span></tt> is an error.  We have
+several options.  In an earlier version of HTSQL, a link
+returned the identifier (primary keys as a value) of the
+corresponding linked row.  An alternative approach is to
+return a nested record, <tt class="docutils literal"><span class="pre">school</span></tt>.</p>
+<p>It&#8217;s unclear what <tt class="docutils literal"><span class="pre">*</span></tt> operator should do.  Currently it
+creates a nested record, which is then flattened.  If we no
+longer flatten these nested records, a query such as
+<tt class="docutils literal"><span class="pre">/department{*,school}</span></tt> would be a list of records with
+two slots <tt class="docutils literal"><span class="pre">*</span></tt> and <tt class="docutils literal"><span class="pre">school</span></tt>.  If <tt class="docutils literal"><span class="pre">school</span></tt> were to
+return a nested record, then syntax such as <tt class="docutils literal"><span class="pre">school.*</span></tt>
+could be made an error and perhaps <tt class="docutils literal"><span class="pre">*</span></tt> within a selector
+might be implementable as syntax-sugar during query binding
+rather than as an operation returning a record.</p>
+<p>Of course, in future versions of HTSQL, a plural record
+indicator such as <tt class="docutils literal"><span class="pre">course</span></tt> in <tt class="docutils literal"><span class="pre">/department{*,course}</span></tt>
+would still be an error.  To list courses, we&#8217;d instead
+write <tt class="docutils literal"><span class="pre">/department{*,/course}</span></tt>.</p>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/discuss-headers";
+var disqus_title = "Discussion of JSON/CSV Headers";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

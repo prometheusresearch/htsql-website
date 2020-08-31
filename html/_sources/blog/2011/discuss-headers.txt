@@ -1,0 +1,347 @@
+**********************************
+  Discussion of JSON/CSV Headers
+**********************************
+
+.. blogentry::
+   :date: 2011-10-01
+   :author: cce
+
+In recent months, we've added hierarchical headers to
+the text formatter, the HTML formatter and the custom
+table formatter found in the HTSQL command shell.  What
+lags behind is the JSON formatter.  This is a discussion
+of what sort of headers we wish for JSON/CSV outputs. 
+
+.. blogcut::
+
+
+Background
+----------
+
+The JSON output of HTSQL models tabular output, rather
+like a CSV file with column headers and row data that
+does not repeat each header.  Let's consider:
+
+.. htsql:: /department{school{name,campus}, name}/:json
+   :hide:
+
+Since the above query output has changed since it was
+written, here is a historical snapshot of what this
+query result use to look like::
+
+  {
+    "cols": [
+      {"title": "school.name", "domain": "string"},
+      {"title": "school.campus", "domain": "string"},
+      {"title": "name", "domain": "string"},
+    ],
+    "rows": [
+      ["School of Business", "south", "Accounting"],
+      ["School of Art & Design", "old", "Art History"],
+      ...
+    ]
+  }
+
+The output of this format has two parts, the list of
+column headers, and then a list of row values.  This 
+kind of format is especially useful for tools that show
+tables, do charting or other processing.  The output
+follows what you'd see in a spreadsheet or CSV file.  
+Let's contrast this with the hierarchical text output:
+
+.. htsql:: /department{school{name,campus}, name}/:txt
+   :plain:
+ 
+Currently, the JSON/CSV output for this query does not
+include any indication that the first two columns in the
+result set are from correlated ``school`` records, nor does
+it tell us we have ``department`` records. 
+
+
+Options for CSV
+---------------
+
+For the CSV output, it seems OK to omit the driving
+``department`` table -- but incorrect to omit that the
+first two columns belong to the correlated ``school``
+record.  The options aren't great.  
+
+One alternative is to have N header rows::
+
+  school,school,
+  name,campus,name
+  School of Business,south,Accounting
+  School of Art and Design,old,Art History
+
+This sort of deviates from what Excel would expect and
+requires extra work to setup.  While a specific ``.xls`` 
+formatter (with a way to define headers & table data)
+could pull this off, it isn't great for ``.csv``.
+
+Another alternative is to delimit the ``school`` as part
+of the header.  Using a period seems reasonable::
+  
+  school.name,school.campus,name
+  School of Business,south,Accounting
+  School of Art and Design,old,Art History
+
+If the title contains a period, there's little we
+could actually do about it.  For CSV this seems 
+reasonable, but we must do better for JSON.
+
+
+Exploring JSON Options
+----------------------
+
+So, we have the same problem with the current JSON
+formatter.  However, since JSON has a richer structure,
+it seems less reasonable to omit that each row in the
+output represents a ``department``.  Let's once again
+consider:
+
+.. htsql:: /department{school{name,campus}, name}
+
+There are 3 options.  The most obvious is to change the
+header definition to make the labels be a list.  This
+approach is simple, but duplicates header contexts::
+
+    "cols": [
+      {"title": ["department", "school", "name"], 
+       "domain": "string"},
+      {"title": ["department", "school", "campus"], 
+       "domain": "string"},
+      {"title": ["department", "name"], 
+       "domain": "string"}]
+ 
+Another approach is to remove header label information
+completely from the column definition.  We could instead
+provide what you'd need to build an HTML header block::
+
+    "cols": [
+      { "domain": "string"},
+      { "domain": "string"},
+      { "domain": "string"}]
+    "headers": [
+      [{"title": "department", "colspan": 3}],
+      [{"title": "school", "colspan": 2},
+       {"title": "name", "rowspan": 2}],
+      [{"title": "name"},
+       {"title": "campus"}]
+
+For large numbers of headers, this should be much more
+space-efficient.  However, it is harder to understand,
+unless you're familiar with how HTML table headers are
+constructed, it's not great.  If someone wants table
+headers, perhaps this should be a separate command that
+returns the HTML header block?
+
+Another option would be to distinguish between the
+context of the column label and the last item in the
+label.  This option is unsatisfactory since it would
+separate the label hierarchy.
+
+
+A Complication: Nested Segments
+-------------------------------
+
+In a future version of HTSQL, we'll add hierarchical
+output.  In this case, we'd have queries such as:
+
+.. htsql:: 
+   :error:
+   :hide:
+
+   /department{ school{name, campus}, name, 
+               /course{no, credits, title}}
+
+This kind of query will return one row per department,
+with a nested tabular value (array of tuples) for
+correlated course rows.  Something like::
+
+  {
+    "cols": [
+      {"title": "school.name", "domain": "string"},
+      {"title": "school.campus", "domain": "string"},
+      {"title": "name", "domain": "string"},
+      {"title": "course", "domain": "table",
+       "cols": [
+          {"title": "no", "domain": "integer"},
+          {"title": "credits", "domain": "integer"},
+          {"title": "title", "domain": "string"}
+        ]}
+    ],
+    "rows": [
+      ["School of Business", "south", "Accounting",[
+        [100, 2, "Practical Bookkeeping"],
+        [200, 3, "Introduction to Accounting"],
+        [234, 3, "Accounting Information Systems"],
+        [315, 5, "Financial Accounting"],
+      ]],
+      ["School of Art and Design", "old", "Art History"],[
+        ...
+      ]],
+      ...
+    ]
+  }
+
+It's not clear at all how this would map onto CSV, so
+perhaps limiting ourselves to tabular structures, while
+short term convenient, doesn't scale that well.
+
+
+Record Type
+-----------
+
+One way to look at this problem is to think of the nested
+``school`` context as a record type.  This would change
+the JSON output entirely::
+
+  {
+    "cols": [
+      {"title": "school", "domain": "record",
+       "parts": [
+          {"title": "name", "domain": "string"},
+          {"title": "campus", "domain": "string"}
+        ]},
+      {"title": "name", "domain": "string"}
+    ],
+    "rows": [
+      [["School of Business", "south"], "Accounting"],
+      [["School of Art and Design", "old"], "Art History"],
+    ]
+  }
+
+A *record* type could be seen as a mapping of keys onto
+values, but it's not really accurate, it's more like a
+"C" Structure.  It would be modeled as a meta-data tuple
+plus zero or more data tuples of the same length.  We
+then have three kinds of domains, *list*, *record* and
+*scalar*.  This is the structured version of the JSON
+model, the primary difference being that arbitrary map
+would be a strictly typed record.  
+
+In this way, HTSQL's top-level production would be a
+list, since all queries start with ``/`` and ``/`` is our
+listing operator.   Let's consider the JSON output of
+``/department{school{name,campus},name,/course{no,title}}``::
+
+  {
+    "meta": {
+      "label": "department", "domain": "list",
+      "of": {
+        "domain": "record",
+        "slots": [
+          {"label": "school", "domain": "record",
+           "slots": [
+             {"label": "name", "domain": "string"},
+             {"label": "campus", "domain": "string"}]},
+          {"label": "name", "domain": "string"},
+          {"label": "course", "domain": "list",
+           "of": {
+             "domain": "record",
+             "slots": [
+               {"label": "title", 
+                "domain": "string"},
+               {"label": "no", 
+                "domain": "integer"}]}}
+        ]}},
+    "data": [
+      [["School of Business", "south"], "Accounting",
+       [[100, "Practical Bookkeeping"],
+        [200, "Introduction to Accounting"]],
+        ...
+      ],
+      [["School of Art and Design", "old"], "Art History",
+       [[100, "Learning to Look Closely"],
+        [204, "North American Native Art"]],
+        ...
+      ],
+      ...
+    ]
+  }
+
+In this model, some levels won't have a label,
+particularly, records that are subordinate to lists. 
+
+
+Object Mapping
+--------------
+
+One nice thing about using list/record structure rather
+than nested tables is that it more easily maps onto more
+traditional object structures.  Consider a native ``:js``
+formatter for Javascript, permitting navigation
+expressions such as ``department[0].school.campus``::
+
+  department: [
+    { school: { name: "School of Business",
+                campus: "south" },
+      name: "Accounting",
+      course: [
+        { no: 100, title: "Practical Bookkeeping" },
+        { no: 200, title: "Introduction to Accounting" },
+        ...
+      ]},
+    { school: { name: "School of Art and Design",
+                campus: "old" },
+      name: "Art History",
+      course: [
+        { no: 100, title: "Learning to Look Closely" },
+        { no: 204, title: "North American Native Art"},
+        ...
+      ]},
+    ...
+  ]
+
+
+Or an XML equivalent::
+
+  <result-set>
+    <department name="Accounting">
+      <school name="School of Business" campus="south" />
+      <course no="100", title="Pratical Bookkeeping" />
+      <course no="200", title="Introduction to Accounting" />
+      ...
+    </department>
+    <department name="Art History">
+      <school name="School of Art and Design" campus="old" />
+      <course no="100" title="Learning to Look Closely" />
+      <course no="204" title="North American Native Art" />
+      ...
+    </department>
+    ...
+  </result-set> 
+
+For mappings such as these to work, a stable and predictable 
+name-mangling algorithm would have to be articulated.
+
+
+Semantic Changes
+----------------
+
+By adding a *record* type to the product semantics, there
+are several changes that are indicated.  Currently, there
+are a few changes. 
+
+Currently ``/department{school}`` is an error.  We have
+several options.  In an earlier version of HTSQL, a link
+returned the identifier (primary keys as a value) of the
+corresponding linked row.  An alternative approach is to
+return a nested record, ``school``.  
+
+It's unclear what ``*`` operator should do.  Currently it
+creates a nested record, which is then flattened.  If we no
+longer flatten these nested records, a query such as
+``/department{*,school}`` would be a list of records with
+two slots ``*`` and ``school``.  If ``school`` were to
+return a nested record, then syntax such as ``school.*``
+could be made an error and perhaps ``*`` within a selector
+might be implementable as syntax-sugar during query binding
+rather than as an operation returning a record.
+
+Of course, in future versions of HTSQL, a plural record
+indicator such as ``course`` in ``/department{*,course}``
+would still be an error.  To list courses, we'd instead
+write ``/department{*,/course}``.
+
+

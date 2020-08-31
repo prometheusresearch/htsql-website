@@ -1,0 +1,274 @@
+**************************
+  Discussion on Location
+**************************
+
+.. blogentry::
+   :date: 2011-08-28
+   :author: cce
+
+In htsql, we would like a short-hand notation to locate a
+given row in a table without having to mention the
+primary key columns.  This is especially important for
+insert, update and delete operations.
+
+.. blogcut::
+
+Background
+----------
+
+In relational database schemas, primary keys have special
+importance in that they are often used to identify rows.
+these columns are often assumed (or perhaps unknown, but
+automatically provided) when working with records from a
+given table.  For example, a product "code" may be
+multi-part consisting of a product line, make, model
+together as a composite key.  Users of software will
+recognize the dashes, periods and/or other delimiters
+used to distinguish parts of the product code. 
+
+We'd like to support something like this natively within
+htsql so that multi-column primary key selection, such as,
+``/product?product_line='hctl'&make='mark4'&model='3943'``
+could instead be written: ``/product[hctl.mark4.3943]``.
+For this example, the query processor knows the
+``product`` table has 3 primary key columns so that these
+need not be provided in the query proper.  
+
+This sort of mechanism works very well using a database
+having natural keys.  However, sometimes system keys are
+used such that a table has two candidate keys: the first
+one would be an internal/system key; and the second would
+be a unique key composed of foreign keys to other tables
+via their system key, plus a user-assigned code.  For this
+case, the user wishes to see rows using a natural key; some
+footwork is needed to make this happen.
+
+The locator approach supports both user-friendly
+interfaces, but also much more generic user interface code.
+From the screen designer's perspective, they only have to
+know that each record has a locator without having to dive
+into the specifics of how the natural key is constructed.
+
+
+Locations
+---------
+
+In HTSQL, for each record in a table, its *location* is 
+a nested tuple corresponding to primary key of a table, 
+resolving any system keys that may correspond to nested 
+locators.  This is defined as follows.  Each location
+tuple has as many slots as the primary key columns for
+the given table.  For any given record, each slot 
+contains either the value of the column, or, when
+the column is system key reference, a nested location.
+
+System key references are assumed when a column in the
+primary key is a singular foreign key to another table,
+that is, one where the target column has a unique index.
+When a system key is identified, the locator slot for
+that column is instead filled with the locator of the
+referenced record from the target table.  In a way, the
+nominal case of single-column natural keys is an
+optimization: the locator for the target table is the
+column value itself and hence can be used directly.
+
+Locators are written using square brackets together with
+periods separating each slot in a location.  Each slot
+then is the column's value for the given record, or a
+nested locator.  There are two short-cuts added to this
+fundamental syntax to make things easy to read.  First,
+if the nested locator is only a single column value, it
+may be written without square brackets.  Secondly, if the
+1st slot is a nested locator and there are no more nested
+locators with more than one slot, then the square
+brackets for the first nested locator may be omitted.
+
+Each column slot in a location can written without quotes
+if it happens to be a valid HTSQL identifier, date (using
+ISO latin notation) or number.  Otherwise, it can be
+written as a single-quoted string value.  For example, 
+``'4-MARK'`` would have to be single quoted since it is
+neither a number nor identifier (I don't love this
+restriction... could we be much more relaxed here?).
+
+Note that locators are only defined for tables with
+primary keys.  A table lacking a primary key does not
+support locator syntax.  The configuration of locators
+can be provided independently or overridden by plugins.
+
+
+An Example
+----------
+
+Let's assume our ``product`` table has a 3-column natural
+key: ``line``, ``make`` and ``model``.  In a natural-key
+scheme, the ``line`` may actually be a foreign key to
+``product_line{code}``.  However, the ``code`` column of
+the product line table would also be it's primary key.
+Hence, the ``product_line`` column in the product table
+would not be considered a nested locators.  On the other
+hand, the ``make`` column may be part of a 2-column
+foreign key (``product_line``, ``make``) onto a
+``product_make`` table.  This column wouldn't be a nested
+locator either, since by itself it is not a foreign key
+reference.  Hence, the locators for the ``product`` table
+would all be column values.  An example query using the
+locator syntax would be ``/product[HCTL.MARK4.3943]``.
+
+Let's change the schema to use system keys.  In this
+case, let's presume that ``product_line`` has a system
+(unique) key ``_id`` and a primary key of ``line``.
+Further, assume the ``product_make`` table also has a
+unique system key, ``_id`` and primary key of
+(``product_line_id``, ``make``) where ``product_line_id``
+references ``product_line{_id}``.  Finally, assume the
+``product`` table also has a unique ``_id`` key and a
+primary key of (``product_make_id``, ``model``).  This is
+typically of ORM generated schemas and follows typical
+design patterns for system-key schema construction.
+
+In this scenario, we'd like product records to also be
+queried using ``/product[HCTL.MARK4.3943]``.  The method
+is a bit more complex, but HTSQL will hide the details.
+First, the locator for ``product`` itself has two slots,
+a nested-locator to ``product_make`` and a column slot
+``model``.  The nested ``product_make`` locator will 
+also have two slots, a nested-locator to ``product_line``
+and the column slot ``make``.  Finally, the doubly 
+nested ``product_line`` locator will have a single slot,
+for the ``line`` slot.  The locator for the given product
+record is ``/product[[[HCTL].MARK4].3943]``.  Due to the
+bracket omission rules, this locator could be shortened
+to simply ``/product[HCTL.MARK4.3943]``.
+
+
+Location Type
+-------------
+
+This mechanism requires a new *location* datatype that is
+effectively a (perhaps nested) tuple holding foreign key
+values.  The ``location()`` function is a constructor for
+this data type.  Its first argument is an identifier for
+the table for which the locator is constructed.  The
+remaining arguments are slots in the locator. 
+
+For example, ``location(course, 'mth', 101)`` would
+construct the internal locator for ``/course[mth.101]``.
+
+If a slot for a locator is nested due to a foreign-key
+reference, then a nested locator must be passed in for
+the given slot.  In our regression test schema, the
+``enrollment`` table references the ``class`` table
+using a system key, ``course_id`` where the ``class`` 
+table uses natural keys for its construction.  The 
+construction for an enrollment location would be::
+
+  location(enrollment, 1038,
+    location(class, 'mth', '101', 2008, 'spring', '001'))
+
+
+Identify
+--------
+
+The ``id(<location>)`` function can be used to convert a
+location into a location string.  It can be used in two
+ways.  For any table, ``/course{id()}`` will return the 
+serialized locator for each row.  This could then be used 
+to *locate* the row for additional data manipulation.  
+
+The ``id()`` function can also be used to convert a link
+or system key into a human readable identifier.  For
+example, ``/enrollment{student_no, id(course)}`` would
+return the serialized locator each corresponding course.
+Selecting a link by itself is an error, it is not 
+automatically converted into a serialized location.
+ 
+Location Operator
+-----------------
+   
+To make this easier, we provide a ``location`` operator
+``@`` which uses the short-hand locator syntax to
+construct an internal location object.  Hence we can
+write: ``@enrollment[2038.[mth.1001.2008.spring.001]]``
+Note that the nested brackets are required in this case
+since the FK reference to ``class`` is not in the first
+slot of the location.
+
+Locations can be compared to a link expression.  The 
+result is true when the constructed location matches 
+the location automatically constructed for the given 
+row.  You could return all courses in the math
+department with ``/course?department=@department[mth]``
+
+Since this comparison is common, there is a syntax
+short-hand ``/course?department=[mth]``.  This format
+requires the left-hand-side of equality to be ``=``.
+
+
+Locate Function
+---------------
+
+The ``locate`` function takes a table expression and
+associates it with a location.  For most commands this
+acts as a selection based on primary keys.  For the
+``insert`` command it acts to set the column assignment.
+Hence the effect of ``locate`` on a table expression
+depends upon the current command.
+
+Let's start with an example, ``/course[mth.101]``, 
+which is syntax sugar for ``/course.locate('mth', 101)``.
+This would construct ``locator(course, 'mth', 101)``
+and then attach it to the course table expression.  
+For ``select()``, ``update()`` and ``delete()`` commands,
+``/course.filter(department_code='mth'&no=101)`` would
+be an equivalent expression.
+
+For columns using system keys, ``locate`` is defined
+recursively.  So that queries such as
+``/enrollment[2038.[mth.1001.2008.spring.001]]`` work as
+expected.  This would be equivalent to::
+  
+  /enrollment?student_id=2038
+             &class=[mth.1001.2008.spring.001]
+
+By contrast, ``insert()`` command would use a locator to
+short-cut assignments.  For example, ``/course[mth.483]``
+``/insert(title:='Matrix Theory)`` would be equivalent to
+adding assignments for ``department_code`` and course ``no``.  
+For nested locators, the corresponding ``INSERT`` statement
+would have a nested select to lookup the given system key.
+An insert into ``enrollment`` given a class locator would
+first find the internal ``class_seq``.
+
+
+Location Variables
+------------------
+
+Since locations are first-class HTSQL data types, they can
+be used in variables.  So, to return a particular course
+you could write, ``/define($mth_101:=@course[mth,101])``
+``.course[$mth_101]``. 
+
+In some cases, locator composition is useful.  This cannot
+be done using the syntax short hand, but can be
+accomplished using the ``locate()`` function.  For example,
+if you wished to create a ``999`` study section course for 
+every department and we had a ``foreach`` command, one could
+write something like::
+
+  /department.define($dept:=id())
+  .foreach(/course.locate($dept,999)
+                  .insert(title='Study Section'))
+
+Presumably, the ``locate()`` command would convert any
+location strings to internal location objects as needed
+for nested locations created by system keys.
+
+Conclusion
+----------
+
+While it is seemingly such a simple feature, the location
+construct and its associated operators and functions 
+create a succinct tool-set for the comparison, location,
+and manipulation of records by primary key.
+

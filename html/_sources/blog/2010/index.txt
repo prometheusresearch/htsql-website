@@ -1,0 +1,13 @@
+***************************
+  2010 HTSQL News Archive
+***************************
+
+.. blogtree::
+
+   htsql-2.0-rc1
+   htsql-2.0-beta5
+   htsql-2.0-beta4
+   htsql-2.0-beta3
+   htsql-2.0-beta2
+   htsql-2.0-beta1
+   introducing-htsql

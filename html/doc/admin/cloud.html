@@ -1,0 +1,215 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTSQL in the Cloud &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Administration" href="index.html" />
+    <link rel="next" title="HTSQL in Python Applications" href="../embed.html" />
+    <link rel="prev" title="Deploying HTSQL" href="deploy.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-in-the-cloud">
+<h1>HTSQL in the Cloud<a class="headerlink" href="#htsql-in-the-cloud" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#installing-at-heroku" id="id1">Installing at Heroku</a></li>
+</ul>
+</div>
+<p>These instructions outline how to use HTSQL using a cloud
+provider where you have a limited application environment.</p>
+<div class="section" id="installing-at-heroku">
+<span id="index-0"></span><h2><a class="toc-backref" href="#id1">Installing at Heroku</a><a class="headerlink" href="#installing-at-heroku" title="Permalink to this headline">¶</a></h2>
+<p>Here we describe how to install HTSQL as a <a class="reference external" href="http://heroku.com">Heroku</a> process
+using their <a class="reference external" href="http://devcenter.heroku.com/articles/cedar">cedar</a> stack.</p>
+<div class="section" id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h3>
+<p>There are some basic steps that you must do if you&#8217;re not
+already using Heroku service.  Heroku&#8217;s server management tools
+are written in Ruby and use Git.</p>
+<ol class="arabic simple">
+<li>Install <a class="reference external" href="http://www.ruby-lang.org/en/downloads/">Ruby</a>, <a class="reference external" href="http://www.ruby-lang.org/en/libraries/">Ruby Gems</a> and <a class="reference external" href="http://help.github.com/linux-set-up-git/">Git</a> for your platform.</li>
+<li><a class="reference external" href="http://heroku.com/signup">Signup</a> for a Heroku Account.</li>
+<li>Install <a class="reference external" href="http://devcenter.heroku.com/articles/heroku-command">Heroku CLI</a> command and register your
+ssh key using <tt class="docutils literal"><span class="pre">heroku</span> <span class="pre">keys:add</span></tt>.</li>
+<li>When you first run a <tt class="docutils literal"><span class="pre">heroku</span></tt> command, it will prompt for your
+account information and cache it at <tt class="docutils literal"><span class="pre">~/.heroku/credentials</span></tt>.</li>
+</ol>
+<p>If you follow Heroku&#8217;s <a class="reference external" href="http://devcenter.heroku.com/articles/quickstart">quickstart</a> don&#8217;t follow the remaining
+instructions past the Prerequisites since this is intended for
+ruby application developers.</p>
+</div>
+<div class="section" id="application-template">
+<h3>Application Template<a class="headerlink" href="#application-template" title="Permalink to this headline">¶</a></h3>
+<p>Next is an application template that matches with Heroku needs.
+You&#8217;ll need to create an empty &#8220;project&#8221; directory with the
+following files &amp; content.</p>
+<p><tt class="docutils literal"><span class="pre">requirements.txt</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">HTSQL</span>
+<span class="n">PyYAML</span>
+<span class="n">psycopg2</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">Procfile</span></tt>:</p>
+<div class="highlight-python"><pre>web: python run_htsql.py</pre>
+</div>
+<p><tt class="docutils literal"><span class="pre">config.yaml</span></tt>:</p>
+<div class="highlight-python"><pre># shell plugin as a default command
+tweak.shell.default:</pre>
+</div>
+<p><tt class="docutils literal"><span class="pre">run_htsql.py</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># create HTSQL application</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">htsql</span> <span class="kn">import</span> <span class="n">HTSQL</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s">&quot;config.yaml&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="n">dburi</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;DATABASE_URL&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;postgres&#39;</span><span class="p">,</span><span class="s">&#39;pgsql&#39;</span><span class="p">)</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">HTSQL</span><span class="p">(</span><span class="n">dburi</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+
+<span class="c"># start webserver</span>
+<span class="kn">from</span> <span class="nn">wsgiref.simple_server</span> <span class="kn">import</span> <span class="n">make_server</span>
+<span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;PORT&#39;</span><span class="p">])</span>
+<span class="n">srv</span> <span class="o">=</span> <span class="n">make_server</span><span class="p">(</span><span class="s">&#39;0.0.0.0&#39;</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">app</span><span class="p">)</span>
+<span class="n">srv</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>These files can be found in the <tt class="docutils literal"><span class="pre">demo/heroku</span></tt> portion
+of the HTSQL distribution.</p>
+</div>
+<div class="section" id="deployment">
+<h3>Deployment<a class="headerlink" href="#deployment" title="Permalink to this headline">¶</a></h3>
+<p>Once those files are created, deployment to Heroku&#8217;s system is
+done by first creating a local git repository for your project:</p>
+<div class="highlight-python"><pre>$ git init
+$ git add .
+$ git commit -m init</pre>
+</div>
+<p>Then, initializing the heroku stack:</p>
+<div class="highlight-python"><pre>$ heroku create --stack cedar</pre>
+</div>
+<p>At this point, a PostgreSQL database is needed.  For testing,
+you could use a shared database:</p>
+<div class="highlight-python"><pre>$ heroku addons:add shared-database</pre>
+</div>
+<p>Then, you&#8217;re ready to push HTSQL to Heroku:</p>
+<div class="highlight-python"><pre>$ git push heroku master</pre>
+</div>
+<p>You could now go to the URL of the hosted service and enter
+<tt class="docutils literal"><span class="pre">/'Hello</span> <span class="pre">World'</span></tt> for a very basic test.  If HTSQL server
+is not up and running, look at the logs:</p>
+<div class="highlight-python"><pre>$ heroku logs</pre>
+</div>
+<p>Likely you will want to customize your deployment, say running
+it along side your web application and using <tt class="docutils literal"><span class="pre">nginx</span></tt> to
+dispatch requests to some prefix to this process.</p>
+</div>
+<div class="section" id="limitations">
+<h3>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h3>
+<p>One major limitation of Heroku deployment is that <a class="reference external" href="http://rubyonrails.org/">Ruby on Rails</a>
+applications typically do not define foreign keys.  Furthermore,
+the tool Heroku uses to do import and export, <a class="reference external" href="http://devcenter.heroku.com/articles/taps">taps</a>, discards any
+foreign key constraints when migrating schemas.  Since HTSQL
+relies upon foreign keys to determine linking, it&#8217;s usage is
+limited to single table queries or manually specified links.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

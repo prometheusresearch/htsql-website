@@ -1,0 +1,237 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introducing Support for Timestamps &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Introducing Calculated Attributes" href="introducing-calculated-attributes.html" />
+    <link rel="prev" title="HTSQL 2.1.0b2 is released" href="htsql-2.1-beta2.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introducing-support-for-timestamps">
+<h1>Introducing Support for Timestamps<a class="headerlink" href="#introducing-support-for-timestamps" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">xi</em> on <em class="blog-date">2011-03-25</em></p>
+<p>The initial 2.0 release only supported the <tt class="docutils literal"><span class="pre">date</span></tt> type.
+Recently, support for a <tt class="docutils literal"><span class="pre">datetime</span></tt> and <tt class="docutils literal"><span class="pre">time</span></tt> data types
+has been added.</p>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>These types provide the following set of operations.</p>
+<div class="section" id="literals">
+<h3>Literals<a class="headerlink" href="#literals" title="Permalink to this headline">¶</a></h3>
+<p>Date and datetime literals use the ISO notation: <tt class="docutils literal"><span class="pre">YYYY-MM-DD</span></tt>
+and <tt class="docutils literal"><span class="pre">YYYY-MM-DD</span> <span class="pre">hh:mm:ss.sss</span></tt>.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{date('2010-04-15'),%20time('20:13'),%20datetime('2010-04-15%2020:13')}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{date('2010-04-15'),%20time('20:13'),%20datetime('2010-04-15%2020:13')}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-04-15&#39;</span><span class="p">),</span> <span class="nf">time</span><span class="p">(</span><span class="s">&#39;20:13&#39;</span><span class="p">),</span> <span class="nf">datetime</span><span class="p">(</span><span class="s">&#39;2010-04-15 20:13&#39;</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="construction">
+<h3>Construction<a class="headerlink" href="#construction" title="Permalink to this headline">¶</a></h3>
+<p>Date and datetime values could also be constructed from
+individual fields.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{date(2010,4,15),%20datetime(2010,4,15,20,13)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{date(2010,4,15),%20datetime(2010,4,15,20,13)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">15</span><span class="p">),</span> <span class="nf">datetime</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">15</span><span class="p">,</span><span class="m">20</span><span class="p">,</span><span class="m">13</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="conversion">
+<h3>Conversion<a class="headerlink" href="#conversion" title="Permalink to this headline">¶</a></h3>
+<p>You could convert a date to a datetime value and back.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{datetime(date('2010-04-15')),%20date(datetime('2010-04-15%2020:13'))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{datetime(date('2010-04-15')),%20date(datetime('2010-04-15%2020:13'))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">datetime</span><span class="p">(</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-04-15&#39;</span><span class="p">)),</span> <span class="nf">date</span><span class="p">(</span><span class="nf">datetime</span><span class="p">(</span><span class="s">&#39;2010-04-15 20:13&#39;</span><span class="p">))}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="comparison">
+<h3>Comparison<a class="headerlink" href="#comparison" title="Permalink to this headline">¶</a></h3>
+<p>Date, datetime and time values could be compared to each other.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{date('2010-03-16')&lt;date('2010-04-15')}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{date('2010-03-16')&lt;date('2010-04-15')}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-03-16&#39;</span><span class="p">)</span><span class="o">&lt;</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-04-15&#39;</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>Note that you cannot compare a date to a datetime value directly,
+you need to cast the values to the common type first.</p>
+</div>
+<div class="section" id="current-date">
+<h3>Current date<a class="headerlink" href="#current-date" title="Permalink to this headline">¶</a></h3>
+<p>Function <tt class="docutils literal"><span class="pre">today()</span></tt> returns the current date, <tt class="docutils literal"><span class="pre">now()</span></tt> returns the
+current date and time.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{today(),%20now()}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{today(),%20now()}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">today</span><span class="p">(),</span> <span class="nf">now</span><span class="p">()}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="components">
+<h3>Components<a class="headerlink" href="#components" title="Permalink to this headline">¶</a></h3>
+<p>Functions <tt class="docutils literal"><span class="pre">year()</span></tt>, <tt class="docutils literal"><span class="pre">month()</span></tt>, <tt class="docutils literal"><span class="pre">day()</span></tt>, <tt class="docutils literal"><span class="pre">hour()</span></tt>,
+<tt class="docutils literal"><span class="pre">minute()</span></tt>, <tt class="docutils literal"><span class="pre">second()</span></tt> extract individual fields of
+a date or a datetime value.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{year(date('2010-04-15')),%20hour(time('20:13'))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{year(date('2010-04-15')),%20hour(time('20:13'))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">year</span><span class="p">(</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-04-15&#39;</span><span class="p">)),</span> <span class="nf">hour</span><span class="p">(</span><span class="nf">time</span><span class="p">(</span><span class="s">&#39;20:13&#39;</span><span class="p">))}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="arithmetics">
+<h3>Arithmetics<a class="headerlink" href="#arithmetics" title="Permalink to this headline">¶</a></h3>
+<p>Adding an integer <tt class="docutils literal"><span class="pre">N</span></tt> to a date value advances the date by
+<tt class="docutils literal"><span class="pre">N</span></tt> days.  Similarly, a float number could be added to
+a datetime value to advanced it by the given number of days
+(the integer part) and time (the fractional part).</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{date('2010-04-15')-30,%20datetime('2010-04-15%2020:13')%2B0.5}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{date('2010-04-15')-30,%20datetime('2010-04-15%2020:13')%2B0.5}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-04-15&#39;</span><span class="p">)</span><span class="o">-</span><span class="m">30</span><span class="p">,</span> <span class="nf">datetime</span><span class="p">(</span><span class="s">&#39;2010-04-15 20:13&#39;</span><span class="p">)</span><span class="o">+</span><span class="m">0.5</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>You could also subtract one date value from another to get
+the number of days between them.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{date('2010-04-25')-date('2010-03-26')}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{date('2010-04-25')-date('2010-03-26')}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-04-25&#39;</span><span class="p">)</span><span class="o">-</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-03-26&#39;</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="open-questions">
+<h2>Open questions<a class="headerlink" href="#open-questions" title="Permalink to this headline">¶</a></h2>
+<p><tt class="docutils literal"><span class="pre">INTERVAL</span></tt> data type is not yet supported.</p>
+<p>There is no way to advance a date by <tt class="docutils literal"><span class="pre">N</span></tt> months.</p>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/introducing-datetime";
+var disqus_title = "Introducing Support for Timestamps";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

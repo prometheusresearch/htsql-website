@@ -1,0 +1,291 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introducing Projections &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Discussion on Link Chains" href="discuss-link-chains.html" />
+    <link rel="prev" title="HTSQL 2.1.0b1 is released" href="htsql-2.1-beta1.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introducing-projections">
+<h1>Introducing Projections<a class="headerlink" href="#introducing-projections" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-02-18</em></p>
+<p>This past week we committed provisional code for projections,
+a virtual table which consists of distinct values from a particular
+expression.  This is comparable to SQL&#8217;s DISTINCT / GROUP BY.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>In HTSQL, each query typically starts with a driving table such that
+rows in the output correspond to records from the driving table. For
+example, <tt class="docutils literal"><span class="pre">/department</span></tt> returns one row per record in the department
+table.  Links from this driving table are either singular or plural,
+where a plural link requires an aggregate function.  In the example
+below, we have two links: a singular link from department to school,
+and a plural link from department to course.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name,%20school.name,%20count(course)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name,%20school.name,%20count(course)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">school</span><span class="p">.</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="projections">
+<h2>Projections<a class="headerlink" href="#projections" title="Permalink to this headline">¶</a></h2>
+<p>The projection feature creates virtual table where each record in the
+table corresponds to distinct values for a particular set of
+expressions.  For instance, the following query returns distinct degree
+values from the program table.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(program^degree)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(program^degree)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">ba</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bs</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ct</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">ma</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ms</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">pb</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ph</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This virtual table has one plural link which leads back to seed table;
+this link is represented by the caret <tt class="docutils literal"><span class="pre">^</span></tt>.  For example, the following
+query shows the number of programs for each distinct degree.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(program^degree){*,%20count(^)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(program^degree){*,%20count(^)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">){</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">degree</th>
+<th class="head">count(^)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">ba</td>
+<td class="htsql-integer-type">10</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bs</td>
+<td class="htsql-integer-type">10</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ct</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">ma</td>
+<td class="htsql-integer-type">7</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ms</td>
+<td class="htsql-integer-type">6</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">pb</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ph</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Here the asterisk <tt class="docutils literal"><span class="pre">*</span></tt> returns all columns from the projected table,
+which is <tt class="docutils literal"><span class="pre">degree</span></tt>.  The caret <tt class="docutils literal"><span class="pre">^</span></tt> indicates a link to the underlying
+seed table, in this case <tt class="docutils literal"><span class="pre">program</span></tt>.  Hence, <tt class="docutils literal"><span class="pre">count(^)</span></tt> returns the
+number of programs corresponding to each degree.</p>
+<p>For projections, we introduce several terms.  The set of distinct
+expressions is called the <em>kernel</em> .  The original table is called
+the <em>seed</em>.  The plural link from the projected table back to the
+seed table is called the <em>complement</em>.</p>
+</div>
+<div class="section" id="additional-examples">
+<h2>Additional Examples<a class="headerlink" href="#additional-examples" title="Permalink to this headline">¶</a></h2>
+<p>In the following example, we return schools and for each school,
+the count of distinct degrees offered by that school.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(program^degree)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(program^degree)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>This query returns distinct values of (year of birth, gender)
+combinations.  For each combination, the number of students
+and the average number of enrollments.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(student^{year(dob),gender}){*,%20count(^),%20avg(^.count(enrollment))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(student^{year(dob),gender}){*,%20count(^),%20avg(^.count(enrollment))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">student</span><span class="o">^</span><span class="p">{</span><span class="nf">year</span><span class="p">(</span><span class="nb">dob</span><span class="p">),</span><span class="nb">gender</span><span class="p">}){</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">),</span> <span class="nf">avg</span><span class="p">(</span><span class="o">^</span><span class="p">.</span><span class="nf">count</span><span class="p">(</span><span class="nb">enrollment</span><span class="p">))}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+<p>This last query returns distinct degrees, but only for programs
+in the school of art.  For each distinct degree, the count of
+those programs and count of associated students.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/((program?school_code='art')^degree){*,%20count(^),%20count(^.student)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/((program?school_code='art')^degree){*,%20count(^),%20count(^.student)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">((</span><span class="nb">program</span><span class="o">?</span><span class="nb">school_code</span><span class="o">=</span><span class="s">&#39;art&#39;</span><span class="p">)</span><span class="o">^</span><span class="nb">degree</span><span class="p">){</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">.</span><span class="nb">student</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="open-questions">
+<h2>Open Questions<a class="headerlink" href="#open-questions" title="Permalink to this headline">¶</a></h2>
+<p>The use of <tt class="docutils literal"><span class="pre">^</span></tt> and <tt class="docutils literal"><span class="pre">*</span></tt> may be less than intuitive.  Currently you
+can not refer to the kernel nor the complement  by name.  But, it seems
+natural that an expression like <tt class="docutils literal"><span class="pre">(program^degree)</span></tt> should have two
+fields, <tt class="docutils literal"><span class="pre">program</span></tt> which refers to the complement and <tt class="docutils literal"><span class="pre">degree</span></tt> which
+refers to the kernel.  Finally, it may be helpful to have a functional
+form for the projection operator, called <tt class="docutils literal"><span class="pre">distinct()</span></tt>.</p>
+<p>With these changes, <tt class="docutils literal"><span class="pre">/(program^degree){*,count(^)}</span></tt> could be written:</p>
+<div class="highlight-python"><pre>/distinct(program{degree}) {degree, count(program)}</pre>
+</div>
+<p>We are also considering a short-cut syntax:</p>
+<div class="highlight-python"><pre>/program{^degree, count(^)}</pre>
+</div>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/introducing-projections";
+var disqus_title = "Introducing Projections";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

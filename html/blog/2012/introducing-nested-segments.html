@@ -1,0 +1,764 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introducing Nested Segments &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2012 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="Improved Visual Display" href="improved-visual-display.html" />
+    <link rel="prev" title="Introducing Django Gateway" href="introducing-django-gateway.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="introducing-nested-segments">
+<h1>Introducing Nested Segments<a class="headerlink" href="#introducing-nested-segments" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2012-03-23</em></p>
+<p>HTSQL now supports nested queries!  Generation of
+multi-layered output is now trivial.</p>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Often you want to organize summary and detailed data in a
+single hierarchical structure.  In HTSQL, the segment (<tt class="docutils literal"><span class="pre">/</span></tt>)
+operator embeds the result of a correlated query as a nested
+list. For instance, a list of <tt class="docutils literal"><span class="pre">school</span></tt> records could
+include associated <tt class="docutils literal"><span class="pre">department</span></tt> records:</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{*,%20/department}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{*,%20/department}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="6%" />
+<col width="31%" />
+<col width="8%" />
+<col width="8%" />
+<col width="31%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" rowspan="2">code</th>
+<th class="head" rowspan="2">name</th>
+<th class="head" rowspan="2">campus</th>
+<th class="head" colspan="3">department</th>
+</tr>
+<tr class="row-even"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type">art</td>
+<td class="htsql-text-type">School of Art &amp; Design</td>
+<td class="htsql-text-type">old</td>
+<td class="htsql-text-type">stdart</td>
+<td class="htsql-text-type">Studio Art</td>
+<td class="htsql-text-type">art</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type" rowspan="3">bus</td>
+<td class="htsql-text-type" rowspan="3">School of Business</td>
+<td class="htsql-text-type" rowspan="3">south</td>
+<td class="htsql-text-type">acc</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">econ</td>
+<td class="htsql-text-type">Economics</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">mm</td>
+<td class="htsql-text-type">Management &amp; Marketing</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type" rowspan="2">edu</td>
+<td class="htsql-text-type" rowspan="2">College of Education</td>
+<td class="htsql-text-type" rowspan="2">old</td>
+<td class="htsql-text-type">edpol</td>
+<td class="htsql-text-type">Educational Policy</td>
+<td class="htsql-text-type">edu</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">tched</td>
+<td class="htsql-text-type">Teacher Education</td>
+<td class="htsql-text-type">edu</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="navigation">
+<h2>Navigation<a class="headerlink" href="#navigation" title="Permalink to this headline">¶</a></h2>
+<p>To understand this better, let&#8217;s review how navigation works.
+Suppose we have two related tables, <tt class="docutils literal"><span class="pre">school</span></tt> and
+<tt class="docutils literal"><span class="pre">department</span></tt> such that each department may be associated
+with a particular school.  Conversely, each school is
+correlated with a list of its associated departments.</p>
+<p>The following query first navigates to <tt class="docutils literal"><span class="pre">school</span></tt>, and then
+for each school, navigates to the associated departments.
+These correlated <tt class="docutils literal"><span class="pre">department</span></tt> records are returned.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.department" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.department" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nb">department</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="56%" />
+<col width="28%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">stdart</td>
+<td class="htsql-text-type">Studio Art</td>
+<td class="htsql-text-type">art</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">acc</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">econ</td>
+<td class="htsql-text-type">Economics</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">mm</td>
+<td class="htsql-text-type">Management &amp; Marketing</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">edpol</td>
+<td class="htsql-text-type">Educational Policy</td>
+<td class="htsql-text-type">edu</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">tched</td>
+<td class="htsql-text-type">Teacher Education</td>
+<td class="htsql-text-type">edu</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Note this query is <em>not</em> the same as <tt class="docutils literal"><span class="pre">/department</span></tt>, even
+though both return records from the <tt class="docutils literal"><span class="pre">department</span></tt> table.
+The <tt class="docutils literal"><span class="pre">/school.department</span></tt> query returns only departments
+associated with some school, and orders them by school.</p>
+<p>The following example also navigates from <tt class="docutils literal"><span class="pre">school</span></tt> to
+<tt class="docutils literal"><span class="pre">department</span></tt>.  However, this linking happens in the context
+of the <tt class="docutils literal"><span class="pre">count()</span></tt> aggregate.  Hence, we get schools, and for
+each school, the count of associated departments.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20count(department)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20count(department)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">count(department)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">edu</td>
+<td class="htsql-integer-type">2</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The segment operator is also an aggregate &#8212; instead of
+returning a scalar, it returns a nested list.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20count(department),%20/department}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20count(department),%20/department}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">),</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="28%" />
+<col width="10%" />
+<col width="37%" />
+<col width="18%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" rowspan="2">code</th>
+<th class="head" rowspan="2">count(department)</th>
+<th class="head" colspan="3">department</th>
+</tr>
+<tr class="row-even"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type">art</td>
+<td class="htsql-integer-type">1</td>
+<td class="htsql-text-type">stdart</td>
+<td class="htsql-text-type">Studio Art</td>
+<td class="htsql-text-type">art</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type" rowspan="3">bus</td>
+<td class="htsql-integer-type" rowspan="3">3</td>
+<td class="htsql-text-type">acc</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">econ</td>
+<td class="htsql-text-type">Economics</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">mm</td>
+<td class="htsql-text-type">Management &amp; Marketing</td>
+<td class="htsql-text-type">bus</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type" rowspan="2">edu</td>
+<td class="htsql-integer-type" rowspan="2">2</td>
+<td class="htsql-text-type">edpol</td>
+<td class="htsql-text-type">Educational Policy</td>
+<td class="htsql-text-type">edu</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">tched</td>
+<td class="htsql-text-type">Teacher Education</td>
+<td class="htsql-text-type">edu</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="more-examples">
+<h2>More Examples<a class="headerlink" href="#more-examples" title="Permalink to this headline">¶</a></h2>
+<p>This mechanism is not a special case, it is an integral part
+of our query language.   For example, it works with
+projections.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school^campus{campus,%20/school{name}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school^campus{campus,%20/school{name}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">^</span><span class="nb">campus</span><span class="p">{</span><span class="nb">campus</span><span class="p">,</span> <span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="83%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" rowspan="2">campus</th>
+<th class="head">school</th>
+</tr>
+<tr class="row-even"><th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type">north</td>
+<td class="htsql-text-type">School of Engineering</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type" rowspan="4">old</td>
+<td class="htsql-text-type">School of Art &amp; Design</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">College of Education</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">School of Arts and Humanities</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Natural Sciences</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type" rowspan="2">south</td>
+<td class="htsql-text-type">School of Business</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">School of Music &amp; Dance</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Nested segments play well with aggregates and variables.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name%2B,%0A%20%20%20%20%20%20%20%20%20%20%20%20$avg_credits%20:=%20avg(course.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20/course{credits,%20title}?credits&gt;$avg_credits%20}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name%2B,%0A%20%20%20%20%20%20%20%20%20%20%20%20$avg_credits%20:=%20avg(course.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20/course{credits,%20title}?credits&gt;$avg_credits%20}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="o">+</span><span class="p">,</span>
+            <span class="p">$</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
+            <span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">credits</span><span class="p">,</span> <span class="nb">title</span><span class="p">}</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span> <span class="p">}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="20%" />
+<col width="12%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" rowspan="2">name</th>
+<th class="head" rowspan="2">$avg_credits</th>
+<th class="head" colspan="2">course</th>
+</tr>
+<tr class="row-even"><th class="head">credits</th>
+<th class="head">title</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type" rowspan="3">Accounting</td>
+<td class="htsql-decimal-type" rowspan="3">3.5</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Financial Accounting</td>
+</tr>
+<tr class="row-even"><td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Audit</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Accounting Internship</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type" rowspan="6">Art History</td>
+<td class="htsql-decimal-type" rowspan="6">3.5</td>
+<td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">History of Art Criticism I</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Antique Art: Greece and Rome</td>
+</tr>
+<tr class="row-even"><td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">Antique Art: The Middle East</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Islamic Art</td>
+</tr>
+<tr class="row-even"><td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Art of Photography</td>
+</tr>
+<tr class="row-odd"><td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">Museum and Gallery Management</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-decimal-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Nesting can be arbitrarily deep.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name%2B,%0A%20%20%20%20%20%20%20%20/department{name,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20/course{title}}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name%2B,%0A%20%20%20%20%20%20%20%20/department{name,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20/course{title}}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="o">+</span><span class="p">,</span>
+        <span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span>
+                    <span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">title</span><span class="p">}}}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="21%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" rowspan="3">name</th>
+<th class="head" colspan="2">department</th>
+</tr>
+<tr class="row-even"><th class="head" rowspan="2">name</th>
+<th class="head">course</th>
+</tr>
+<tr class="row-odd"><th class="head">title</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type" rowspan="35">College of Education</td>
+<td class="htsql-text-type" rowspan="16">Educational Policy</td>
+<td class="htsql-text-type">Introduction to Education</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Contemporary Society</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Sociology of Childhood</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Technology in the Classroom</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Technology, Society and Schools</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Economics and Education Policy</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Politics and Education Policy</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Education Policy Analysis</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Children&#8217;s Literature</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Education Policy and Practice</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Social Analysis of Education Policy</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Classroom Visit</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Organizational Analysis of Education Policy</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Seminar in Education Policy I</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Seminar in Education Policy II</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Qualitative Research in Education Policy</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type" rowspan="19">Teacher Education</td>
+<td class="htsql-text-type">Teaching Methodology</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Theory and Practice of Early Childhood Education</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Methods of Early Science Education</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Play as Education Method</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Developmental Psychology</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Selection of Learning Resources</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Teacher Identity</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Problems in Education Management</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Challenges of Teaching the Gifted and Talented</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Techniques of Mathematics Teaching</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Techniques of Science Teaching</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Techniques of Language Teaching</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Problems in Education</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Public School Internship</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Preschool Internship</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Special Topics in Teacher Education</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Practice of Mathematics Teaching</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Practice of Science Teaching</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Practice of Language Teaching</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>A query may have adjacent nested segments.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20/department{name},%20/program{title}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20/department{name},%20/program{title}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">},</span> <span class="o">/</span><span class="nb">program</span><span class="p">{</span><span class="nb">title</span><span class="p">}}</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="27%" />
+<col width="46%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head" rowspan="2">name</th>
+<th class="head">department</th>
+<th class="head">program</th>
+</tr>
+<tr class="row-even"><th class="head">name</th>
+<th class="head">title</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-odd"><td class="htsql-text-type" rowspan="3">School of Art &amp; Design</td>
+<td class="htsql-text-type" rowspan="3">Studio Art</td>
+<td class="htsql-text-type">Post Baccalaureate in Art History</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Bachelor of Arts in Art History</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Bachelor of Arts in Studio Art</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type" rowspan="6">School of Business</td>
+<td class="htsql-text-type">Accounting</td>
+<td class="htsql-text-type">Master of Arts in Economics</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Economics</td>
+<td class="htsql-text-type">Graduate Certificate in Accounting</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type" rowspan="4">Management &amp; Marketing</td>
+<td class="htsql-text-type">Certificate in Business Administration</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">B.S. in Accounting</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">Bachelor of Business Administration</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">Bachelor of Arts in Economics</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>For tabular formats, we show parallel tables adjacent to each
+other.  In the query above, programs and departments are
+shown side-by-side even though they are not correlated with
+each other.</p>
+</div>
+<div class="section" id="presentation">
+<h2>Presentation<a class="headerlink" href="#presentation" title="Permalink to this headline">¶</a></h2>
+<p>Nested segments are supported by all HTSQL output formats.
+The hierarchical structure of the output is very suitable for
+<tt class="docutils literal"><span class="pre">XML</span></tt> and <tt class="docutils literal"><span class="pre">JSON</span></tt> formats.</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{*,%20/department}%20/:xml" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{*,%20/department}%20/:xml" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">xml</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;
+&lt;htsql:result xmlns:htsql=&quot;http://htsql.org/2010/xml&quot;&gt;
+  &lt;school&gt;
+    &lt;code&gt;art&lt;/code&gt;
+    &lt;name&gt;School of Art &amp;amp; Design&lt;/name&gt;
+    &lt;campus&gt;old&lt;/campus&gt;
+    &lt;department&gt;
+      &lt;code&gt;stdart&lt;/code&gt;
+      &lt;name&gt;Studio Art&lt;/name&gt;
+      &lt;school_code&gt;art&lt;/school_code&gt;
+    &lt;/department&gt;
+  &lt;/school&gt;
+  &lt;school&gt;
+    &lt;code&gt;bus&lt;/code&gt;
+    &lt;name&gt;School of Business&lt;/name&gt;
+    &lt;campus&gt;south&lt;/campus&gt;
+    &lt;department&gt;
+      &lt;code&gt;acc&lt;/code&gt;
+      &lt;name&gt;Accounting&lt;/name&gt;
+      &lt;school_code&gt;bus&lt;/school_code&gt;
+    &lt;/department&gt;
+    &lt;department&gt;
+      &lt;code&gt;econ&lt;/code&gt;
+      &lt;name&gt;Economics&lt;/name&gt;
+      &lt;school_code&gt;bus&lt;/school_code&gt;
+    &lt;/department&gt;
+    &lt;department&gt;
+      &lt;code&gt;mm&lt;/code&gt;
+      &lt;name&gt;Management &amp;amp; Marketing&lt;/name&gt;
+      &lt;school_code&gt;bus&lt;/school_code&gt;
+    &lt;/department&gt;
+  &lt;/school&gt;
+…
+</pre></div>
+</div>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{*,%20/department}%20/:json" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{*,%20/department}%20/:json" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">json</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre>{
+  &quot;school&quot;: [
+    {
+      &quot;code&quot;: &quot;art&quot;,
+      &quot;name&quot;: &quot;School of Art &amp; Design&quot;,
+      &quot;campus&quot;: &quot;old&quot;,
+      &quot;department&quot;: [
+        {
+          &quot;code&quot;: &quot;stdart&quot;,
+          &quot;name&quot;: &quot;Studio Art&quot;,
+          &quot;school_code&quot;: &quot;art&quot;
+        }
+      ]
+    },
+    {
+      &quot;code&quot;: &quot;bus&quot;,
+      &quot;name&quot;: &quot;School of Business&quot;,
+      &quot;campus&quot;: &quot;south&quot;,
+      &quot;department&quot;: [
+        {
+          &quot;code&quot;: &quot;acc&quot;,
+          &quot;name&quot;: &quot;Accounting&quot;,
+          &quot;school_code&quot;: &quot;bus&quot;
+        },
+        {
+          &quot;code&quot;: &quot;econ&quot;,
+          &quot;name&quot;: &quot;Economics&quot;,
+          &quot;school_code&quot;: &quot;bus&quot;
+        },
+        {
+          &quot;code&quot;: &quot;mm&quot;,
+          &quot;name&quot;: &quot;Management &amp; Marketing&quot;,
+          &quot;school_code&quot;: &quot;bus&quot;
+        }
+      ]
+    },
+…
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2012/introducing-nested-segments";
+var disqus_title = "Introducing Nested Segments";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

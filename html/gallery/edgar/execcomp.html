@@ -1,0 +1,218 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>EDGAR : 2008 Executive Compensation &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="HTSQL Gallery" href="../index.html" />
+    <link rel="next" title="DonorsChoose : Donation by State" href="../donorschoose/state.html" />
+    <link rel="prev" title="HTSQL Gallery" href="../index.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="edgar-2008-executive-compensation">
+<h1>EDGAR : 2008 Executive Compensation<a class="headerlink" href="#edgar-2008-executive-compensation" title="Permalink to this headline">¶</a></h1>
+<div class="demo-block compound">
+<div class="demo-area compound-first"><script type="text/javascript"
+    src="/htraf/htraf.js"
+    data-htsql-version="2"
+    data-htsql-prefix="/@edgar">
+</script>
+
+<p>Market Sector:
+<select id="sector"
+    data-htsql="/(industry^sector)"></select></p>
+<br/>
+<div style="width: 470px; height: 300px;"
+    data-htsql="/industry{name,
+                  sum(company.officer.compensation.amount)
+                }?sector=$sector"
+    data-ref="sector"
+    data-widget="chart"
+    data-type="pie"
+    data-title="Executive Compensation by Industry"></div>
+
+<h3>Companies</h3>
+<p>For industry
+<select id="industry"
+    data-htsql="/industry{name}?sector=$sector"
+    data-ref="sector">
+</select></p>
+<p>Filter by name: <input id="company_name"/></p>
+<table id="company"
+    data-htsql="/company{
+                    cik,
+                    name :as 'Company Name',
+                    Ticker,
+                    company_extended.last_annual_eps :as 'EPS',
+                    round(avg(officer.sum(compensation.amount))) -
+                        :as 'Avg Compensation',
+                    max(officer.sum(compensation.amount))
+                        :as 'Max Compensation'
+                 }?industry=$industry&name~$company_name"
+    data-hide-column-0="yes"
+    data-ref="industry company_name">
+</table>
+
+<h3>Officer Compensation</h3>
+<table id="officer"
+    data-htsql="/officer{
+                    officer_name :as 'Full Name',
+                        sum(compensation.amount) -
+                        :as 'Compensation',
+                    Title
+                 }?cik=$company"
+    data-ref="company">
+</table></div><tt class="demo-switch compound-middle docutils literal"><span class="pre">[-</span> <span class="pre">view</span> <span class="pre">source]</span></tt><div class="demo-source compound-last highlight-html"><div class="highlight"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span>
+    <span class="na">src=</span><span class="s">&quot;/htraf/htraf.js&quot;</span>
+    <span class="na">data-htsql-version=</span><span class="s">&quot;2&quot;</span>
+    <span class="na">data-htsql-prefix=</span><span class="s">&quot;/@edgar&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;p&gt;</span>Market Sector:
+<span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&quot;sector&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/(industry^sector)&quot;</span><span class="nt">&gt;&lt;/select&gt;&lt;/p&gt;</span>
+<span class="nt">&lt;br/&gt;</span>
+<span class="nt">&lt;div</span> <span class="na">style=</span><span class="s">&quot;width: 470px; height: 300px;&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/industry{name,</span>
+<span class="s">                  sum(company.officer.compensation.amount)</span>
+<span class="s">                }?sector=$sector&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;sector&quot;</span>
+    <span class="na">data-widget=</span><span class="s">&quot;chart&quot;</span>
+    <span class="na">data-type=</span><span class="s">&quot;pie&quot;</span>
+    <span class="na">data-title=</span><span class="s">&quot;Executive Compensation by Industry&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+
+<span class="nt">&lt;h3&gt;</span>Companies<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;p&gt;</span>For industry
+<span class="nt">&lt;select</span> <span class="na">id=</span><span class="s">&quot;industry&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/industry{name}?sector=$sector&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;sector&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/select&gt;&lt;/p&gt;</span>
+<span class="nt">&lt;p&gt;</span>Filter by name: <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;company_name&quot;</span><span class="nt">/&gt;&lt;/p&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;company&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/company{</span>
+<span class="s">                    cik,</span>
+<span class="s">                    name :as &#39;Company Name&#39;,</span>
+<span class="s">                    Ticker,</span>
+<span class="s">                    company_extended.last_annual_eps :as &#39;EPS&#39;,</span>
+<span class="s">                    round(avg(officer.sum(compensation.amount))) -</span>
+<span class="s">                        :as &#39;Avg Compensation&#39;,</span>
+<span class="s">                    max(officer.sum(compensation.amount))</span>
+<span class="s">                        :as &#39;Max Compensation&#39;</span>
+<span class="s">                 }?industry=$industry&amp;name~$company_name&quot;</span>
+    <span class="na">data-hide-column-0=</span><span class="s">&quot;yes&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;industry company_name&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+
+<span class="nt">&lt;h3&gt;</span>Officer Compensation<span class="nt">&lt;/h3&gt;</span>
+<span class="nt">&lt;table</span> <span class="na">id=</span><span class="s">&quot;officer&quot;</span>
+    <span class="na">data-htsql=</span><span class="s">&quot;/officer{</span>
+<span class="s">                    officer_name :as &#39;Full Name&#39;,</span>
+<span class="s">                        sum(compensation.amount) -</span>
+<span class="s">                        :as &#39;Compensation&#39;,</span>
+<span class="s">                    Title</span>
+<span class="s">                 }?cik=$company&quot;</span>
+    <span class="na">data-ref=</span><span class="s">&quot;company&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/table&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

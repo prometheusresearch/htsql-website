@@ -1,0 +1,142 @@
+**********************************
+  Open question: ambiguous names
+**********************************
+
+.. blogentry::
+   :date: 2011-03-30
+   :author: xi
+
+In HTSQL, tables are addressed by name while the table schema is ignored.
+This creates an ambiguity when the same table name exists in more than
+one schema.  This article describes several workarounds and possible
+solutions.
+
+.. blogcut::
+
+
+Problem
+=======
+
+Most relational database servers keep tables and other named entities
+in namespace objects called *schemas*.  A canonical way to address
+a table in a schema is to use a dotted notation: ``schema.table``.
+In some cases, the schema qualifier could be omitted.  For instance,
+in PostgreSQL, any table from the schema ``public`` could be addressed
+by name only; the list schemas that permit unqualified access could
+be changed by setting ``search_path`` parameter.
+
+HTSQL has no notion of a schema.  When resolving a table name, HTSQL
+looks through all available schemas; the search succeeds if
+a unique table with the given name is found.  The search fails if
+no table with the given name exists or there are more than one
+table with the given name (which must belong to different schemas).
+The latter case is indicated by an error message::
+
+    $ /student
+    bind error: ambiguous name:
+        /student
+         ^^^^^^^
+
+We are still contemplating on the best way to address this problem;
+meanwhile you can use one of several workarounds.
+
+
+Workarounds
+===========
+
+Permissions
+-----------
+
+Often, one only need to address a specific schema, tables in other
+schemas are of no interest.  In this case, one may create a user
+with access restricted to the specific schema and then use this user
+credentials to connect HTSQL to the database.
+
+HTSQL respects user permissions and will not allow you to address
+any tables which the given user has no right to SELECT from.  Therefore
+the ambiguity is eliminated and you could address the desired table
+by name.
+
+``tweak.schema``
+----------------
+
+Use addon ``tweak.schema``, which allows you to address a table
+as ``<schema>_<table>``.  That is, if there is a table called ``sales``
+in the schema ``private``, you can address it as ``private_sales``.
+
+To use the addon, add ``-E tweak.schema`` option when starting
+``htsql-ctl shell`` or ``htsql-ctl server``.
+
+
+Background
+==========
+
+The 1.0 release, symbol ``:`` was used to indicate a namespace,
+in particular, it was used to specify the schema of a table.
+This feature was lost during transition to 2.0, and ``:`` is now
+used for infix and suffix function call.  For instance
+
+.. sourcecode:: htsql
+
+   expr:round, expr:round(2)
+
+are equivalent to
+
+.. sourcecode:: htsql
+
+   round(expr), round(expr, 2)
+
+respectively.
+
+Here is the list of options we are considering for 2.0.
+
+Alternative namespace syntax
+----------------------------
+
+Use a different syntax to indicate namespace (for instance, ``ns::name``).
+This syntax must be at the same time feel intuitive, not clash with
+any existing syntax and not be too line-noisy.
+
+Alternatively, we could find out a different syntax for infix function call
+(e.g. ``expr@round``) and use ``:`` for namespaces again.
+
+Dot notation
+------------
+
+Use ``.`` to indicate the namespace.  That may be technically feasible,
+but it muddles the definition of the ``.`` operator, which currently
+strongly implies "composition".  Also, it does not work well with function
+calls: ``ns.fn(arg)`` implies that ``arg`` belongs to namespace ``ns``,
+and permits invalid queries like ``/ns``.
+
+Namespace macro
+---------------
+
+Use a macro to indicate the schema.  For instance, ``from(table,schema)``,
+or, using the infix notation ``(table :from schema)``.
+
+Name mangling
+-------------
+
+Mangle the table name using ``_`` or ``__`` as the separator
+(``schema_table``), that's what addon ``tweak.schema`` does.
+
+Explicit configuration
+----------------------
+
+Defer the problem to configuration, allow the user to assign unique
+table names in a configuration file.
+
+There is another related problem with ambiguous links.  Suppose that one
+table has two different links to another table.  For instance, ``prerequisite``
+has two links to ``course``, they are called ``prerequisite.of_course``
+and ``prerequisite.on_course``.  However we cannot name the reverse links
+from ``course`` to ``prerequisite``.  The usual way to name reverse links
+is to use the name of the target table, but in this case, ``course.prerequisite``
+is ambiguous.  Another example is self-referential links: ``program.part_of``
+links from ``program``, to ``program``, but there is no way to address
+the reverse link as ``program.program`` also refers to the direct link.
+
+No matter what solution is chosen to solve the problem with ambiguous schema,
+it should work for the case of ambiguous link names too.
+

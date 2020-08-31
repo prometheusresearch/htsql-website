@@ -1,0 +1,252 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HTSQL 2.2.0b1 is released &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+    <link rel="up" title="2011 HTSQL News Archive" href="index.html" />
+    <link rel="next" title="HTSQL 2.2 Roadmap" href="htsql-2.2-roadmap.html" />
+    <link rel="prev" title="Discussion on Location" href="discuss-locator.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htsql-2-2-0b1-is-released">
+<h1>HTSQL 2.2.0b1 is released<a class="headerlink" href="#htsql-2-2-0b1-is-released" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2011-09-20</em></p>
+<p>The first beta of the 2.2 release is now available.</p>
+<p>The new release brings two major features:</p>
+<ul class="simple">
+<li>a mechanism to query HTSQL&#8217;s system catalog</li>
+<li>a query editor for the web /w syntax highlighting</li>
+</ul>
+<p>We&#8217;ve tagged 2.2.0 beta #1, our first installment on the
+road to supporting &#8220;form applications&#8221;.  Here are the
+major new features we&#8217;ve added:</p>
+<ul class="simple">
+<li>a web-based <tt class="docutils literal"><span class="pre">/shell()</span></tt> command for interactive multi-line
+HTSQL query editing with syntax highlighting</li>
+<li>a <tt class="docutils literal"><span class="pre">/meta()</span></tt> command that can be used to return accessible
+tables, links and columns</li>
+<li>added plugin parameters and configuration file support</li>
+<li>defined a command mechanism as a way to include
+functionality unrelated to SQL generation</li>
+<li>converted formatters to use new command mechanism</li>
+</ul>
+<p>All of these features are enabled at <a class="reference external" href="http://demo.htsql.org">http://demo.htsql.org</a></p>
+<p>The <tt class="docutils literal"><span class="pre">/meta()</span></tt> command changes the execution context to run
+queries on the system catalog: <tt class="docutils literal"><span class="pre">table</span></tt>, <tt class="docutils literal"><span class="pre">field</span></tt>, <tt class="docutils literal"><span class="pre">column</span></tt>
+and <tt class="docutils literal"><span class="pre">link</span></tt>.  For example,</p>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/meta(/table)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/meta(/table)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">table</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">appointment</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">class</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">classification</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">confidential</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">course</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">course_classification</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">department</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">enrollment</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">instructor</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">prerequisite</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">program</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">program_requirement</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">school</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">semester</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">student</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/meta(/link?table_name='department')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/meta(/link?table_name='department')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">link</span><span class="o">?</span><span class="nb">table_name</span><span class="o">=</span><span class="s">&#39;department&#39;</span><span class="p">)</span>
+</pre></div>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="22%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">table_name</th>
+<th class="head">name</th>
+<th class="head">is_singular</th>
+<th class="head">target_name</th>
+<th class="head">reverse_name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">department</td>
+<td class="htsql-text-type">appointment</td>
+<td class="htsql-boolean-type htsql-false-val">false</td>
+<td class="htsql-text-type">appointment</td>
+<td class="htsql-text-type">department</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">department</td>
+<td class="htsql-text-type">course</td>
+<td class="htsql-boolean-type htsql-false-val">false</td>
+<td class="htsql-text-type">course</td>
+<td class="htsql-text-type">department</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">department</td>
+<td class="htsql-text-type">school</td>
+<td class="htsql-boolean-type htsql-true-val">true</td>
+<td class="htsql-text-type">school</td>
+<td class="htsql-text-type">department</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In addition to new features, we have one important bug
+fix.  There is a silent data truncation error that can
+be triggered with character encoding issues (reported
+by Gordon... thank you!).  SQLite users should upgrade.</p>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2011/htsql-2.2-beta1";
+var disqus_title = "HTSQL 2.2.0b1 is released";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

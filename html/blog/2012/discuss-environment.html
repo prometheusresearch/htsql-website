@@ -1,0 +1,361 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Discuss Environment &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../../index.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="discuss-environment">
+<h1>Discuss Environment<a class="headerlink" href="#discuss-environment" title="Permalink to this headline">¶</a></h1>
+<p class="blog-published">Published by <em class="blog-author">cce</em> on <em class="blog-date">2012-08-01</em></p>
+<p>In the next release of HTSQL we&#8217;ll introduce a mechanism
+to track internal state.  This will permit us to introduce
+transactions, CSRF protection, user/roles, and url-based
+record masking.  This post discusses our API changes that
+plugins might use to set/access per-application and
+per-request state in thread local storage.</p>
+<p>It&#8217;s not per-application per-request state.  When you you
+initiate a new application context <tt class="docutils literal"><span class="pre">with</span> <span class="pre">app</span></tt>, you&#8217;d
+also be initiating a new request environment.  Nested
+requests wouldn&#8217;t need to this _unless_ they actually
+wanted a new sub-request, for example, to switch to the
+meta-database.</p>
+<p>When you exit the nexted context, it automatically
+switches to the parent environment.</p>
+<p>Application state is typically read-only or append-only;
+for example, <tt class="docutils literal"><span class="pre">introspect</span></tt> might cache the catalog in
+the application state.</p>
+<p>What is in the environment?  current user, current
+transaction object (if you&#8217;re in one),</p>
+<p>Each plugin may declare what environment variables it
+wishes to create and what initial values it might use.
+Generally, nexted contexts don&#8217;t inherit.</p>
+<p>Application environment key access is hierarchical
+using the plugin path as a namespace.  In this sense
+you&#8217;d do context.app.tweak.autolimit.limit,</p>
+<p>Should environment be flat?  Alot more collaboration
+at the request level, application state is read-only
+with environment you often want to change it.   You
+need it to be stacked... read-only scoped.</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first last docutils">
+<dt>with context.env(variable=value):</dt>
+<dd>[work with modified environment]</dd>
+</dl>
+</dd>
+</dl>
+<p>This requires a flat namespace with this syntax;
+no namespaces 10-20 variables.   Plugins could
+declare what they use, and report collisions.
+If you create an application it makes new state,
+if two plugins declare the same one it is an
+application construction error.</p>
+<div class="section" id="transactions">
+<h2>Transactions<a class="headerlink" href="#transactions" title="Permalink to this headline">¶</a></h2>
+<p>A typical use case for transactions is that some sort of
+user level command, such as <tt class="docutils literal"><span class="pre">do()</span></tt> wants to call a bunch
+of HTSQL requests that are all executed in the same
+database transaction.   For example, you might want to run
+two inserts together.</p>
+<p>In previous version of HTSQL, our internal API required an
+optional argument with the transaction and the command
+itself was responsible for creating a database connection
+and doing commit/rollback.  The problem with this approach
+is that it requires connection object to be passed through
+nested commands, if you omit the connection a
+sub-connection might be created accidently.  You can&#8217;t be
+generic, since some commands (such as a render function)
+don&#8217;t use connection, it makes it hard to manage.</p>
+<p>So, we&#8217;ll have <tt class="docutils literal"><span class="pre">env.connection</span></tt> would be the current
+connection (in a tranaction bloc).  It&#8217;s the open
+connection used for transaction if it is set; if it isn&#8217;t
+set, there isn&#8217;t an open transaction.  What we need is
+context manager that permits you to do <tt class="docutils literal"><span class="pre">with</span></tt></p>
+<div class="highlight-python"><pre>from htsql.api import transact
+with transaction():</pre>
+</div>
+<p>There are two cases.  With <tt class="docutils literal"><span class="pre">do()</span></tt> you&#8217;d use <tt class="docutils literal"><span class="pre">transact</span></tt>
+to create a new transaction.</p>
+<p>If you were implementing <tt class="docutils literal"><span class="pre">INSERT</span></tt> you&#8217;d do...</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd><dl class="first last docutils">
+<dt>with transaction() as connection:</dt>
+<dd>cursor = connection.cursor()
+cursor.execute(...)</dd>
+</dl>
+</dd>
+</dl>
+<p>How does transact work?  It has an enter and exit block.
+On entrance, if the current connection is null, you create
+a new connection and set the environment.  In either case
+it returns the DBAPI connect object.  On exit, this gets
+an exception object.  If the entrance didn&#8217;t create the
+connection it doesn&#8217;t do anything.  Otherwise, if it is an
+exception, it rollsback the transaction.  If it is a
+normal exit, it does a commit; then it pops previous
+connection.</p>
+</div>
+<div class="section" id="request-forgery">
+<h2>Request Forgery<a class="headerlink" href="#request-forgery" title="Permalink to this headline">¶</a></h2>
+<p>In HTSQL, when you get a WSGI request, it goes to
+<tt class="docutils literal"><span class="pre">app(environ,</span> <span class="pre">start_response)</span></tt>  and this goes to a WSGI
+adapter which parses the environment to create the query,
+builds the request, and calls <tt class="docutils literal"><span class="pre">render()</span></tt> on the result.
+When you use the API internally, you could bypass the
+render and use <tt class="docutils literal"><span class="pre">produce()</span></tt> instead.  This is why we
+can&#8217;t assume we always have an HTTP request.</p>
+<p>The problem with cross-site request forgery, by tricking a
+user to click on the link, you could return an arbitrary
+query which might do a denial of service, or call a CRUD
+operation, or a stored procedure which may side effects.</p>
+<p>One way to help address is this checking the Referrer,
+however, some user agents have bugs which permit this
+to be spoofed.</p>
+<p>The primary way to protect against CSRF is to send a
+cookie or response header with information that must be
+parroted back in a header.  Unfortunately, this has its
+own set of problems, it requires Javascript to parrot a
+header back.</p>
+<p>Three ways user may initiate an HTSQL request:</p>
+<ol class="arabic simple">
+<li>Type the URL directly in the browser.</li>
+<li>Use a shell command,
+when you could still ask</li>
+<li>Use HTRAF,
+when you call an HTRAF request you know it&#8217;s
+pre-validated query.</li>
+</ol>
+<p>If we require all requests to require a token.  We
+could implement token protection at WSGI level, but
+what if token isn&#8217;t set?  You&#8217;d have to show error,
+and error screen could have a link+confirm button;
+but it&#8217;d lack context a command might provide.</p>
+<p>HTRAF isn&#8217;t an issue, it could always read the token
+and set it.   Queries typed within the shell are also
+quite OK since it could know about the token.  The
+shell itself needs a confirmation screen.  Bare
+requests without the shell need a confirmation.</p>
+<p>Since shell is a command itself, it doesn&#8217;t need this
+confirmation since it isn&#8217;t running a query.</p>
+<p>You only want to protect specific commands, not all
+of them.  Some commands operate on URLs and it&#8217;s OK
+if those work and convenient if they don&#8217;t require
+confirmation.</p>
+<p>We&#8217;ll have request environment variables, <tt class="docutils literal"><span class="pre">can_read</span></tt>
+and <tt class="docutils literal"><span class="pre">can_write</span></tt>.  By default these are TRUE, and we&#8217;ll
+have a WSGI adapter that could be enabled that checks
+Referrer and/or token, setting these flags based upon a
+security policy.  For example, it could always permit
+read, or read could require a token.</p>
+<p>CRUD commands would operate only if <tt class="docutils literal"><span class="pre">can_write</span></tt> is true;
+while SELECT would require <tt class="docutils literal"><span class="pre">can_read</span></tt>.</p>
+<p>Shell always shows the screen regardless of flags, but
+it will execute query only if it can determine that the
+command would be executable.  With shell you get an HTML
+page.  When you open it, you have very specific values
+for can_read and can_write, they could be true/false.</p>
+<p>When you open the screen, it opens the editor it&#8217;ll
+record the initial environment when it loaded, and if
+executes the query using the permission level of the
+original request.  It will need a way to downgrade the
+permission level as needed for the 1st request.  If that
+returns an error, it could show an informative message.</p>
+</div>
+<div class="section" id="authorization">
+<h2>Authorization<a class="headerlink" href="#authorization" title="Permalink to this headline">¶</a></h2>
+<p>PostgreSQL permits <tt class="docutils literal"><span class="pre">SET</span> <span class="pre">SESSION</span> <span class="pre">AUTHORIZATON</span></tt> and
+<tt class="docutils literal"><span class="pre">SET</span> <span class="pre">SESSION</span> <span class="pre">ROLE</span></tt> to enable the database to know
+exactly who the user and the permission set they should
+be using.   This is an example how you might solve this
+with custom code.</p>
+<p>So, you&#8217;d have an <tt class="docutils literal"><span class="pre">env.user</span></tt> that is a environment
+variable and it&#8217;d populate this from <tt class="docutils literal"><span class="pre">REMOTE_USER</span></tt>
+WSGI environment.  How <tt class="docutils literal"><span class="pre">REMOTE_USER</span></tt> is populated
+would be subject to up-stream web infrastructure.  Then
+we&#8217;d have a connection adapter which would invoke <tt class="docutils literal"><span class="pre">SET</span>
+<span class="pre">SESSION</span> <span class="pre">AUTHORIZATION</span></tt> with this <tt class="docutils literal"><span class="pre">env.user</span></tt>.</p>
+<p>From within a command, you may want to run a query under
+another user.  In this case, we&#8217;d do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">env</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="s">&#39;root&#39;</span><span class="p">):</span>
+     <span class="c"># won&#39;t work due to active transaction</span>
+     <span class="n">produce</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>So, we&#8217;d have to have a <tt class="docutils literal"><span class="pre">switch_user()</span></tt> function:</p>
+<div class="highlight-python"><pre>with switch_user('root'):
+     # This updates the user and calls 'SET SESSION
+     # AUTHORIZATON' on both entry and exit.</pre>
+</div>
+<p>We need more information to determine what switch_user does.</p>
+<p>Roles are almost the same, only that you have to have a
+container of role-specific introspections.  The catalog
+(per role) and meta database need to be switched when
+you change role.  Plugin interactions are fun.</p>
+</div>
+<div class="section" id="path-masking">
+<h2>Path Masking<a class="headerlink" href="#path-masking" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>Starting with the 2.3.2 release, we will be introducing CRUD
+features.  This requires that we maintain quite a bit of
+internal state that we&#8217;ve thus far avoided.  We need to
+support complex transactions, we need to set/change the
+database user or role, we need to issue tokens so that we can
+protect against cross-site request forgery requests, and we
+wish to</p>
+</div>
+<div class="section" id="context">
+<h2>Context<a class="headerlink" href="#context" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>::</dt>
+<dd><p class="first">from htsql import HTSQL
+from htsql.core.context import context</p>
+<p>app = HTSQL(&#8220;pgsql:htsql_demo&#8221;)
+with app:</p>
+<div class="system-message">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/usr/local/www/apache22/src/htsql.org/tree/blog/2012/discuss-environment.rst</tt>, line 262)</p>
+Unexpected indentation.</div>
+<blockquote class="last">
+<div>print context</div></blockquote>
+</dd>
+</dl>
+<p>So, per-request environment will be <tt class="docutils literal"><span class="pre">context.env</span></tt>
+and per-application storage will be <tt class="docutils literal"><span class="pre">context.app</span></tt>.</p>
+<blockquote>
+<div><p># this switches thread local storage so that
+# the named application becomes current; this
+# is typically done transparently.  The first
+# thing the WSGI interface does this.</p>
+<p>app() and app.produce do this transparently</p>
+<dl class="docutils">
+<dt>app.produce(query) is:</dt>
+<dd><dl class="first last docutils">
+<dt>with self:</dt>
+<dd>return produce(query)</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<p>When in an adapter, <tt class="docutils literal"><span class="pre">context</span></tt> is a global variable,
+so <tt class="docutils literal"><span class="pre">context.app.htsql.db</span></tt> this returns the Record
+object with fields like host, port, user, database</p>
+</div>
+</div>
+<div class="blog-disqus">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+var disqus_shortname = "htsql";
+var disqus_identifier = "/blog/2012/discuss-environment";
+var disqus_title = "Discuss Environment";
+
+(function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>

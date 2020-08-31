@@ -1,0 +1,201 @@
+*************************************
+  Introducing Calculated Attributes
+*************************************
+
+.. blogentry::
+   :date: 2011-03-14
+   :author: cce
+
+During our work converting SQL queries to HTSQL, we found a need for
+re-usable query fragments.  This week we introduce ``define()`` which
+names a calculated column or parameterized expression.
+
+.. blogcut::
+
+Basic Usage
+===========
+
+Often during query construction, a query fragment may be copied and
+pasted many times, frequently with minor changes.  For example, suppose
+you want to collect some statistics over a set of courses for each
+department. 
+
+.. htsql::
+   :hide:
+   :cut: 3
+
+   /department{name, count(course?no>=200&no<400),
+                     max((course?no>=200&no<400).credits),
+                     min((course?no>=200&no<400).credits),
+                     avg((course?no>=200&no<400).credits)}
+
+This query has a repeated expression, ``(course?no>=200&no<400)``
+which represents courses typically taken by sophomores.  The query
+above can be rewritten with ``define()`` to remove this redundancy.
+
+.. htsql::
+   :hide:
+   :cut: 3
+
+   /department.define(sophomore := course?no>=200&no<400)
+              {name, count(sophomore),
+                     max(sophomore.credits),
+                     min(sophomore.credits),
+                     avg(sophomore.credits)}
+
+In this equivalent, ``department.define(...)`` introduces a calculated
+attribute ``sophomore`` of department.  This attribute is then used in
+the subsequent selector.  An intended side benefit is that the column
+header better reflects the content of the column.
+
+In-Place Declaration
+====================
+
+Occasionally you want to define a calculated attribute within a local
+context.  The ``where()`` function takes two or more arguments.  The
+first argument is the expression to return, the remaining arguments are
+local attributes.  In this manner the example above could be written:
+
+.. htsql::
+   :hide:
+   :cut: 3
+
+   /department{name, 
+               {count(sophomore), 
+                max(sophomore.credits),
+                min(sophomore.credits), 
+                avg(sophomore.credits)}
+               :where sophomore := course?no>=200&no<400}
+
+For this case, a nested selection context is created defining the
+local attribute ``sophomore`` after it is used across 4 aggregates.
+
+Here we use infix notation to call the ``where()`` function.
+In HTSQL, any function call ``f(x,y)`` could be written ``x :f y``.
+
+Parameterized Attributes
+========================
+
+Suppose that one wants to calculate the same 4 statistics
+for several different types of courses.  A naive query would be written:
+
+.. htsql::
+   :hide:
+   :cut: 3
+
+   /department{name,count(course?no>=100&no<300),
+                    max((course?no>=100&no<300).credits),
+                    min((course?no>=100&no<300).credits),
+                    avg((course?no>=100&no<300).credits),
+                    count(course?no>=200&no<400),
+                    max((course?no>=200&no<400).credits),
+                    min((course?no>=200&no<400).credits),
+                    avg((course?no>=200&no<400).credits),
+                    count(course?no>=300&no<500),
+                    max((course?no>=300&no<500).credits),
+                    min((course?no>=300&no<500).credits),
+                    avg((course?no>=300&no<500).credits),
+                    count(course?no>=400&no<500),
+                    max((course?no>=400&no<500).credits),
+                    min((course?no>=400&no<500).credits),
+                    avg((course?no>=400&no<500).credits)}
+
+In this query we calculate 4 statistical evaluations (count, max, min,
+avg) across 4 sets of courses (freshman, sophomore, junior and senior).
+Using the ``define()`` function to add calculated attributes, this
+query could be rewritten as:
+
+.. htsql::
+   :hide:
+   :cut: 3
+
+   /department.define(freshman := course?no>=100&no<300,
+                      sophomore := course?no>=200&no<400,
+                      junior := course?no>=300&no<500,
+                      senior := course?no>=400&no<500)
+              {name, count(freshman),
+                     max(freshman.credits),
+                     min(freshman.credits),
+                     avg(freshman.credits),
+                     count(sophomore), 
+                     max(sophomore.credits),
+                     min(sophomore.credits),
+                     avg(sophomore.credits),
+                     count(junior), 
+                     max(junior.credits),
+                     min(junior.credits), 
+                     avg(junior.credits),
+                     count(senior), 
+                     max(senior.credits),
+                     min(senior.credits),
+                     avg(senior.credits)}
+
+However, there is still redundancy -- we call the same set of
+four functions several times.  This can be addressed with a
+parameterized attribute, ``stats``.
+
+.. htsql::
+   :hide:
+   :cut: 3
+
+   /department.define(freshman := course?no>=100&no<300,
+                      sophomore := course?no>=200&no<400,
+                      junior := course?no>=300&no<500,
+                      senior := course?no>=400&no<500,
+                      stats(set) := {count(set),
+                                     max(set.credits),
+                                     min(set.credits),
+                                     avg(set.credits)})
+              {name, stats(freshman),
+                     stats(sophomore), 
+                     stats(junior),
+                     stats(senior)}
+
+One really doesn't need to define attributes for the 4 subsets of
+courses, however, it helps readability.  Currently, the output 
+headers logic hasn't been updated to handle this construct.
+
+Open Questions
+==============
+
+You may want to define ``stats`` differently, instead of passing in
+a table expression, you may want pass two arguments, the start and
+end of the course number range. 
+
+.. htsql::
+   :hide:
+   :error:
+
+   /department.define(stats(start,finish) :=
+                        {count(course?no>=start&no<finish),
+                         max((course?no>=start&no<finish).credits),
+                         min((course?no>=start&no<finish).credits),
+                         avg((course?no>=start&no<finish).credits)})
+              {name, stats(100,300),
+                     stats(200,400),
+                     stats(300,500),
+                     stats(400,500)}
+
+However, this query will complain about an unknown attribute ``start``
+in the expression ``?course?no>=start``.  This happens since there isn't
+a column ``start`` in the table ``course``.  The attributes ``start``
+and ``finish`` are available in the top-level namespace of the ``stats``
+definition, but are not accessible in the ``course`` namespace.
+
+Our provisional plan is to add a way to search previous namespaces, in
+which case the query above would be written:
+
+.. htsql::
+   :hide:
+   :error:
+
+   /department.define(stats(start,finish) :=
+                        {count(course?no>=*start&no<*finish),
+                         max((course?no>=*start&no<*finish).credits),
+                         min((course?no>=*start&no<*finish).credits),
+                         avg((course?no>=*start&no<*finish).credits)})
+              {name, stats(100,300),
+                     stats(200,400),
+                     stats(300,500),
+                     stats(400,500)}
+

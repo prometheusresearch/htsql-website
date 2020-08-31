@@ -1,0 +1,16 @@
+******************************
+  HTSQL 2.0.0rc1 is released
+******************************
+
+.. blogentry::
+   :date: 2010-01-21
+   :author: xi
+
+The first release candidate of the 2.0 release is now available.  Changes
+since the last beta:
+
+* `HTRAF demo <http://htraf.htsql.org/>`_ is promoted to a standalone project;
+  see http://htraf.org/, sources at http://bitbucket.org/prometheus/htraf.
+* Added an extended JSON renderer with extra metadata: `/:jsonex`.
+* Documentation updates.
+

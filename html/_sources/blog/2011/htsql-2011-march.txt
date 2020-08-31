@@ -1,0 +1,85 @@
+********************************
+  HTSQL 2.1 Development Update  
+********************************
+
+.. blogentry::
+   :date: 2011-03-20
+   :author: cce
+
+
+This is a development status update for HTSQL 2.1, including a
+statement of scope, notes on projections, database backends and
+numerous other features that we're currently working on.
+
+.. blogcut::
+
+
+Release Scope
+-------------
+
+The scope for the HTSQL 2.1 release is defined primarily around an
+end-user deliverable -- the ability to succinctly translate a sample of
+complex SQL queries from the financial industry.  Along these lines, the
+primary gaps in HTSQL that we identified were:
+
+ * support for *projections*, the ability for a each row in the result
+   to represent distinct values from a set of expressions; 
+ 
+ * support for *detachment*, so that we can compare a row-value of
+   a column to an aggregate on that same column;
+
+ * support for *macros*, parameterized logic fragments that can be 
+   declared once and re-used several times in a given query; and
+
+ * an optimization phase so that sets of similar aggregate expressions
+   can be converted into a single subquery frame using conditional logic
+   instead of requiring a subquery for each aggregate.
+  
+Besides this core objective, we have several internal refactor goals:
+
+  * review semantics of ``select`` and ``filter`` operators and
+    provide a functional syntax equivalent to aid composability;
+    
+  * review name lookup rules and mechanisms to refer to components
+    from prior query contexts
+
+Finally, because of user feedback, we added two more objectives:
+
+  * support for ``datetime`` data type and corresponding operators;
+
+  * support for MySQL, Oracle and MS SQL Server backends.
+
+We also intend to expand the documentation -- many features in the 2.0
+release weren't documented.  We hope to fill in this gap and document all
+of the new features we're introducing.  
+
+While there are lots of other things we could have put in this release,
+it's already too big, so many other high-value features will wait for
+the next release.  Two features we will reluctantly omit are:
+
+  * a mechanism to override the HTSQL catalog to exclude/rename tables
+    and other introspected meta-data objects;
+
+  * any sort of introspection, ie, listing tables available in HTSQL,
+    or columns that you can in the database;
+
+In short... due to feature creep, this release is quite substantial and
+will take some time to specify, complete, document and test.
+
+Current Status
+--------------
+
+At this point, support for projections, macros, and other backends is
+implemented -- but all of these features lack documentation and full
+regression coverage tests.  We also reviewed name lookup rules (to
+support macros) and have adjusted the implementation to support new
+behavior that is required.
+
+What's up next is documentation for projections and macros, support
+for datetime/timestamp, and several other features and changes.
+
+Finally, we've added the optimization phase to the translator, but it
+doesn't yet perform the specific query transformation we have in mind.
+This, other optimizations and refactors after low-level code review 
+will take the final month of the release cycle.
+

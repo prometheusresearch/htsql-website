@@ -1,0 +1,184 @@
+*******************
+  HTSQL Community 
+*******************
+
+.. contents:: Table of Contents
+   :depth: 1
+   :local:
+
+We are a community project |mdash| we do *not* have a |lq| professional
+|rq| version with proprietary features.  When technically feasible, all
+features are made available for all open source databases.  We do license
+HTSQL for use in conjunction with proprietary databases, but there is
+*no* |lq| special sauce |rq|.
+
+To collaborate with us, please read our covenant_.
+
+Contacting Us
+=============
+
+* Follow *HTSQL Announcements* on `twitter <http://twitter.com/htsql>`_.
+
+* Subscribe to our `News Blog </blog/>`_ via `RSS </index.rss>`_.
+
+* For in-depth discussion and questions, subscribe and post to our
+  `htsql-users <http://lists.htsql.org/mailman/listinfo/htsql-users>`_
+  mailing list.
+
+* Chat with us via IRC at `#htsql on Freenode <irc://irc.freenode.net#htsql>`_;
+  we idle so you may need to linger.
+
+* Please submit *bugs* or *feature requests* to the 
+  `HTSQL issue tracker <https://bitbucket.org/prometheus/htsql/issues/>`_.
+
+* For query questions, we watch the 
+  `htsql tag <http://stackoverflow.com/questions/tagged/htsql>`_
+  on Stack Overflow.
+
+For questions about HTSQL, we will often respond with answers relative
+to the demo schema as described in the `HTSQL Tutorial </doc/tutorial.html>`_.  
+Questions asked using this schema will be easier to answer.
+
+.. _Sponsorship:
+.. _Sponsor:
+.. _Support:
+
+Sponsorship & Support
+=====================
+
+We have lots of things we'd like HTSQL to do, and we're sure you do as
+well.  Sponsoring features will help us get them done faster.  All
+features developed through sponsorship are billed at a collaborative,
+cost-based rate, or treated as donations to support work on HTSQL.
+Sponsors are prominently listed on our homepage.
+
+We are able to offer support agreements.  This is a retainer and
+maintenance agreement that helps us keep technical staff focused on
+continuously improving HTSQL and assisting your team with any issues
+they may encounter.
+
+If you are interested, please request a quote via our `web form
+<https://www.prometheusresearch.com/services/request-a-quote/>`_, 
+or ask **cce** in ``#htsql`` on 
+`freenode <http://webchat.freenode.net/#htsql>`_.
+
+.. _Talks:
+.. _Presenations:
+
+Talks & Presentations
+=====================
+
+Over the years we've given several papers & talks on HTSQL.
+
+* `2012-MAR-11 : PyCon 2012, Santa Clara, CA`__ (`poster`__, `video`__)
+  *presented by Catherine Devlin*
+
+  __ https://us.pycon.org/2012/
+  __ /talks/20120311.pdf
+  __ http://pyvideo.org/video/728/46-htsql-a-navigational-query-language-for-rel
+
+* `2011-SEP-16 : Postgres Open 2011, Chicago, IL`__ (`slides`__)
+  
+  __ http://postgresopen.org/2011/schedule/presentations/16/
+  __ /talks/20110916.html
+
+* `2011-SEP-10 : Ohio LinuxFest 2011, Columbus, OH`__ (`slides`__)
+  *by Catherine Devlin*
+
+  __ https://ohiolinux.org/talks#HTSQL
+  __ http://catherinedevlin.pythoneers.com/presentations/htsql-olf/
+
+* `2011-JUL-31 : PyOhio 2011, Columbus, OH`__ (`slides`__, `video`__)
+  
+  __ http://pyohio.org/schedule/presentations/8/
+  __ /talks/20110731.html
+  __ http://blip.tv/pyohio/htsql-is-a-wsgi-reporting-toolkit-for-relational-databases-5438683
+
+* `2011-MAY-20 : PgCon 2011, Ottawa, CA`__ (`slides`__)
+  
+  __ http://www.pgcon.org/2011/schedule/events/282.en.html
+  __ /talks/20110520.html
+
+* `2011-MAY-13 : BSDCan 2011, Ottawa, CA`__ (`slides`__)
+  
+  __ http://www.bsdcan.org/2011/schedule/events/229.en.html
+  __ /talks/20110513.html
+
+* `2011-MAR-25 : Indiana Linux 2011, Indianapolis, IN`__ (`slides`__)
+  *by Catherine Devlin*
+
+  __ http://www.indianalinux.org/cms/schedule2011
+  __ http://catherinedevlin.pythoneers.com/presentations/htsql/
+
+* `2011-MAR-24 : PgEast 2011, New York, NY`__ (`slides`__)
+  
+  __ https://www.postgresqlconference.org/content/htsql-insanely-good-reporting-postgresql
+  __ /talks/20110324.html
+
+* `2011-MAR-11 : PyCon 2011, Atlanta, GA`__ (`slides`__, `video`__)
+  
+  __ http://us.pycon.org/2011/schedule/presentations/264/
+  __ /talks/20110312.html
+  __ http://pycon.blip.tv/file/4883320/
+
+* `2010-NOV-03 : PG WEST 2010, San Francisco, CA`__ (`slides`__)
+  
+  __ https://www.postgresqlconference.org/content/htsql-query-language-accidental-programmer
+  __ /talks/20101103.html
+
+* 2010-AUG-04 : Workantile, Ann Arbor, MI (`slides`__)
+  
+  __ /talks/20100804.html
+
+* `2008-MAY-23 : PGCon'08, Ottawa, Canada`__ (`slides`__)
+  
+  __ http://www.pgcon.org/2008/schedule/events/95.en.html
+  __ /talks/20080523.html
+
+* 2007-JUN-25 : ICOMP'07, Las Vegas, NV (`slides`__, `paper`__)
+
+  __ /talks/20070625.pdf
+  __ /paper/icomp07_paper.pdf
+
+.. _Covenant:
+.. _Collaboration:
+
+Contributions & Collaboration
+=============================
+
+We welcome free software collaborators.  Please subscribe to 
+`htsql-users <http://lists.htsql.org/mailman/listinfo/htsql-users>`_
+and join us at `#htsql <irc://irc.freenode.net#htsql>`_.
+
+Since HTSQL uses a plugin mechanism for extensions, there is typically
+no need for commit access to our repository, nor any reason to fork.
+Further, when we prepare our *free software* distribution we seek to
+include 3rd party extensions that do not otherwise require *non-free*
+component parts.  Our project is governed such that improvements are
+considered based upon technical merit.  We will not withhold our own
+features to release them in a proprietary version of this work.
+
+Direction and growth of this project is currently subject to our own
+application requirements and funding.  However, it must instead become a
+function of adoption, including community contributions and financial
+revenue from feature sponsorship_, technical support_, or `licensing
+</license/#proprietary>`_ of HTSQL for proprietary database systems.
+
+For works that we would incorporate into our repository, we do require
+intellectual property assignment.  In exchange, we give our word as a
+open source covenant that we will maintain this work and not take it
+soley proprietary with your contributions; else, we will release this
+entire work under the Apache license if future support is not
+forthcoming.  We do not have a contribution agreement yet prepared, but
+when needed, we intend to model it after the Contributor Agreement,
+described by Bruce Perens'
+`The Covenant - A New Approach to Open Source Cooperation 
+<http://hpccsystems.com/community/white-papers/the_covenant_bperens>`_.
+
+
+.. |lq| unicode:: U+201C 
+   :rtrim:
+.. |rq| unicode:: U+201D 
+   :ltrim:
+.. |mdash| unicode:: U+2014
+   :trim:

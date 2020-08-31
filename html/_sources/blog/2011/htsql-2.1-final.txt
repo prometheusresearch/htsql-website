@@ -1,0 +1,36 @@
+***************************
+  HTSQL 2.1.1 is released
+***************************
+
+.. blogentry::
+   :date: 2011-08-30
+   :author: cce
+
+This is the final release of HTSQL 2.1 aka "Query Power".  This release
+focuses on supporting analytical queries with projections and calculated
+attributes. 
+
+.. blogcut::
+
+Major changes since the 2.0 release:
+
+* Added *MySQL*, *Oracle* and *MS SQL Server* backends, in addition to
+  existing *SQLite* and *PostgreSQL* backends.
+* Added support for projections (see :doc:`introducing-projections`).
+* Added support for calculated attributes and references (see
+  :doc:`introducing-calculated-attributes` and
+  :doc:`introducing-references`).
+* Streamlined HTSQL grammar and semantics, added support for `time` and
+  `datetime` data types, and many other improvements.
+
+Changes since 2.1rc1 include:
+
+* General code cleanup and refactoring.
+* Improved emitted SQL for projections and aggregates.
+* Changed operator precedence to avoid parentheses around
+  filtering and projection operators.
+* Added a test data generator for HTSQL regression tests
+  (thank to Yuri Yerokhin).
+* Added support for hierarchical headers for `/:txt` and `/:html`
+  formatters.
+

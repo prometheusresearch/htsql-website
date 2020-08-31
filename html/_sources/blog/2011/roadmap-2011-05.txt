@@ -1,0 +1,247 @@
+*******************************
+  HTSQL Roadmap for May, 2011
+*******************************
+
+.. blogentry::
+   :date: 2011-05-02
+   :author: xi
+
+This month we are going to add a linking operator (`->`), a concept
+of references (`$ name`), a shortcut syntax that combines selection
+and definition (`{ attr := (expr) }`) and automatically populate
+the namespace of projection.
+
+.. blogcut::
+
+
+.. _roadmap-linking-operator:
+
+Linking Operator
+================
+
+HTSQL provides automatic linking based on foreign keys, so that an
+expression
+
+.. htsql:: /school.department
+   :cut: 5
+   :hide:
+
+generates a link from table ``school`` to table ``department`` joining
+them by values of ``school.code`` and ``department.school_code``.
+
+Sometimes, you may need to make a link not based on any foreign keys,
+either because the database administrator forgot to create the key or
+when the columns to join by are calculated.  For this purpose, we are
+going to introduce a *linking operator* (`->`).  Using a linking
+operator, the expression ``school.department`` could be written as
+
+.. htsql:: /school.(code -> department{school_code})
+   :cut: 5
+   :hide:
+
+The linking operator has several forms.  When the the source and the
+target columns coincide, use
+
+.. htsql:: /student.(year(dob) -> student)
+   :cut: 5
+   :hide:
+
+as a shortcut for
+
+.. htsql:: /student.(year(dob) -> student{year(dob)})
+   :cut: 5
+   :hide:
+
+This expression makes a link from ``student`` table to itself
+associating each student with a set of students with the same year of
+birth.  Note that the same expression could also be written using
+``fork()`` function:
+
+.. htsql:: /student.fork(year(dob))
+   :cut: 5
+   :hide:
+
+A link may use more than one column, as in
+
+.. htsql::
+   :cut: 5
+   :hide:
+
+   /course.({department_code, no}
+            -> class{department_code, course_no})
+
+or no columns at all:
+
+.. htsql:: /student.({} -> instructor)
+   :cut: 5
+   :hide:
+
+The last form generates all possible pairings between ``student``
+and ``instructor``.
+
+
+.. _roadmap-references:
+
+References
+==========
+
+In HTSQL, a *scope* is a context which defines the set of available
+names.  Typically, a scope is associated with some table and available
+names are table attributes and links.
+
+Let's deconstruct scopes in the following example.
+
+.. htsql:: /school.filter(code='art').department{name}
+   :hide:
+
+`/`
+    The query starts with a *scalar* scope, which contains the names of
+    all tables.
+
+`school.filter(code='art')`
+    By choosing ``school``, we changed the scope to the table.  Now we
+    have access to table attributes such as ``code`` and table links
+    such as ``department``.  Applying ``filter()`` does not change the
+    scope.
+
+`.department{name}`
+    Traversing link ``department`` changes the scope again.  Now we have
+    access to attributes of table ``department`` such as ``name``.  The
+    selection operator ``department{name}`` does not affect the scope,
+    and, if necessary, we could continue building the query.
+
+Whenever a new scope is introduced, it completely hides the content of
+any previous scope.  Thus, we cannot access attributes of ``school`` in
+the scope of ``department``.  It is an intentional limitation since
+otherwise attributes from different tables would pollute the namespace.
+
+However, occasionally, we may still want to fetch an attribute from a
+previous scope.  For instance, in the example above, we may need to add
+the school name to the output columns.
+
+To overcome this limitation, we are going to introduce a concept of
+*references*.  A reference is a name that ignores scope boundaries.  A
+reference starts with `$` followed by an identifier and could be defined
+using the regular ``define()`` function:
+
+.. htsql::
+   :hide:
+
+   /school.define($school_name := name)
+           .filter(code='art')
+           .department{$school_name, name}
+
+In this example, perhaps it is easier to make a new link to ``school``
+than to fetch it from the previous context:
+
+.. htsql:: /school.filter(code='art').department{school.name, name}
+   :hide:
+
+but it may not always be possible.
+
+References are especially useful when defining parameterized attributes.
+Consider a query:
+
+.. htsql::
+   :error:
+
+   /define(cohort(y) := student?year(start_date)=y)
+    .cohort(2010){name}
+
+In ``cohort(y)``, the argument ``y`` is defined in the top scope of the
+function body.  However, choosing ``student`` changes the scope and
+``y`` is no longer available, so we get an error in the expression
+``year(start_date)=y``.  Using references, this query could be written as
+
+.. htsql::
+   :cut: 5
+   :hide:
+
+   /define(cohort($y) := student?year(start_date)=$y)
+    .cohort(2010){name}
+
+
+.. _roadmap-selector-shortcuts:
+
+Selector Shortcuts
+==================
+
+Consider a query
+
+.. htsql:: /school{code, count(department)}?count(department)>=4
+   :hide:
+
+Note how expression ``count(department)`` is repeated twice.  To avoid
+duplication, we could factor this expression as a calculated attribute
+``school.num_dept``:
+
+.. htsql::
+   :hide:
+
+   /school.define(num_dept := count(department))
+           {code, num_dept}?num_dept>=4
+
+For the next beta release, we are going to introduce an even shorter
+form that combines selection and definition:
+
+.. htsql::
+   :hide:
+
+   /school{code, num_dept := count(department)}?num_dept>=4
+
+In general, an expression of the form
+
+.. sourcecode:: htsql
+
+   {attr := (expr), ...}
+
+will be expanded to
+
+.. sourcecode:: htsql
+
+   define(attr := (expr)){attr, ...}
+
+
+.. _roadmap-projection-namespace:
+
+Projection Namespace
+====================
+
+Consider a query
+
+.. htsql:: /(program^degree){*1, count(^)}
+   :cut: 5
+   :hide:
+
+.. **
+
+The projection operator (`^`) creates a new row set consisting of
+all distinct values of ``degree`` as it runs over ``program``.  The
+row set ``(program^degree)`` behaves like a table with a single
+column ``degree`` and a foreign key from ``program``.
+
+Currently, neither the columns of ``(program^degree)``, nor the
+link to ``program`` could be addressed by name.  Instead, to
+address the columns by position, use::
+
+    *1, *2, ...
+
+and to traverse the link to the original table, use::
+
+    ^
+
+For the next beta release, HTSQL will automatically name the columns and
+the link of a projection in cases where it could be done unambiguously.
+Thus, the query above could be written as:
+
+.. htsql:: /(program^degree){degree, count(program)}
+   :cut: 5
+   :hide:
+
+When the projection kernel is an expression, we may use `:=`
+to assign it a name:
+
+.. htsql:: /(school^{num_dept := count(department)})
+            {num_dept, count(school)}
+   :hide:
+

@@ -1,0 +1,102 @@
+*****************************
+  Snort Demo : Event Detail
+*****************************
+
+.. demo::
+
+    <script type="text/javascript"
+        src="/htraf/htraf.js"
+        data-htsql-version="2"
+        data-htsql-prefix="/@snort">
+    </script>
+
+    <h3>Last 10 Detected Events</h3>
+    <table id="evt"
+        data-htsql="/event{cid :as 'Event CID',
+                           signature.sig_priority :as 'Pr',
+                           sensor.hostname :as 'Sensor',
+                           inet(iphdr.ip_src) :as 'Source IP',
+                           inet(iphdr.ip_dst) :as 'Destination IP',
+                           signature.sig_name :as 'Signature',
+                           time(timestamp) :as 'Time'}
+                          .sort(timestamp-).limit(10)">
+    </table>
+    <h3>Selected Event ASCII Payload</h3>
+    <table id="evtascii" width="100%"
+        data-htsql="/event{data.data_payload :as 'Payload'}?cid=$evt"
+        data-ref="evt"
+        data-onafterload="fixasciipayload()">
+    </table>
+    <h3>Selected Event IP Header</h3>
+    <table id="evtip"
+        data-htsql="/event{inet(iphdr.ip_src) :as 'Source',
+                           inet(iphdr.ip_dst) :as 'Destination',
+                           iphdr.ip_ver :as 'Version',
+                           iphdr.ip_hlen :as 'Header Length',
+                           iphdr.ip_tos :as 'DCSP / TOS',
+                           iphdr.ip_len :as 'Length',
+                           iphdr.ip_id :as 'IP ID',
+                           iphdr.ip_flags :as 'Flags',
+                           iphdr.ip_off :as 'Frag Offset',
+                           iphdr.ip_ttl :as 'TTL',
+                           iphdr.ip_proto :as 'IP Proto'}?cid=$evt"
+        data-ref="evt">
+    </table>
+    <h3>Selected Event TCP Header</h3>
+    <table id="evttcp"
+        data-htsql="/event{tcphdr.tcp_sport :as 'Source Port',
+                           tcphdr.tcp_dport :as 'Destination Port',
+                           tcphdr.tcp_seq :as 'Seq',
+                           tcphdr.tcp_ack :as 'Ack',
+                           tcphdr.tcp_off :as 'Offset',
+                           tcphdr.tcp_res :as 'Reserved',
+                           tcphdr.tcp_flags :as 'Flags',
+                           tcphdr.tcp_win :as 'Window',
+                           tcphdr.tcp_csum :as 'Checksum',
+                           tcphdr.tcp_urp :as 'Urgent Pointer'}?cid=$evt"
+        data-ref="evt">
+    </table>
+    <h3>Selected Event UDP Header</h3>
+    <table id="evtudp"
+        data-htsql="/event{udphdr.udp_sport :as 'Source Port',
+                           udphdr.udp_dport :as 'Destination Port',
+                           udphdr.udp_len :as 'Length',
+                           udphdr.udp_csum :as 'Checksum'}?cid=$evt"
+        data-ref="evt">
+    </table>
+    <h3>Selected Event ICMP Header</h3>
+    <table id="evticmp"
+        data-htsql="/event{icmphdr.icmp_type :as 'ICMP Type',
+                           icmphdr.icmp_code :as 'ICMP Code',
+                           icmphdr.icmp_csum :as 'Checksum',
+                           icmphdr.icmp_id :as 'ICMP ID',
+                           icmphdr.icmp_seq :as 'Sequence'}?cid=$evt"
+        data-ref="evt">
+    </table>
+    <script type="text/javascript">
+
+        function fixasciipayload()
+        {
+            var payload = $("#evtascii td").text();
+            var newpayload = "";
+            var line = 0;
+            for(var i=0; i<payload.length; i+=2)
+            {
+                var val = parseInt(payload.substr(i, 2), 16);
+                newpayload += '&'+'#'+val+';';
+                line += 1;
+                if (val == 10) {
+                    newpayload += '<br>';
+                    line = 0;
+                }
+                if (line > 80) {
+                    newpayload += '<span style="font-family: sans"><br>&nbsp;</span>';
+                    line = 0;
+                }
+            };
+            newpayload = "<code>"+newpayload+"</code>";
+ 
+            $("#evtascii td").html(newpayload);
+        };
+
+    </script>

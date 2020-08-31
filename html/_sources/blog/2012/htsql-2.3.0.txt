@@ -1,0 +1,43 @@
+***************************
+  HTSQL 2.3.0 is released
+***************************
+
+.. blogentry::
+   :date: 2012-03-07
+   :author: cce
+
+This is the first release in the 2.3 development series.  This release
+is focused almost exclusively on licensing and packaging changes. 
+
+With this release, HTSQL is now free and open source software under the
+terms of the AGPLv3.  That said, we're keeping our permissive license so
+that proprietary applications could use HTSQL in conjunction with open
+source databases.  For more detail, visit http://htsql.org/license/.
+
+We've re-packaged HTSQL so that each database adapter has its own source
+and binary package.  This permits us to specify dependencies, for
+example, ``HTSQL-PGSQL`` explicitly requires the ``pyscopg2`` database
+client software for PostgreSQL.  This packaging also permits us to
+clarify that adapters to proprietary databases are not free software. 
+
+Going forward, we're switching to an even/odd release numbering scheme.
+Each public release is marked by three numbers, ``X.Y.Z``.  Here ``X.Y``
+are the major/minor version numbers and ``Z`` is the release number.  An
+even (odd) value of ``Y`` indicates a stable (development) release
+series respectively.  Thus ``2.3.0`` starts a new series of development
+releases, which will conclude with the ``2.4.0`` stable series.  Our
+stable releases are targeted to long term support and maintain syntax,
+semantics, and API compatibility when ever possible.
+
+Finally, we've updated our website and introduced a new mascot! 
+
+.. blogcut::
+
+Specific changes since the 2.2 final release:
+
+* Extracted connection pooling into a separate addon ``tweak.pool``
+  since it was causing issues with SQLite and MySQL backends.
+* Added a quick start guide, :doc:`/doc/handbook`, and added a "Philosophy"
+  section to our :doc:`/doc/overview`.
+* Added ``describe`` command to ``htsql-ctl shell``.
+

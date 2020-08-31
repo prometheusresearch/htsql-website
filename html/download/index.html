@@ -1,0 +1,173 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Download &mdash; HTSQL</title>
+    
+    <link rel="stylesheet" href="../_static/common.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/htsqldoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/htrafdemo.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.3.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/htrafdemo.js"></script>
+  
+    <link rel="top" title="HTSQL" href="../index.html" />
+    <link rel="next" title="HTSQL Licensing" href="../license/index.html" />
+    <link rel="prev" title="HTSQL Community" href="../community/index.html" />
+  <link rel="alternate" type="application/rss+xml" title="HTSQL News" href="http://htsql.org/index.rss" />
+ 
+  </head>
+  <body>
+
+  <div class="header">
+    <div class="header-inner">
+      <a href="/"><img class="header-logo" src="../_static/rabbit-logo.png" alt="HTSQL(tm)"></a>
+      <ul class="navigation">
+        <li><a href="/blog/">News</a></li>
+        <li><a href="/doc/">Documentation</a></li>
+        <li><a href="/gallery/">Gallery</a></li>
+        <li><a href="/download/">Download</a></li>
+        <li><a href="/community/">Community</a></li>
+      </ul>
+      <div id="searchbox" style="display: none">
+        <form class="search" action="../search.html" method="get">
+          <input class="search-input" type="text" name="q" size="20" placeholder="Search&hellip;" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </form>
+      </div>
+      <script type="text/javascript">$('#searchbox').show(0);</script>
+    </div>
+  </div>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="download">
+<h1>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p>Use of HTSQL with open source databases (PostgreSQL, MySQL, SQLite) is
+royalty free under BSD-style conditions.  Usage of HTSQL with
+proprietary database systems (Oracle, Microsoft SQL) requires a
+commercial license.  See <a class="reference internal" href="../license/index.html"><em>HTSQL Licensing</em></a>.</p>
+<p>After installing HTSQL, please see our <a class="reference internal" href="../doc/handbook.html"><em>HTSQL Handbook</em></a>.</p>
+<div class="section" id="debian-ubuntu">
+<h2>Debian / Ubuntu<a class="headerlink" href="#debian-ubuntu" title="Permalink to this headline">¶</a></h2>
+<p>If you&#8217;re running a <a class="reference external" href="http://debian.org/">Debian</a> or <a class="reference external" href="http://ubuntu.com/">Ubuntu</a> system, you can install HTSQL
+from our APT repository:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> wget -q -O - http://dist.htsql.org/misc/build.gpg.key | apt-key add -
+<span class="gp">#</span> <span class="nb">echo</span> <span class="s1">&#39;deb http://dist.htsql.org/debian stable free&#39;</span> &gt;&gt; /etc/apt/sources.list
+<span class="gp">#</span> apt-get update
+<span class="gp">#</span> apt-get install htsql
+</pre></div>
+</div>
+<p>You need to install additional packages to use HTSQL with a database
+other than SQLite.  For PostgreSQL:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> apt-get install htsql-pgsql
+</pre></div>
+</div>
+<p>For MySQL:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> apt-get install htsql-mysql
+</pre></div>
+</div>
+</div>
+<div class="section" id="redhat-el-centos">
+<h2>RedHat EL / CentOS<a class="headerlink" href="#redhat-el-centos" title="Permalink to this headline">¶</a></h2>
+<p>We provide RPM packages for <a class="reference external" href="http://redhat.com/">RedHat Enterprise Linux 6</a> or <a class="reference external" href="http://centos.org/">CentOS 6</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You may need to add the <a class="reference external" href="http://fedoraproject.org/wiki/EPEL">EPEL</a> repository to satisfy the dependency
+on <a class="reference external" href="http://dl.fedoraproject.org/pub/epel/6/i386/repoview/PyYAML.html">PyYAML</a>.</p>
+</div>
+<p>To include HTSQL RPM repository, run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> rpm -Uvh http://dist.htsql.org/redhat/6/i386/HTSQL-release-1.0-1.el6.noarch.rpm
+</pre></div>
+</div>
+<p>Now you can install HTSQL:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> yum install HTSQL
+</pre></div>
+</div>
+<p>To install PostgreSQL or MySQL backend, run:</p>
+<div class="highlight-console"><div class="highlight"><pre><span class="gp">#</span> yum install HTSQL-PGSQL
+<span class="gp">#</span> yum install HTSQL-MYSQL
+</pre></div>
+</div>
+</div>
+<div class="section" id="htraf-toolkit">
+<h2>HTRAF Toolkit<a class="headerlink" href="#htraf-toolkit" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../htraf/index.html"><em>HTRAF</em></a> is a toolkit for embedding data into HTML
+pages. HTRAF is written in Javascript and released under dual MIT/GPL
+license.</p>
+<p>The latest build of HTRAF could be downloaded from
+<a class="reference external" href="http://dist.htsql.org/source/HTRAF-latest.zip">http://dist.htsql.org/source/HTRAF-latest.zip</a>.</p>
+</div>
+<div class="section" id="install-from-source">
+<h2>Install from Source<a class="headerlink" href="#install-from-source" title="Permalink to this headline">¶</a></h2>
+<p>To install HTSQL from source, please read <a class="reference internal" href="../doc/admin/install.html"><em>Installing HTSQL</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  <div class="footer">
+    <div class="footer-inner">
+      <span class="copyright">
+        Copyright &copy; 2006-2012
+        <a href="http://prometheusresearch.com/">Prometheus Research LLC</a>
+      </span>
+      <ul class="community-links">
+        <li><a href="/index.rss">RSS</a></li>
+        <li><a href="http://twitter.com/htsql">twitter</a></li>
+        <li><a href="irc://irc.freenode.net#htsql">IRC</a></li>
+        <li><a href="http://lists.htsql.org/mailman/listinfo/htsql-users">mailing list</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/issues/new">report a bug</a></li>
+        <li><a href="http://bitbucket.org/prometheus/htsql/">source code</a></li>
+        <li><a href="http://prometheusresearch.com/">commercial support</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-11527623-4']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+  </script>
+
+
+  </body>
+</html>
