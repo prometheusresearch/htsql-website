@@ -79,7 +79,7 @@ the context where it was used.  As a result, you couldn&#8217;t append
 This is fixed, so you can now write:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course{title,%20credits-}.limit(3)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course{title,%20credits-}.limit(3)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="o">-</span><span class="p">}.</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/course{title,%20credits-}.limit(3)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/course{title,%20credits-}.limit(3)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="o">-</span><span class="p">}.</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -87,7 +87,7 @@ This is fixed, so you can now write:</p>
 <p>Before you had to write:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course.sort(credits-).limit(3){title,%20credits}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course.sort(credits-).limit(3){title,%20credits}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="nb">credits</span><span class="o">-</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">){</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="p">}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/course.sort(credits-).limit(3){title,%20credits}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/course.sort(credits-).limit(3){title,%20credits}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="nb">credits</span><span class="o">-</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">){</span><span class="nb">title</span><span class="p">,</span> <span class="nb">credits</span><span class="p">}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -100,7 +100,7 @@ output columns in the current context.   Additionally, if <tt class="docutils li
 followed by a number, it returns the nth output column.  For example,</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20name,%20count(department)}.{*1,*3}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20name,%20count(department)}.{*1,*3}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}.{</span><span class="o">*</span><span class="m">1</span><span class="p">,</span><span class="o">*</span><span class="m">3</span><span class="p">}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{code,%20name,%20count(department)}.{*1,*3}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{code,%20name,%20count(department)}.{*1,*3}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}.{</span><span class="o">*</span><span class="m">1</span><span class="p">,</span><span class="o">*</span><span class="m">3</span><span class="p">}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -108,7 +108,7 @@ followed by a number, it returns the nth output column.  For example,</p>
 <p>This mechanism can be used to filter by previously selected expressions:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20count(department)}?*2&gt;3" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20count(department)}?*2&gt;3" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span><span class="o">?*</span><span class="m">2</span><span class="o">&gt;</span><span class="m">3</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{code,%20count(department)}?*2&gt;3" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{code,%20count(department)}?*2&gt;3" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span><span class="o">?*</span><span class="m">2</span><span class="o">&gt;</span><span class="m">3</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -122,7 +122,7 @@ example, the following query returns for each school distinct
 degrees for the programs in that school.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.(program^degree)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.(program^degree)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school.(program^degree)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school.(program^degree)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -134,21 +134,21 @@ degrees for the programs in that school.</p>
 aliases for several operators.  For instance,</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
 </div>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school?code='eng'" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school?code='eng'" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">?</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school?code='eng'" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school?code='eng'" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">?</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span>
 </pre></div>
 </a></pre></div></div>
 </div>
 </div>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/program^degree" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/program^degree" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/program^degree" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/program^degree" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -156,21 +156,21 @@ aliases for several operators.  For instance,</p>
 <p>could now be written:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.select(name)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.select(name)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school.select(name)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school.select(name)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
 </div>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.filter(code='eng')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.filter(code='eng')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school.filter(code='eng')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school.filter(code='eng')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
 </div>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/distinct(program{degree})" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/distinct(program{degree})" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">distinct</span><span class="p">(</span><span class="nb">program</span><span class="p">{</span><span class="nb">degree</span><span class="p">})</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/distinct(program{degree})" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/distinct(program{degree})" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">distinct</span><span class="p">(</span><span class="nb">program</span><span class="p">{</span><span class="nb">degree</span><span class="p">})</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -179,7 +179,7 @@ aliases for several operators.  For instance,</p>
 permits you to reduce nesting depth.  For example,</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(department?school.code='eng').limit(3)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(department?school.code='eng').limit(3)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">department</span><span class="o">?</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/(department?school.code='eng').limit(3)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/(department?school.code='eng').limit(3)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">department</span><span class="o">?</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -187,7 +187,7 @@ permits you to reduce nesting depth.  For example,</p>
 <p>could be more clearly written:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.filter(school.code='eng').limit(3)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.filter(school.code='eng').limit(3)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/department.filter(school.code='eng').limit(3)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/department.filter(school.code='eng').limit(3)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;eng&#39;</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>

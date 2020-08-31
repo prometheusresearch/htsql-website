@@ -98,7 +98,7 @@ objects such as classes, attributes and links, and also to global
 constants.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}</span><span class="o">?</span><span class="nb">campus</span><span class="o">==</span><span class="nb">null</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}</span><span class="o">?</span><span class="nb">campus</span><span class="o">==</span><span class="nb">null</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -137,7 +137,7 @@ one or two arguments.  In HTSQL, operators use the same mechanism for
 name resolution as regular functions.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(department)%20:as%20'%23%20of%20Depts'}?campus='south'/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(department)%20:as%20'%23%20of%20Depts'}?campus='south'/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)</span> <span class="p">:</span><span class="nf">as</span> <span class="s">&#39;# of Depts&#39;</span><span class="p">}</span><span class="o">?</span><span class="nb">campus</span><span class="o">=</span><span class="s">&#39;south&#39;</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{name,%20count(department)%20:as%20'%23%20of%20Depts'}?campus='south'/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{name,%20count(department)%20:as%20'%23%20of%20Depts'}?campus='south'/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)</span> <span class="p">:</span><span class="nf">as</span> <span class="s">&#39;# of Depts&#39;</span><span class="p">}</span><span class="o">?</span><span class="nb">campus</span><span class="o">=</span><span class="s">&#39;south&#39;</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -160,7 +160,7 @@ School of Music &amp; Dance,4
 the prefix notation only, the query takes the form:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/csv(/school{name,%20as(count(department),%20'%23%20of%20Depts')}?campus='north')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/csv(/school{name,%20as(count(department),%20'%23%20of%20Depts')}?campus='north')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">csv</span><span class="p">(</span><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">as</span><span class="p">(</span><span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">),</span> <span class="s">&#39;# of Depts&#39;</span><span class="p">)}</span><span class="o">?</span><span class="nb">campus</span><span class="o">=</span><span class="s">&#39;north&#39;</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/csv(/school{name,%20as(count(department),%20'%23%20of%20Depts')}?campus='north')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/csv(/school{name,%20as(count(department),%20'%23%20of%20Depts')}?campus='north')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">csv</span><span class="p">(</span><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">as</span><span class="p">(</span><span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">),</span> <span class="s">&#39;# of Depts&#39;</span><span class="p">)}</span><span class="o">?</span><span class="nb">campus</span><span class="o">=</span><span class="s">&#39;north&#39;</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -174,7 +174,7 @@ the query.  Often, references serve as parameters of predefined
 expressions.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">define</span><span class="p">($</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">))</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">define</span><span class="p">($</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">))</span>
  <span class="p">.</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span>
 </pre></div>
 </a></pre></div></div>
@@ -229,7 +229,7 @@ expressions.</p>
 across all courses.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define(course_with_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_with_credits(2)),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course_with_credits(3))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define(course_with_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_with_credits(2)),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course_with_credits(3))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">course_with_credits</span><span class="p">($</span><span class="nb">c</span><span class="p">)</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">=</span><span class="p">$</span><span class="nb">c</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/department.define(course_with_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_with_credits(2)),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course_with_credits(3))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/department.define(course_with_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_with_credits(2)),%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20count(course_with_credits(3))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">course_with_credits</span><span class="p">($</span><span class="nb">c</span><span class="p">)</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">=</span><span class="p">$</span><span class="nb">c</span><span class="p">)</span>
            <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nf">course_with_credits</span><span class="p">(</span><span class="m">2</span><span class="p">)),</span>
                   <span class="nf">count</span><span class="p">(</span><span class="nf">course_with_credits</span><span class="p">(</span><span class="m">3</span><span class="p">))}</span>
 </pre></div>
@@ -282,7 +282,7 @@ distinguishes two types of scopes: global and local.</p>
 <p>The <em>global</em> scope contains built-in functions, operators and constants.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/count(school?campus==null)/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/count(school?campus==null)/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="o">?</span><span class="nb">campus</span><span class="o">==</span><span class="nb">null</span><span class="p">)</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/count(school?campus==null)/:csv" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/count(school?campus==null)/:csv" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="o">?</span><span class="nb">campus</span><span class="o">==</span><span class="nb">null</span><span class="p">)</span><span class="o">/</span><span class="p">:</span><span class="nf">csv</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -304,7 +304,7 @@ distinguishes two types of scopes: global and local.</p>
 all classes in the database model.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{count(school),%20count(department)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/{count(school),%20count(department)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/{count(school),%20count(department)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/{count(school),%20count(department)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -333,7 +333,7 @@ the unit scope.</p>
 all class attributes and links.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(department)}?exists(program)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(department)}?exists(program)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span><span class="o">?</span><span class="nf">exists</span><span class="p">(</span><span class="nb">program</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{name,%20count(department)}?exists(program)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{name,%20count(department)}?exists(program)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span><span class="o">?</span><span class="nf">exists</span><span class="p">(</span><span class="nb">program</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -401,7 +401,7 @@ wildcard (<tt class="docutils literal"><span class="pre">*</span></tt>) and comp
 objects:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/program^degree%20{degree,%20count(program)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/program^degree%20{degree,%20count(program)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span> <span class="p">{</span><span class="nb">degree</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="p">)}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/program^degree%20{degree,%20count(program)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/program^degree%20{degree,%20count(program)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span> <span class="p">{</span><span class="nb">degree</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -435,7 +435,7 @@ objects:</p>
 </div>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/program^degree%20{*,%20count(^)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/program^degree%20{*,%20count(^)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span> <span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">)}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/program^degree%20{*,%20count(^)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/program^degree%20{*,%20count(^)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span> <span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -478,7 +478,7 @@ the current scope.</p>
 and associated expressions to the top local scope.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.define(num_prog%20:=%20count(program))%0A%20%20%20%20%20%20%20{name,%20num_prog}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.define(num_prog%20:=%20count(program))%0A%20%20%20%20%20%20%20{name,%20num_prog}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nb">num_prog</span> <span class="p">:=</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="p">))</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school.define(num_prog%20:=%20count(program))%0A%20%20%20%20%20%20%20{name,%20num_prog}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school.define(num_prog%20:=%20count(program))%0A%20%20%20%20%20%20%20{name,%20num_prog}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nb">num_prog</span> <span class="p">:=</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="p">))</span>
        <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">num_prog</span><span class="p">}</span>
 </pre></div>
 </a></pre></div></div>
@@ -517,7 +517,7 @@ of <tt class="docutils literal"><span class="pre">school</span></tt>.</p>
 references to the top local scope:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define(course_by_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_by_credits(2))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define(course_by_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_by_credits(2))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">course_by_credits</span><span class="p">($</span><span class="nb">c</span><span class="p">)</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">=</span><span class="p">$</span><span class="nb">c</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/department.define(course_by_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_by_credits(2))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/department.define(course_by_credits($c)%20:=%20course?credits=$c)%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course_by_credits(2))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">course_by_credits</span><span class="p">($</span><span class="nb">c</span><span class="p">)</span> <span class="p">:=</span> <span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">=</span><span class="p">$</span><span class="nb">c</span><span class="p">)</span>
            <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nf">course_by_credits</span><span class="p">(</span><span class="m">2</span><span class="p">))}</span>
 </pre></div>
 </a></pre></div></div>
@@ -552,7 +552,7 @@ references to the top local scope:</p>
 </div>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">define</span><span class="p">($</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">))</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/define($avg_credits%20:=%20avg(course.credits))%0A%20.course?credits&gt;$avg_credits" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">define</span><span class="p">($</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">))</span>
  <span class="p">.</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span>
 </pre></div>
 </a></pre></div></div>
@@ -609,7 +609,7 @@ an augmented scope.  Function <tt class="docutils literal"><span class="pre">whe
 notation:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name,%20count(course?credits&gt;$avg_credits)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20:where%20$avg_credits%20:=%20avg(course.credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name,%20count(course?credits&gt;$avg_credits)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20:where%20$avg_credits%20:=%20avg(course.credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/department{name,%20count(course?credits&gt;$avg_credits)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20:where%20$avg_credits%20:=%20avg(course.credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/department{name,%20count(course?credits&gt;$avg_credits)%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20:where%20$avg_credits%20:=%20avg(course.credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span><span class="p">)</span>
                   <span class="p">:</span><span class="nf">where</span> <span class="p">$</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
@@ -656,7 +656,7 @@ following rules to find the corresponding object.</p>
 other scopes are completely shadowed.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}</span><span class="o">?</span><span class="nb">campus</span><span class="o">==</span><span class="nb">null</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{name}?campus==null" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}</span><span class="o">?</span><span class="nb">campus</span><span class="o">==</span><span class="nb">null</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -708,7 +708,7 @@ other scopes are completely shadowed.</p>
 scope.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school[ns].department{name,%20campus}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school[ns].department{name,%20campus}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">[</span><span class="s">ns</span><span class="p">].</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">campus</span><span class="p">}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school[ns].department{name,%20campus}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school[ns].department{name,%20campus}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">[</span><span class="s">ns</span><span class="p">].</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">campus</span><span class="p">}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -734,7 +734,7 @@ that those are different functions even though they share the same name,
 they are distinguished by the number of arguments.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/date('2010-04-15')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/date('2010-04-15')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-04-15&#39;</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/date('2010-04-15')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/date('2010-04-15')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">date</span><span class="p">(</span><span class="s">&#39;2010-04-15&#39;</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -754,7 +754,7 @@ they are distinguished by the number of arguments.</p>
 </div>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/date(2010,%204)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/date(2010,%204)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/date(2010,%204)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/date(2010,%204)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -769,7 +769,7 @@ While translating:
 </div>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/date(2010,%204,%2015)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/date(2010,%204,%2015)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">15</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/date(2010,%204,%2015)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/date(2010,%204,%2015)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">date</span><span class="p">(</span><span class="m">2010</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">15</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -792,7 +792,7 @@ You can use function <tt class="docutils literal"><span class="pre">define()</sp
 scope.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.define(num_prog_by_degree($d)%20:=%20count(program?degree=$d))%0A%20%20%20%20%20%20%20{name,%20num_prog_by_degree('ba'),%20num_prog_by_degree('bs')}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.define(num_prog_by_degree($d)%20:=%20count(program?degree=$d))%0A%20%20%20%20%20%20%20{name,%20num_prog_by_degree('ba'),%20num_prog_by_degree('bs')}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">num_prog_by_degree</span><span class="p">($</span><span class="nb">d</span><span class="p">)</span> <span class="p">:=</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="o">?</span><span class="nb">degree</span><span class="o">=</span><span class="p">$</span><span class="nb">d</span><span class="p">))</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school.define(num_prog_by_degree($d)%20:=%20count(program?degree=$d))%0A%20%20%20%20%20%20%20{name,%20num_prog_by_degree('ba'),%20num_prog_by_degree('bs')}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school.define(num_prog_by_degree($d)%20:=%20count(program?degree=$d))%0A%20%20%20%20%20%20%20{name,%20num_prog_by_degree('ba'),%20num_prog_by_degree('bs')}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nf">num_prog_by_degree</span><span class="p">($</span><span class="nb">d</span><span class="p">)</span> <span class="p">:=</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="o">?</span><span class="nb">degree</span><span class="o">=</span><span class="p">$</span><span class="nb">d</span><span class="p">))</span>
        <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">num_prog_by_degree</span><span class="p">(</span><span class="s">&#39;ba&#39;</span><span class="p">),</span> <span class="nf">num_prog_by_degree</span><span class="p">(</span><span class="s">&#39;bs&#39;</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
@@ -844,7 +844,7 @@ scopes; done if found.</li>
 local scopes in the current naming context.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department.define($avg_credits%20:=%20avg(course.credits))%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course?credits&gt;$avg_credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department.define($avg_credits%20:=%20avg(course.credits))%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course?credits&gt;$avg_credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">($</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">))</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/department.define($avg_credits%20:=%20avg(course.credits))%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course?credits&gt;$avg_credits)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/department.define($avg_credits%20:=%20avg(course.credits))%0A%20%20%20%20%20%20%20%20%20%20%20{name,%20count(course?credits&gt;$avg_credits)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">.</span><span class="nf">define</span><span class="p">($</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">))</span>
            <span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>

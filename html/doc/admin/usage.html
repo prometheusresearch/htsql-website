@@ -225,7 +225,7 @@ can be changed:</p>
 </div>
 <p>If more than one parameter is possible, use &#8221;,&#8221; to separate them:</p>
 <div class="highlight-console"><div class="highlight"><pre><span class="gp">$</span> htsql-ctl serve pgsql:htsql_demo <span class="se">\</span>
-<span class="go">  -E &quot;tweak.shell:server-root=&#39;http://demo.htsql.org&#39;,limit=10&quot;</span>
+<span class="go">  -E &quot;tweak.shell:server-root=&#39;https://demo.htsql.org&#39;,limit=10&quot;</span>
 </pre></div>
 </div>
 <p>HTSQL plugins are found using Python&#8217;s entry point feature.  When a
@@ -389,7 +389,7 @@ list of host names:</p>
 Do not use the default settings with non-public data!</p>
 </div>
 <p>For example, to enable AJAX requests to the HTSQL demo server
-(located at <a class="reference external" href="http://demo.htsql.org/">http://demo.htsql.org/</a>) from domains <a class="reference external" href="http://htsql.org/">http://htsql.org/</a>
+(located at <a class="reference external" href="https://demo.htsql.org/">https://demo.htsql.org/</a>) from domains <a class="reference external" href="http://htsql.org/">http://htsql.org/</a>
 and <a class="reference external" href="http://htsql.com/">http://htsql.com/</a>, we could write:</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.cors</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">origin</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://htsql.org http://htsql.com</span>
@@ -562,7 +562,7 @@ columns and links of the primary database.</p>
 <p>To get a list of tables:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/meta(/table)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/meta(/table)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">table</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/meta(/table)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/meta(/table)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">table</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -593,7 +593,7 @@ columns and links of the primary database.</p>
 <p>Mapping call notation is also permitted:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/table/:meta" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/table/:meta" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">table</span><span class="o">/</span><span class="p">:</span><span class="nf">meta</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/table/:meta" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/table/:meta" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">table</span><span class="o">/</span><span class="p">:</span><span class="nf">meta</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -624,7 +624,7 @@ columns and links of the primary database.</p>
 <p>To list all columns of a given table in the output order:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/meta(/column.sort(field.sort)?table.name='course')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/meta(/column.sort(field.sort)?table.name='course')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">column</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="nb">field</span><span class="p">.</span><span class="nb">sort</span><span class="p">)</span><span class="o">?</span><span class="nb">table</span><span class="p">.</span><span class="nb">name</span><span class="o">=</span><span class="s">&#39;course&#39;</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/meta(/column.sort(field.sort)?table.name='course')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/meta(/column.sort(field.sort)?table.name='course')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">column</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="nb">field</span><span class="p">.</span><span class="nb">sort</span><span class="p">)</span><span class="o">?</span><span class="nb">table</span><span class="p">.</span><span class="nb">name</span><span class="o">=</span><span class="s">&#39;course&#39;</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -676,7 +676,7 @@ columns and links of the primary database.</p>
 <p>To get all links to and from a specific table:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/meta(/link?table.name='department'|target.name='department')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/meta(/link?table.name='department'|target.name='department')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">link</span><span class="o">?</span><span class="nb">table</span><span class="p">.</span><span class="nb">name</span><span class="o">=</span><span class="s">&#39;department&#39;</span><span class="o">|</span><span class="nb">target</span><span class="p">.</span><span class="nb">name</span><span class="o">=</span><span class="s">&#39;department&#39;</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/meta(/link?table.name='department'|target.name='department')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/meta(/link?table.name='department'|target.name='department')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">link</span><span class="o">?</span><span class="nb">table</span><span class="p">.</span><span class="nb">name</span><span class="o">=</span><span class="s">&#39;department&#39;</span><span class="o">|</span><span class="nb">target</span><span class="p">.</span><span class="nb">name</span><span class="o">=</span><span class="s">&#39;department&#39;</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -735,7 +735,7 @@ columns and links of the primary database.</p>
 <p>To describe the meta database itself, apply <tt class="docutils literal"><span class="pre">meta()</span></tt> twice:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/meta(/meta(/table))" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/meta(/meta(/table))" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">table</span><span class="p">))</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/meta(/meta(/table))" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/meta(/meta(/table))" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nf">meta</span><span class="p">(</span><span class="o">/</span><span class="nb">table</span><span class="p">))</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -1045,7 +1045,7 @@ query to edit.</p>
 <dd>Truncation threshold for shell output (default: 1000)</dd>
 </dl>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">tweak.shell</span><span class="p-Indicator">:</span>
-  <span class="l-Scalar-Plain">server-root</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http://demo.htsql.org</span>
+  <span class="l-Scalar-Plain">server-root</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://demo.htsql.org</span>
   <span class="l-Scalar-Plain">limit</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">100</span>
 </pre></div>
 </div>

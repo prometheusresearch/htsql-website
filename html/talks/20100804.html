@@ -415,7 +415,7 @@ ON (correlated_program.school = school.code)
 &quot;I *just* need a list of schools and the number
 of departments and programs for each?&quot;
 </pre>
-<p>really <em>is</em> trivial.  How about an <a class="reference external" href="http://demo.htsql.org/school{name,count(department),count(program)}">alternative</a> (<a class="reference external" href="http://demo.htsql.com/school{code,count(department),count(program)}/chart(title='%23%20Department%20%26%20Program%20by%20School')">plot</a>):</p>
+<p>really <em>is</em> trivial.  How about an <a class="reference external" href="https://demo.htsql.org/school{name,count(department),count(program)}">alternative</a> (<a class="reference external" href="http://demo.htsql.com/school{code,count(department),count(program)}/chart(title='%23%20Department%20%26%20Program%20by%20School')">plot</a>):</p>
 <pre class="literal-block">
 /school{name, count(department), count(program)}
 </pre>
@@ -566,7 +566,7 @@ and courses.  Here it is:</p>
 <li>use curly brackets for nested links</li>
 <li>wildcard <tt class="docutils literal">*</tt> pulls all columns from a table</li>
 </ul>
-<p>An example (<a class="reference external" href="http://demo.htsql.org/course{department{school.name,name},*}">E2</a>):</p>
+<p>An example (<a class="reference external" href="https://demo.htsql.org/course{department{school.name,name},*}">E2</a>):</p>
 <pre class="literal-block">
 /course{department{school.name, name}, * }
 </pre>

@@ -78,7 +78,7 @@ another, you can link through a chain.  For example, the query below
 returns, for each course, the name of the school it is associated with.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course{department_code,no,department.school.name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/course{department_code,no,department.school.name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">department_code</span><span class="p">,</span><span class="nb">no</span><span class="p">,</span><span class="nb">department</span><span class="p">.</span><span class="nb">school</span><span class="p">.</span><span class="nb">name</span><span class="p">}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/course{department_code,no,department.school.name}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/course{department_code,no,department.school.name}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">department_code</span><span class="p">,</span><span class="nb">no</span><span class="p">,</span><span class="nb">department</span><span class="p">.</span><span class="nb">school</span><span class="p">.</span><span class="nb">name</span><span class="p">}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -121,7 +121,7 @@ request returns, for each school, the number of courses across its
 departments.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,count(department.course)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,count(department.course)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span><span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">.</span><span class="nb">course</span><span class="p">)}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{name,count(department.course)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{name,count(department.course)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span><span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">.</span><span class="nb">course</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -161,7 +161,7 @@ departments.</p>
 <tt class="docutils literal"><span class="pre">department</span></tt> table where the <tt class="docutils literal"><span class="pre">school</span></tt> column is not null.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department?school" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department?school" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="o">?</span><span class="nb">school</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/department?school" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/department?school" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="o">?</span><span class="nb">school</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -204,7 +204,7 @@ mechanism.  The following request returns rows from the <tt class="docutils lite
 table, after joining through <tt class="docutils literal"><span class="pre">school</span></tt>.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.department" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.department" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nb">department</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school.department" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school.department" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nb">department</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -250,7 +250,7 @@ different mechanism.  The former returns <tt class="docutils literal"><span clas
 <div>/course?credits&gt;department.avg(course.credits)</div></blockquote>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name,%20school.name,%20count(course)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name,%20school.name,%20count(course)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">school</span><span class="p">.</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="p">)}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/department{name,%20school.name,%20count(course)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/department{name,%20school.name,%20count(course)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">school</span><span class="p">.</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -266,7 +266,7 @@ below, we have two links: a singular link from department to school,
 and a plural link from department to course.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name,%20school.name,%20count(course)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name,%20school.name,%20count(course)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">school</span><span class="p">.</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="p">)}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/department{name,%20school.name,%20count(course)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/department{name,%20school.name,%20count(course)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nb">school</span><span class="p">.</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -280,7 +280,7 @@ expressions.  For instance, the following query returns distinct degree
 values from the program table.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(program^degree)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(program^degree)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/(program^degree)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/(program^degree)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -317,7 +317,7 @@ this link is represented by the caret <tt class="docutils literal"><span class="
 query shows the number of programs for each distinct degree.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(program^degree){*,%20count(^)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(program^degree){*,%20count(^)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">){</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">)}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/(program^degree){*,%20count(^)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/(program^degree){*,%20count(^)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">){</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -373,7 +373,7 @@ seed table is called the <em>complement</em>.</p>
 the count of distinct degrees offered by that school.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20count(program^degree)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20count(program^degree)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">)}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{name,%20count(program^degree)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{name,%20count(program^degree)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="o">^</span><span class="nb">degree</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -383,7 +383,7 @@ combinations.  For each combination, the number of students
 and the average number of enrollments.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/(student^{year(dob),gender}){*,%20count(^),%20avg(^.count(enrollment))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/(student^{year(dob),gender}){*,%20count(^),%20avg(^.count(enrollment))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">student</span><span class="o">^</span><span class="p">{</span><span class="nf">year</span><span class="p">(</span><span class="nb">dob</span><span class="p">),</span><span class="nb">gender</span><span class="p">}){</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">),</span> <span class="nf">avg</span><span class="p">(</span><span class="o">^</span><span class="p">.</span><span class="nf">count</span><span class="p">(</span><span class="nb">enrollment</span><span class="p">))}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/(student^{year(dob),gender}){*,%20count(^),%20avg(^.count(enrollment))}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/(student^{year(dob),gender}){*,%20count(^),%20avg(^.count(enrollment))}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">(</span><span class="nb">student</span><span class="o">^</span><span class="p">{</span><span class="nf">year</span><span class="p">(</span><span class="nb">dob</span><span class="p">),</span><span class="nb">gender</span><span class="p">}){</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">),</span> <span class="nf">avg</span><span class="p">(</span><span class="o">^</span><span class="p">.</span><span class="nf">count</span><span class="p">(</span><span class="nb">enrollment</span><span class="p">))}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -393,7 +393,7 @@ in the school of art.  For each distinct degree, the count of
 those programs and count of associated students.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/((program?school.code='art')^degree){*,%20count(^),%20count(^.student)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/((program?school.code='art')^degree){*,%20count(^),%20count(^.student)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">((</span><span class="nb">program</span><span class="o">?</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;art&#39;</span><span class="p">)</span><span class="o">^</span><span class="nb">degree</span><span class="p">){</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">.</span><span class="nb">student</span><span class="p">)}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/((program?school.code='art')^degree){*,%20count(^),%20count(^.student)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/((program?school.code='art')^degree){*,%20count(^),%20count(^.student)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="p">((</span><span class="nb">program</span><span class="o">?</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="s">&#39;art&#39;</span><span class="p">)</span><span class="o">^</span><span class="nb">degree</span><span class="p">){</span><span class="o">*</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="o">^</span><span class="p">.</span><span class="nb">student</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
 </div>

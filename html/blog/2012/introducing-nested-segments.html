@@ -79,7 +79,7 @@ list. For instance, a list of <tt class="docutils literal"><span class="pre">sch
 include associated <tt class="docutils literal"><span class="pre">department</span></tt> records:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{*,%20/department}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{*,%20/department}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{*,%20/department}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{*,%20/department}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -162,7 +162,7 @@ for each school, navigates to the associated departments.
 These correlated <tt class="docutils literal"><span class="pre">department</span></tt> records are returned.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.department" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school.department" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nb">department</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school.department" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school.department" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nb">department</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -222,7 +222,7 @@ of the <tt class="docutils literal"><span class="pre">count()</span></tt> aggreg
 each school, the count of associated departments.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20count(department)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20count(department)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{code,%20count(department)}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{code,%20count(department)}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -258,7 +258,7 @@ each school, the count of associated departments.</p>
 returning a scalar, it returns a nested list.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20count(department),%20/department}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20count(department),%20/department}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">),</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{code,%20count(department),%20/department}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{code,%20count(department),%20/department}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">),</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -330,7 +330,7 @@ of our query language.   For example, it works with
 projections.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school^campus{campus,%20/school{name}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school^campus{campus,%20/school{name}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">^</span><span class="nb">campus</span><span class="p">{</span><span class="nb">campus</span><span class="p">,</span> <span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school^campus{campus,%20/school{name}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school^campus{campus,%20/school{name}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="o">^</span><span class="nb">campus</span><span class="p">{</span><span class="nb">campus</span><span class="p">,</span> <span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">}}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -372,7 +372,7 @@ projections.</p>
 <p>Nested segments play well with aggregates and variables.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name%2B,%0A%20%20%20%20%20%20%20%20%20%20%20%20$avg_credits%20:=%20avg(course.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20/course{credits,%20title}?credits&gt;$avg_credits%20}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name%2B,%0A%20%20%20%20%20%20%20%20%20%20%20%20$avg_credits%20:=%20avg(course.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20/course{credits,%20title}?credits&gt;$avg_credits%20}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="o">+</span><span class="p">,</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/department{name%2B,%0A%20%20%20%20%20%20%20%20%20%20%20%20$avg_credits%20:=%20avg(course.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20/course{credits,%20title}?credits&gt;$avg_credits%20}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/department{name%2B,%0A%20%20%20%20%20%20%20%20%20%20%20%20$avg_credits%20:=%20avg(course.credits),%0A%20%20%20%20%20%20%20%20%20%20%20%20/course{credits,%20title}?credits&gt;$avg_credits%20}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="o">+</span><span class="p">,</span>
             <span class="p">$</span><span class="nb">avg_credits</span> <span class="p">:=</span> <span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">),</span>
             <span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">credits</span><span class="p">,</span> <span class="nb">title</span><span class="p">}</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span> <span class="p">}</span>
 </pre></div>
@@ -439,7 +439,7 @@ projections.</p>
 <p>Nesting can be arbitrarily deep.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name%2B,%0A%20%20%20%20%20%20%20%20/department{name,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20/course{title}}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name%2B,%0A%20%20%20%20%20%20%20%20/department{name,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20/course{title}}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="o">+</span><span class="p">,</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{name%2B,%0A%20%20%20%20%20%20%20%20/department{name,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20/course{title}}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{name%2B,%0A%20%20%20%20%20%20%20%20/department{name,%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20/course{title}}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="o">+</span><span class="p">,</span>
         <span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span>
                     <span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">title</span><span class="p">}}}</span>
 </pre></div>
@@ -547,7 +547,7 @@ projections.</p>
 <p>A query may have adjacent nested segments.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{name,%20/department{name},%20/program{title}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{name,%20/department{name},%20/program{title}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">},</span> <span class="o">/</span><span class="nb">program</span><span class="p">{</span><span class="nb">title</span><span class="p">}}</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{name,%20/department{name},%20/program{title}}" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{name,%20/department{name},%20/program{title}}" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">},</span> <span class="o">/</span><span class="nb">program</span><span class="p">{</span><span class="nb">title</span><span class="p">}}</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -612,7 +612,7 @@ The hierarchical structure of the output is very suitable for
 <tt class="docutils literal"><span class="pre">XML</span></tt> and <tt class="docutils literal"><span class="pre">JSON</span></tt> formats.</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{*,%20/department}%20/:xml" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{*,%20/department}%20/:xml" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">xml</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{*,%20/department}%20/:xml" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{*,%20/department}%20/:xml" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">xml</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -656,7 +656,7 @@ The hierarchical structure of the output is very suitable for
 </div>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{*,%20/department}%20/:json" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{*,%20/department}%20/:json" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">json</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{*,%20/department}%20/:json" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{*,%20/department}%20/:json" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="o">*</span><span class="p">,</span> <span class="o">/</span><span class="nb">department</span><span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">json</span>
 </pre></div>
 </a></pre></div></div>
 </div>

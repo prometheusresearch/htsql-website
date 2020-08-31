@@ -438,7 +438,7 @@ ON (correlated_program.school = school.code)
 &quot;I *just* need a list of schools and the number
 of departments and programs for each?&quot;
 </pre>
-<p>really <em>is</em> trivial.  How about an <a class="reference external" href="http://demo.htsql.org/school{name,count(department),count(program)}">alternative</a> (<a class="reference external" href="http://demo.htsql.com/school{code,count(department),count(program)}/chart(title='%23%20Department%20%26%20Program%20by%20School')">plot</a>):</p>
+<p>really <em>is</em> trivial.  How about an <a class="reference external" href="https://demo.htsql.org/school{name,count(department),count(program)}">alternative</a> (<a class="reference external" href="http://demo.htsql.com/school{code,count(department),count(program)}/chart(title='%23%20Department%20%26%20Program%20by%20School')">plot</a>):</p>
 <pre class="literal-block">
 /school{name, count(department), count(program)}
 </pre>
@@ -552,7 +552,7 @@ departments, programs and courses.  Here it is:</p>
 <li>postfix operators are sorting (+/-)</li>
 <li>use <tt class="docutils literal">as</tt> to rename columns for presentation</li>
 </ul>
-<p>An example (<a class="reference external" href="http://demo.htsql.org/course{department%20as%20'Dept%20Code'+,number%20as%20'No.',credits-,title}">E1</a>):</p>
+<p>An example (<a class="reference external" href="https://demo.htsql.org/course{department%20as%20'Dept%20Code'+,number%20as%20'No.',credits-,title}">E1</a>):</p>
 <pre class="literal-block">
 /course{department as 'Dept Code'+, number as 'No.',
         credits-, title}
@@ -566,7 +566,7 @@ departments, programs and courses.  Here it is:</p>
 <li>use curly brackets for nested links</li>
 <li>wildcard <tt class="docutils literal">*</tt> pulls all columns from a table</li>
 </ul>
-<p>An example (<a class="reference external" href="http://demo.htsql.org/course{department{school.name,name},*}">E2</a>):</p>
+<p>An example (<a class="reference external" href="https://demo.htsql.org/course{department{school.name,name},*}">E2</a>):</p>
 <pre class="literal-block">
 /course{department{school.name, name}, * }
 </pre>
@@ -579,7 +579,7 @@ departments, programs and courses.  Here it is:</p>
 <li>full predicate algebra</li>
 <li>pluggable function support</li>
 </ul>
-<p>For example (<a class="reference external" href="http://demo.htsql.org/course{department,number,title}?credits&lt;3&amp;department.school='ns'">E3</a>):</p>
+<p>For example (<a class="reference external" href="https://demo.htsql.org/course{department,number,title}?credits&lt;3&amp;department.school='ns'">E3</a>):</p>
 <pre class="literal-block">
 /course{department, number, title}?
    credits&lt;3&amp;department.school='ns'
@@ -592,7 +592,7 @@ departments, programs and courses.  Here it is:</p>
 <li>all plural links require aggregates</li>
 <li>nested aggregates are possible</li>
 </ul>
-<p>An example (<a class="reference external" href="http://demo.htsql.org/school{code,avg(department.count(course))}">E4</a>):</p>
+<p>An example (<a class="reference external" href="https://demo.htsql.org/school{code,avg(department.count(course))}">E4</a>):</p>
 <pre class="literal-block">
 /school{code, avg(department.count(course))}
 </pre>
@@ -616,7 +616,7 @@ departments, programs and courses.  Here it is:</p>
 <li>supports CSV, JSON, TXT, HTML</li>
 <li>XML, YAML and others (3-4 months for 2.0)</li>
 </ul>
-<p>An example (<a class="reference external" href="http://demo.htsql.org/student/:txt">E6</a>):</p>
+<p>An example (<a class="reference external" href="https://demo.htsql.org/student/:txt">E6</a>):</p>
 <pre class="literal-block">
 /school/:txt
 </pre>
@@ -628,7 +628,7 @@ departments, programs and courses.  Here it is:</p>
 <li>use <tt class="docutils literal">sort()</tt> to sort a table expression</li>
 <li>other forms of table expressions possible</li>
 </ul>
-<p>An example (<a class="reference external" href="http://demo.htsql.org/department.sort(school).limit(10,5)">E7</a>):</p>
+<p>An example (<a class="reference external" href="https://demo.htsql.org/department.sort(school).limit(10,5)">E7</a>):</p>
 <pre class="literal-block">
 /department.sort(school).limit(10,5)
 </pre>

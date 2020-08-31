@@ -126,7 +126,7 @@ HTRAF to execute the query and use the result to populate the content
 of the widget.  Take a look at the output of the query:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20name}?exists(department)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/school{code,%20name}?exists(department)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nb">name</span><span class="p">}</span><span class="o">?</span><span class="nf">exists</span><span class="p">(</span><span class="nb">department</span><span class="p">)</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/school{code,%20name}?exists(department)" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/school{code,%20name}?exists(department)" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nb">name</span><span class="p">}</span><span class="o">?</span><span class="nf">exists</span><span class="p">(</span><span class="nb">department</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
 </div>
@@ -184,7 +184,7 @@ drop-down list, then to update the linked table, HTRAF will execute the
 query:</p>
 <div class="htsql-io container">
 <div class="htsql-input container">
-<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{name,%20count(course)}?school.code=$school_code%0A%20%20:where%20($school_code%20:=%20'eng')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="http://demo.htsql.org/department{name,%20count(course)}?school.code=$school_code%0A%20%20:where%20($school_code%20:=%20'eng')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="p">)}</span><span class="o">?</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="p">$</span><span class="nb">school_code</span>
+<div class="highlight-htsql"><div class="highlight"><pre><a href="https://demo.htsql.org/department{name,%20count(course)}?school.code=$school_code%0A%20%20:where%20($school_code%20:=%20'eng')" target="_new" class="htsql-arrow-link">&#x25E5;</a><a href="https://demo.htsql.org/department{name,%20count(course)}?school.code=$school_code%0A%20%20:where%20($school_code%20:=%20'eng')" target="_new" class="htsql-link"><div class="highlight"><pre><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">name</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="p">)}</span><span class="o">?</span><span class="nb">school</span><span class="p">.</span><span class="nb">code</span><span class="o">=</span><span class="p">$</span><span class="nb">school_code</span>
   <span class="p">:</span><span class="nf">where</span> <span class="p">($</span><span class="nb">school_code</span> <span class="p">:=</span> <span class="s">&#39;eng&#39;</span><span class="p">)</span>
 </pre></div>
 </a></pre></div></div>
@@ -279,7 +279,7 @@ with two non-standard attributes:</p>
 <dt><tt class="xref py py-obj docutils literal"><span class="pre">data-htsql-prefix</span></tt> (absolute or relative URL)</dt>
 <dd><p class="first">This specifies the root of the HTSQL service; in the example above,
 HTSQL service is located at <a class="reference external" href="http://htsql.org/&#64;demo">http://htsql.org/&#64;demo</a> or
-<a class="reference external" href="http://demo.htsql.org">http://demo.htsql.org</a>.</p>
+<a class="reference external" href="https://demo.htsql.org">https://demo.htsql.org</a>.</p>
 <p class="last">Note that the URL should not include a trailing slash.</p>
 </dd>
 <dt><tt class="xref py py-obj docutils literal"><span class="pre">data-htsql-version</span></tt> (<tt class="docutils literal"><span class="pre">1</span></tt> or <tt class="docutils literal"><span class="pre">2</span></tt>)</dt>
