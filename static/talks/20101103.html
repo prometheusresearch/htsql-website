@@ -1,0 +1,737 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<meta name="version" content="S5 1.1" />
+<title>HTSQL -- a Query Language for Accidental Programmers</title>
+<meta name="date" content="November 3rd, 2010" />
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 6253 2010-03-02 00:24:53Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: left }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<script src="ui/default/slides.js" type="text/javascript"></script>
+<link rel="stylesheet" href="ui/default/slides.css"
+      type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/default/outline.css"
+      type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/default/print.css"
+      type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/default/opera.css"
+      type="text/css" media="projection" id="operaFix" />
+
+<style type="text/css">
+#currentSlide {display: none;}
+</style>
+</head>
+<body>
+<div class="layout">
+<div id="controls"></div>
+<div id="currentSlide"></div>
+<div id="header">
+
+</div>
+<div id="footer">
+<h1>HTSQL -- a Query Language for Accidental Programmers</h1>
+
+</div>
+</div>
+<div class="presentation">
+<div class="slide" id="slide0">
+<h1 class="title">HTSQL -- a Query Language for Accidental Programmers</h1>
+<table class="docinfo" frame="void" rules="none">
+<col class="docinfo-name" />
+<col class="docinfo-content" />
+<tbody valign="top">
+<tr class="field"><th class="docinfo-name">Presenter:</th><td class="field-body">Clark C. Evans, Prometheus Research</td>
+</tr>
+<tr><th class="docinfo-name">Date:</th>
+<td>November 3rd, 2010</td></tr>
+<tr class="field"><th class="docinfo-name">Location:</th><td class="field-body">PGWest 2010, San Francisco, CA</td>
+</tr>
+</tbody>
+</table>
+<p>HTSQL (&quot;Hyper Text Structured Query Language&quot;) is a web-based,
+high-level query language for relational databases.</p>
+
+</div>
+<div class="slide" id="today-s-talk">
+<h1>Today's Talk</h1>
+<div class="section" id="part-i">
+<h2>Part I</h2>
+<ul class="simple">
+<li>Why is querying so hard?</li>
+<li>Who am I?  What is HTSQL?</li>
+<li>HTSQL in 10 Minutes</li>
+<li>HTSQL Applications</li>
+<li>Q&amp;A</li>
+</ul>
+</div>
+<div class="section" id="part-ii">
+<h2>Part II</h2>
+<ul class="simple">
+<li>Walk-Through</li>
+<li>Final Q&amp;A</li>
+</ul>
+</div>
+</div>
+<div class="slide" id="quite-simply-i-only-need">
+<h1>Quite simply, I only need ...</h1>
+<p>Business user:</p>
+<pre class="literal-block">
+&quot;I *just* need a list of schools and the number
+of departments and programs for each?&quot;
+</pre>
+<p>Developer:</p>
+<pre class="literal-block">
+&quot;Got it! This one is easy -- give me 15 minutes.&quot;
+</pre>
+<p>Crickets:</p>
+<pre class="literal-block">
+*chrip*  *chirp*
+</pre>
+</div>
+<div class="slide" id="it-s-easy-no">
+<h1>it's easy, no?</h1>
+<p>A junior SQL developer might produce an <em>obvious</em> answer:</p>
+<pre class="literal-block">
+SELECT school.name,
+       count(department),
+       count(program)
+FROM school
+LEFT OUTER JOIN department
+ON (department.school = school.code)
+LEFT OUTER JOIN program
+ON (program.school = school.code)
+GROUP BY school.name
+</pre>
+<p>... that (luckily) also happens to be
+<em>obviously</em> <tt class="docutils literal">incorrect</tt>.</p>
+</div>
+<div class="slide" id="perhaps-it-s-not-so-trivial">
+<h1>Perhaps it's not so trivial?</h1>
+<pre class="literal-block">
+SELECT school.name,
+       coalesce(correlated_department.count,0),
+       coalesce(correlated_program.count,0),
+FROM school as school
+LEFT OUTER JOIN (
+   SELECT school, COUNT(1) as count
+   FROM department GROUP BY school
+) AS correlated_department
+ON (correlated_department.school = school.code)
+LEFT OUTER JOIN (
+   SELECT school, COUNT(1) as count
+   FROM program GROUP BY school
+) AS correlated_program
+ON (correlated_program.school = school.code)
+</pre>
+</div>
+<div class="slide" id="but-it-should-be-easy">
+<h1>But... it should be easy</h1>
+<p>This business user's request:</p>
+<pre class="literal-block">
+&quot;I *just* need a list of schools and the number
+of departments and programs for each?&quot;
+</pre>
+<p>really <em>is</em> trivial.  How about an <a class="reference external" href="http://demo.htsql.org/school{name,count(department),count(program)}">alternative</a> (<a class="reference external" href="http://demo.htsql.com/school{code,count(department),count(program)}/chart(title='%23%20Department%20%26%20Program%20by%20School')">plot</a>):</p>
+<pre class="literal-block">
+/school{name, count(department), count(program)}
+</pre>
+<p>This is HTSQL -- a new query language designed from
+the bottom up to be usable by accidental programmers.</p>
+</div>
+<div class="slide" id="who-am-i">
+<h1>Who am I?</h1>
+<ul class="simple">
+<li>I'm Clark Evans, principal at Prometheus Research, LLC.</li>
+<li>We serve medical researchers and informatics projects</li>
+<li>Our customers are smart, data-oriented -- not programmers</li>
+<li>Our primary HTSQL users are data analysts</li>
+<li>Kyrylo Simonov is the primary architect of HTSQL</li>
+</ul>
+</div>
+<div class="slide" id="what-is-htsql">
+<h1>What is HTSQL?</h1>
+<p>HTSQL is...</p>
+<img alt="img/what_is_it.png" class="align-right" src="img/what_is_it.png" />
+<ul class="simple">
+<li>a sophisticated graph-oriented query language</li>
+<li>a web access gateway for relational databases</li>
+<li>a extendible data processing/presentation framework</li>
+<li>a wicked smart tool for smart data heads</li>
+<li>90% of expressive power, 10% of the complexity</li>
+</ul>
+</div>
+<div class="slide" id="htsql-processing-model">
+<h1>HTSQL Processing Model</h1>
+<img alt="img/flow.jpeg" src="img/flow.jpeg" style="width: 70%;" />
+</div>
+<div class="slide" id="a-bit-more-technical">
+<h1>a bit more technical</h1>
+<ul class="simple">
+<li>on startup, introspects table relationships</li>
+<li>relationships are edges in a graph model</li>
+<li>processor translates graph requests into SQL</li>
+<li>handles complex filters, projections and aggregates</li>
+<li>extensive, pluggable support for post-processing</li>
+</ul>
+</div>
+<div class="slide" id="why-did-we-make-it">
+<h1>Why did we make it?</h1>
+<img alt="img/triangle.png" src="img/triangle.png" style="width: 70%;" />
+<p>We were dealing with users having extremely complex data -- traditional
+techniques for communication wasn't going to work.</p>
+</div>
+<div class="slide" id="a-shared-language">
+<h1>A Shared Language</h1>
+<img alt="img/sharing.jpg" src="img/sharing.jpg" style="width: 70%;" />
+<p>Our users, analysts, and developers now use a shared query language,
+while it's not a perfect understanding, it is much better.</p>
+</div>
+<div class="slide" id="evolution-of-htsql">
+<h1>Evolution of HTSQL</h1>
+<ul class="simple">
+<li>started as tool to complement XSLT (2004)</li>
+<li>internal analysts became primary users (2005)</li>
+<li>end users started to use HTSQL directly! (2006)</li>
+<li>complete redesign with lessons learned (2006)</li>
+<li>large deployments, more refinements (2007-2008)</li>
+<li>rewrite for speed, fixing semantic issues (2009)</li>
+<li>porting HTSQL to commercial databases (2010)</li>
+</ul>
+</div>
+<div class="slide" id="self-service-reporting">
+<h1>Self-Service Reporting</h1>
+<ul class="simple">
+<li>business analysts are 1st line of inquiry</li>
+<li>end-users sometimes tweak queries!</li>
+<li>dashboard developers use HTML/JQuery + HTSQL</li>
+<li>dba's help with data model changes, views</li>
+<li>system developers do custom commands, transforms</li>
+<li>easy to share (just email!) and format data</li>
+</ul>
+</div>
+<div class="slide" id="developer-productivity">
+<h1>Developer Productivity</h1>
+<ul class="simple">
+<li>queries are easy to grok, use and modify</li>
+<li>accidental join errors are impossible</li>
+<li>complex (impossible?) queries are feasible</li>
+<li>processing framework is extensible</li>
+<li>smaller inbox due to self-service for analysts</li>
+<li>expose VIEWs to HTSQL for 5% problems</li>
+</ul>
+</div>
+<div class="slide" id="htsql-in-10-minutes">
+<h1>HTSQL in 10 Minutes</h1>
+<p>Let's assume we have a data model, with schools,
+departments, programs and courses.  Here it is:</p>
+<pre class="literal-block">
+     +-------------+       +--------+
+/---m| DEPARTMENT  |&gt;-----o| SCHOOL |m----\
+|.   +-------------+  .    +--------+    .|
+| .                  .                  . |
+|   department   department    a school   |
+|   offers       may be part   has one or |
+|   courses      of school     programs   |
+|                                         |
+|    +-------------+       +---------+    |
+\---&lt;| COURSE      |       | PROGRAM |&gt;---/
+     +-------------+       +---------+
+</pre>
+</div>
+<div class="slide" id="selecting-data">
+<h1>#1 - Selecting Data</h1>
+<ul class="simple">
+<li>curly brackets are selectors</li>
+<li>postfix operators are sorting (+/-)</li>
+<li>use <tt class="docutils literal">as</tt> to rename columns for presentation</li>
+</ul>
+<p>An example (<a class="reference external" href="http://demo.htsql.org/course{department%20as%20'Dept%20Code'+,number%20as%20'No.',credits-,title}">E1</a>):</p>
+<pre class="literal-block">
+/course{department as 'Dept Code'+, number as 'No.',
+        credits-, title}
+</pre>
+</div>
+<div class="slide" id="linking-data">
+<h1>#2 - Linking Data</h1>
+<ul class="simple">
+<li>we use period to signify a link, or join</li>
+<li>multiple levels of linking is possible</li>
+<li>use curly brackets for nested links</li>
+<li>wildcard <tt class="docutils literal">*</tt> pulls all columns from a table</li>
+</ul>
+<p>An example (<a class="reference external" href="http://demo.htsql.org/course{department{school.name,name},*}">E2</a>):</p>
+<pre class="literal-block">
+/course{department{school.name, name}, * }
+</pre>
+</div>
+<div class="slide" id="filtering-data">
+<h1>#3 - Filtering Data</h1>
+<ul class="simple">
+<li>the question mark <tt class="docutils literal">?</tt> indicates filter</li>
+<li>single-quote literal strings</li>
+<li>full predicate algebra</li>
+<li>pluggable function support</li>
+</ul>
+<p>For example (<a class="reference external" href="http://demo.htsql.org/course{department,number,title}?credits&lt;3&amp;department.school='ns'">E3</a>):</p>
+<pre class="literal-block">
+/course{department, number, title}?
+   credits&lt;3&amp;department.school='ns'
+</pre>
+</div>
+<div class="slide" id="aggregating-data">
+<h1>#4 - Aggregating Data</h1>
+<ul class="simple">
+<li>one-to-many links are &quot;plural&quot;</li>
+<li>all plural links require aggregates</li>
+<li>nested aggregates are possible</li>
+</ul>
+<p>An example (<a class="reference external" href="http://demo.htsql.org/school{code,avg(department.count(course))}">E4</a>):</p>
+<pre class="literal-block">
+/school{code, avg(department.count(course))}
+</pre>
+</div>
+<div class="slide" id="projections-segments">
+<h1>#5 - Projections &amp; Segments</h1>
+<ul class="simple">
+<li>projections (<tt class="docutils literal">^</tt>) build new DISTINCT relations</li>
+<li>use <tt class="docutils literal">/</tt> to merge-sort correlated data sets</li>
+<li>currently 1.0 feature only (3-4 months for 2.0)</li>
+</ul>
+<p>An example (<a class="reference external" href="http://demo.htsql.com/program{degree^,count()}/student">E5</a>):</p>
+<pre class="literal-block">
+/program{degree^, count()}/student
+</pre>
+</div>
+<div class="slide" id="pluggable-formatters">
+<h1>#6 - Pluggable Formatters</h1>
+<ul class="simple">
+<li>use <tt class="docutils literal">/:format</tt> to specify formatter</li>
+<li>supports CSV, JSON, TXT, HTML</li>
+<li>XML, YAML and others (3-4 months for 2.0)</li>
+</ul>
+<p>An example (<a class="reference external" href="http://demo.htsql.org/student/:txt">E6</a>):</p>
+<pre class="literal-block">
+/school/:txt
+</pre>
+</div>
+<div class="slide" id="table-expressions">
+<h1>#7 - Table Expressions</h1>
+<ul class="simple">
+<li>use <tt class="docutils literal"><span class="pre">limit(#,</span> offset)</tt> to slice data</li>
+<li>use <tt class="docutils literal">sort()</tt> to sort a table expression</li>
+<li>other forms of table expressions possible</li>
+</ul>
+<p>An example (<a class="reference external" href="http://demo.htsql.org/department.sort(school).limit(10,5)">E7</a>):</p>
+<pre class="literal-block">
+/department.sort(school).limit(10,5)
+</pre>
+</div>
+<div class="slide" id="canned-htsql-queries">
+<h1>Canned <tt class="docutils literal">.htsql</tt> Queries</h1>
+<ul class="simple">
+<li>web-developers edit <tt class="docutils literal">.htsql</tt> file</li>
+<li>untrusted users use parameterized queries</li>
+<li>uses <tt class="docutils literal">$var</tt> for variable substitution</li>
+</ul>
+<p>This permits standard HTML forms:</p>
+<pre class="literal-block">
+&lt;form action=&quot;/canned.htsql&quot;&gt;
+  Enter an parameter value:
+  &lt;input type=&quot;text&quot; name=&quot;arg&quot; /&gt;
+&lt;/form&gt;
+</pre>
+</div>
+<div class="slide" id="jquery-data-binding">
+<h1>JQuery / Data Binding</h1>
+<ul class="simple">
+<li>no server-side programming</li>
+<li>automatic data binding for widgets</li>
+<li>easy dashboard constructions</li>
+</ul>
+<p>changes list box makes table auto-update:</p>
+<pre class="literal-block">
+&lt;select id=&quot;school&quot;
+   data-source=&quot;/school{code, name&quot;} /&gt;
+
+&lt;table id=&quot;department&quot;
+   data-source=&quot;/department?school=$school&quot; /&gt;
+</pre>
+</div>
+<div class="slide" id="why-htsql-2-0">
+<h1>Why HTSQL 2.0?</h1>
+<ul class="simple">
+<li>a full audit of the source and semantics</li>
+<li>our HTSQL 1.0 was not a &quot;community&quot; product</li>
+<li>internal catalog wasn't extensible</li>
+<li>inability to provide custom types/functions</li>
+<li>function behavior varied across databases</li>
+<li>core query implementation was non-streaming</li>
+<li>program API was 4+ years old and it showed</li>
+</ul>
+</div>
+<div class="slide" id="temporary-2-0-limitations">
+<h1>Temporary 2.0 Limitations</h1>
+<ul class="simple">
+<li>it is in <em>beta</em> and may change</li>
+<li>no custom commands, primitive formatters (yet!)</li>
+<li>no projections or segment queries</li>
+<li>only supports PostgreSQL</li>
+<li>query results are not streaming</li>
+<li>no way to override catalog configuration</li>
+</ul>
+</div>
+<div class="slide" id="systematic-considerations">
+<h1>Systematic Considerations</h1>
+<ul class="simple">
+<li>Currently transitioning from 1.0 to 2.0 (beta)</li>
+<li>URL syntax deviates from HTML FORM expectations</li>
+<li>License is BSD + Non-OSI &quot;No Commercial DB&quot;</li>
+<li>Implementation is in Python using Psycopg2.</li>
+</ul>
+</div>
+<div class="slide" id="how-do-i-get-it">
+<h1>How do I get it?</h1>
+<ul class="simple">
+<li>free of charge for PostgreSQL, MySQL, etc.</li>
+<li>open source code, open community</li>
+<li>commercial license for Oracle, Microsoft SQL, etc.</li>
+<li>we'd love to hear from you</li>
+</ul>
+<p>There are a few syntax changes (mostly with regard
+to commands) that we'll be changing in HTSQL 2.0.</p>
+</div>
+<div class="slide" id="q-a">
+<h1>Q&amp;A</h1>
+<p>Please visit our community site, <a class="reference external" href="http://htsql.org">http://htsql.org</a>, our commercial site
+<a class="reference external" href="http://htsql.com">http://htsql.com</a>, or chat with Clark or Kyrylo here in Ann Arbor.  We
+are best found at #htsql on freenode.  We have regular Python releases,
+with source code at <a class="reference external" href="http://bitbucket.org/prometheus/htsql">http://bitbucket.org/prometheus/htsql</a></p>
+<p>Generous support for HTSQL was provided by Prometheus Research, LLC and
+The Simons Foundation. This material is also based upon work supported
+by the National Science Foundation under Grant #0944460.</p>
+</div>
+</div>
+
+   <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-11527623-4']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+</body>
+</html>

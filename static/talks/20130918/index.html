@@ -1,0 +1,881 @@
+
+<!DOCTYPE html>
+
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ETL with HTSQL &mdash; HTSQL 2.4 Preview (ETL - Extract/Transform/Load) 2013.09.17 documentation</title>
+    
+    <link rel="stylesheet" href="_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/styles.css" type="text/css" />
+    <link rel="stylesheet" href="_static/single.css" type="text/css" />
+    
+    <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    
+
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/htsql.css" type="text/css" />
+    <link rel="top" title="HTSQL 2.4 Preview (ETL - Extract/Transform/Load) 2013.09.17 documentation" href="#" /> 
+  </head>
+  <body>
+
+<section
+   id="slide_container"
+   class='slides layout-regular'>
+
+
+  <article class="slide level-1" id="etl-with-htsql">
+<h1>ETL with HTSQL</h1>
+<p>By Clark Evans, PostgreSQL Open, Sept 18, 2013</p>
+<img alt="_images/rabbit-htsql.png" src="_images/rabbit-htsql.png" style="width: 400px;" />
+
+</article>
+<article class="slide level-2" id="verifiable-transformations">
+<h2>Verifiable Transformations</h2>
+<ul class="simple">
+<li>We help medical researchers with data management</li>
+<li>We have many clients with large data sets</li>
+<li>We have many analysts who work on those data sets</li>
+<li>We have lots and lots of data transformations</li>
+<li>We need transformations to be correct and auditable</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="simple-request">
+<h2>Simple Request</h2>
+<blockquote>
+<div>For a given $family in our research study, please
+update all <em>individual</em> records in the database so
+that a useful but reduced-resolution <tt class="docutils literal"><span class="pre">birth_yearmo</span></tt>
+variable preserves the year and month, but not the
+day, from the birth date found in that individual's
+<em>identifying detail</em>.</div></blockquote>
+
+</article>
+<article class="slide level-2" id="a-dumb-approach">
+<h2>A &quot;Dumb&quot; Approach</h2>
+<ol class="arabic simple">
+<li>Find the family in the system, navigate to the corresponding
+individual records, collecting the corresponding birth dates,
+and then jotting down the individual codes and dates.</li>
+<li>Calculate the truncated date as requested, preserving the
+indvidual's code so you know who gets what truncated date.</li>
+<li>Verify the computation, checking that the truncated dates
+look reasonable for the individuals in that family.</li>
+<li>Update each individual's record appropriately.</li>
+</ol>
+
+</article>
+<article class="slide level-2" id="sql-expert-approach">
+<h2>SQL Expert Approach!</h2>
+<div class="highlight-sql"><pre>UPDATE individual AS sr
+   SET birth_yearmo = (
+       SELECT TO_CHAR(pd.birth_date, 'YYYY-MM')
+         FROM private_detail pd
+        WHERE pd.individual_id = sr.id)
+ WHERE family_id = $family</pre>
+</div>
+<p>Computationally efficient.  Completely transparent
+if you're familiar with SQL and have a solid
+understanding of the database schema &amp; its contents.</p>
+
+</article>
+<article class="slide level-2" id="what-could-be-better">
+<h2>What Could Be Better?</h2>
+<div class="highlight-sql"><pre>WITH changes AS (
+   SELECT sr.id, TO_CHAR(pd.birth_date, 'YYYY-MM')
+                 AS birth_yearmo
+    FROM individual AS sr
+    JOIN private_detail pd
+      ON (sr.id = pd.individual_id)
+   WHERE sr.family_id = $family)
+UPDATE individual
+   SET birth_year_month = changes.birth_year_month
+ WHERE id = changes.id</pre>
+</div>
+<p>Perhaps a <tt class="docutils literal"><span class="pre">WITH</span></tt> ... <tt class="docutils literal"><span class="pre">UPDATE</span></tt> construct might permit
+a query to be tested so that you could select your output
+before applying it in an update.</p>
+
+</article>
+<article class="slide level-2" id="in-htsql-you-d-write">
+<h2>In HTSQL, you'd write</h2>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="o">/</span><span class="nb">family</span><span class="p">[$</span><span class="nb">family</span><span class="p">]</span>
+<span class="p">.</span><span class="nb">individual</span>
+<span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nb">birth_yearmo</span> <span class="o">:=</span>
+   <span class="nf">head</span><span class="p">(</span><span class="nf">string</span><span class="p">(</span><span class="nb">private_detail</span><span class="p">.</span><span class="nb">birth_date</span><span class="p">,</span><span class="m">7</span><span class="p">)))</span>
+<span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="nf">id</span><span class="p">(),</span> <span class="nb">birth_yearmo</span><span class="p">)</span>
+<span class="o">/</span><span class="p">:</span><span class="nf">update</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>Navigate to the selected family,</li>
+<li>navigate further to corresponding individuals,</li>
+<li>define the birth_yearmo calculation</li>
+<li>request the identity and the change you wish</li>
+<li>reflect the select as an update</li>
+</ol>
+
+</article>
+<article class="slide level-2" id="what-is-htsql">
+<h2>What is HTSQL?</h2>
+<ul class="build simple">
+<li><em>navigational</em> -- connecting data is intuitive</li>
+<li><em>composable</em> -- query construction is incremental</li>
+<li><em>modular</em>  -- properly modularize complex calculations</li>
+<li><em>portable</em> -- it also works with SQLite, MySQL, etc.</li>
+<li><em>embedable</em> -- use in Python, or on the web</li>
+<li><em>extendable</em> -- with an extensive plugin mechanism</li>
+<li><em>comprehensive</em> -- it is a non-leaky abstraction</li>
+<li><em>experimental</em> -- it's in active development...</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="htsql-background">
+<h2>HTSQL Background</h2>
+<ul class="build simple">
+<li>Early sketches about 10 years ago</li>
+<li>&quot;Accidental Programmer&quot; 7 years ago</li>
+<li>HTSQL 2.X work started ~3.5 years ago</li>
+<li>Language itself is quite stable</li>
+<li>Last year added &quot;rough draft&quot; ETL</li>
+<li>Currently refactoring implementation</li>
+<li>Central to our OSS RexDB (TM) Plaform</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="how-do-we-use-htsql">
+<h2>How do we use HTSQL?</h2>
+<ul class="build simple">
+<li>from Javascript Browser Apps</li>
+<li>from Python Server Processes</li>
+<li>for it for Data quality reports</li>
+<li>for sharing data sets with users</li>
+<li>for communicating requirements</li>
+<li>for ad-hoc querying (ala psql)</li>
+<li>for <em>data conversions</em> ala ETL</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="case-study-autism-speaks">
+<h2>Case Study : Autism Speaks</h2>
+<p>As of last year this time, Autism Speaks had
+three main internal database systems that we
+spent several months converting to RexDB.</p>
+<ul class="simple">
+<li>Lots of tables with hand-entered data</li>
+<li>Not a huge data set (in the 10's of GBs)</li>
+<li>Some data quality issues, mostly good</li>
+<li>Imperfect alignment with RexDB tables</li>
+</ul>
+<p>We received the data set as CSVs, loaded them
+into SQLite so we could cross-reference them,
+and merged results into a PostgreSQL database.</p>
+
+</article>
+<article class="slide level-2" id="autism-speaks-topology">
+<h2>Autism Speaks : Topology</h2>
+<p>The HTSQL &quot;ETL&quot; process built SQLite database
+from CSVs, executed queries and pushed data
+output over to PostgreSQL.</p>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="o">/</span><span class="nb">source_table</span> <span class="p">:</span><span class="nf">as</span>
+ <span class="p">.</span><span class="nf">define</span><span class="p">(....)</span>
+ <span class="p">.</span><span class="nf">select</span><span class="p">(....)</span>
+ <span class="p">.</span><span class="nf">where</span><span class="p">(....)</span>
+<span class="p">:</span><span class="nf">as</span> <span class="nb">destination_table</span>
+<span class="o">/</span><span class="p">:</span><span class="nf">from_sqlite</span>
+<span class="o">/</span><span class="p">:</span><span class="nf">merge</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="autism-speaks-how-bad">
+<h2>Autism Speaks, How Bad?</h2>
+<p>Roughly 15k lines of queries:</p>
+<ul class="simple">
+<li>1.5k of re-usable macros, 250 definitions</li>
+<li>30% of the lines were simply recodes</li>
+<li>a few &quot;de-normalizations&quot; ala pivots</li>
+<li>lots of date wrangling (SQLite lacks DATE)</li>
+<li>lots of custom business logic &amp; twists</li>
+</ul>
+<p>Written primarily by 3 data analysts on
+with dozens and dozens of client calls.</p>
+
+</article>
+<article class="slide level-2" id="typical-re-code-example">
+<h2>Typical Re-Code Example</h2>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="nf">race_code</span><span class="p">(</span><span class="nb">race</span><span class="p">)</span> <span class="o">:=</span>
+  <span class="nf">if</span><span class="p">(</span><span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;White&#39;</span> <span class="o">&amp;</span> <span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;American&#39;</span><span class="p">,</span> <span class="nf">null</span><span class="p">(),</span>
+     <span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;indian&#39;</span> <span class="o">&amp;</span> <span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;Alaskan&#39;</span><span class="p">,</span> <span class="s">&#39;american-indian-alaskan-native&#39;</span><span class="p">,</span>
+     <span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;black&#39;</span> <span class="o">&amp;</span> <span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;African&#39;</span><span class="p">,</span> <span class="s">&#39;black-or-african-american&#39;</span><span class="p">,</span>
+     <span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;asian&#39;</span><span class="p">,</span> <span class="s">&#39;asian&#39;</span><span class="p">,</span>
+     <span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;more than&#39;</span><span class="p">,</span> <span class="s">&#39;more-than-one-race&#39;</span><span class="p">,</span>
+     <span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;hawaiian&#39;</span><span class="p">,</span> <span class="s">&#39;native-hawaiian-or-other-pacific-islander&#39;</span><span class="p">,</span>
+     <span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;not asked&#39;</span><span class="p">,</span> <span class="s">&#39;not-asked&#39;</span><span class="p">,</span>
+     <span class="nb">race</span> <span class="o">~</span> <span class="s">&#39;unknown&#39;</span><span class="p">,</span> <span class="s">&#39;unknown&#39;</span><span class="p">,</span>
+     <span class="nb">race</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;White&#39;</span><span class="p">,</span> <span class="s">&#39;white&#39;</span><span class="p">},</span> <span class="s">&#39;white&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="typical-navigation">
+<h2>Typical Navigation</h2>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="o">/</span><span class="nb">individual</span>
+<span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nf">exists</span><span class="p">(</span><span class="nb">todo_raw</span><span class="p">)</span><span class="o">&amp;!</span><span class="nf">exists</span><span class="p">(</span>
+      <span class="nb">protocol_participation</span><span class="o">?</span><span class="nb">protocol</span><span class="o">=</span><span class="s">&#39;agre.unknown&#39;</span><span class="p">))</span>
+<span class="p">...</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="typical-query">
+<h2>Typical Query</h2>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="o">/</span><span class="nb">blood</span><span class="p">.</span><span class="nf">define</span> <span class="p">(</span>
+   <span class="p">$</span><span class="nb">individual</span> <span class="o">:=</span> <span class="nb">memberid</span> <span class="p">:</span><span class="nf">string</span><span class="p">,</span>
+   <span class="p">$</span><span class="nb">agrednaforaudit</span> <span class="o">:=</span> <span class="nf">make_date</span><span class="p">(</span><span class="nb">agrednaforaudit</span><span class="p">),</span>
+   <span class="p">$</span><span class="nb">blooddrawdate</span> <span class="o">:=</span> <span class="nf">if</span><span class="p">(</span><span class="nb">blooddrawdate</span><span class="o">=</span><span class="s">&#39;2/7/0207&#39;</span><span class="p">,</span><span class="nf">date</span><span class="p">(</span><span class="m">2007</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">7</span><span class="p">),</span>
+           <span class="nb">blooddrawdate</span><span class="o">=</span><span class="s">&#39;8/11/0207&#39;</span><span class="p">,</span><span class="nf">date</span><span class="p">(</span><span class="m">2007</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">11</span><span class="p">),</span>
+           <span class="nf">make_date</span><span class="p">(</span><span class="nb">blooddrawdate</span><span class="p">)),</span>
+<span class="p">){</span>
+   <span class="nb">individual</span><span class="o">:=</span> <span class="p">[$</span><span class="nb">individual</span><span class="p">],</span>
+   <span class="nb">blooddrawdate</span> <span class="o">:=</span> <span class="p">$</span><span class="nb">blooddrawdate</span><span class="p">,</span>
+   <span class="p">...</span>
+<span class="p">}</span>
+<span class="p">:</span><span class="nf">as</span> <span class="nb">blood</span>
+<span class="o">/</span><span class="p">:</span><span class="nf">source</span>
+<span class="o">/</span><span class="p">:</span><span class="nf">merge</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="autism-speaks-retrospective">
+<h2>Autism Speaks, Retrospective</h2>
+<ul class="simple">
+<li>HTSQL macros made errors easy to spot/fix</li>
+<li>HTSQL was solid with composition/navigation</li>
+<li>HTSQL isn't great with scalar manipulation</li>
+<li>Next time... load CSVs into PostgreSQL!</li>
+<li>We didn't need to rely upon core developers.</li>
+</ul>
+
+</article>
+<article class="slide level-2" id="navigation">
+<h2>Navigation</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.filter(campus='old').department" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/school.filter(campus='old').department" target="_new" class="htsql-link"><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">filter</span><span class="p">(</span><span class="nb">campus</span><span class="o">=</span><span class="s">&#39;old&#39;</span><span class="p">).</span><span class="nb">department</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="51%" />
+<col width="31%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">stdart</td>
+<td class="htsql-text-type">Studio Art</td>
+<td class="htsql-text-type">art</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">edpol</td>
+<td class="htsql-text-type">Educational Policy</td>
+<td class="htsql-text-type">edu</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">tched</td>
+<td class="htsql-text-type">Teacher Education</td>
+<td class="htsql-text-type">edu</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">arthis</td>
+<td class="htsql-text-type">Art History</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">eng</td>
+<td class="htsql-text-type">English</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">hist</td>
+<td class="htsql-text-type">History</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">lang</td>
+<td class="htsql-text-type">Foreign Languages</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">poli</td>
+<td class="htsql-text-type">Political Science</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">psych</td>
+<td class="htsql-text-type">Psychology</td>
+<td class="htsql-text-type">la</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">astro</td>
+<td class="htsql-text-type">Astronomy</td>
+<td class="htsql-text-type">ns</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</article>
+<article class="slide level-2" id="smart-aggregates">
+<h2>Smart Aggregates</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20count(program),%20count(department)}" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/school{code,%20count(program),%20count(department)}" target="_new" class="htsql-link"><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">program</span><span class="p">),</span> <span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)}</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="40%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">count(program)</th>
+<th class="head">count(department)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-integer-type">3</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">edu</td>
+<td class="htsql-integer-type">7</td>
+<td class="htsql-integer-type">2</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">eng</td>
+<td class="htsql-integer-type">8</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">la</td>
+<td class="htsql-integer-type">9</td>
+<td class="htsql-integer-type">6</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">mus</td>
+<td class="htsql-integer-type">0</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ns</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</article>
+<article class="slide level-2" id="nested-aggregates">
+<h2>Nested Aggregates</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school{code,%20max(department.count(course?credits&gt;3))}" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/school{code,%20max(department.count(course?credits&gt;3))}" target="_new" class="htsql-link"><span class="o">/</span><span class="nb">school</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nf">max</span><span class="p">(</span><span class="nb">department</span><span class="p">.</span><span class="nf">count</span><span class="p">(</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="m">3</span><span class="p">))}</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">max(department.count(course?credits&gt;3))</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">art</td>
+<td class="htsql-integer-type">12</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">bus</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">edu</td>
+<td class="htsql-integer-type">11</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">eng</td>
+<td class="htsql-integer-type">5</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">la</td>
+<td class="htsql-integer-type">10</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">mus</td>
+<td class="htsql-integer-type">0</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">ns</td>
+<td class="htsql-integer-type">9</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</article>
+<article class="slide level-2" id="records-lists">
+<h2>Records &amp; Lists</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/department{code,%20school{name},%20/course{no,%20title}%20}%20/:txt" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/department{code,%20school{name},%20/course{no,%20title}%20}%20/:txt" target="_new" class="htsql-link"><span class="o">/</span><span class="nb">department</span><span class="p">{</span><span class="nb">code</span><span class="p">,</span> <span class="nb">school</span><span class="p">{</span><span class="nb">name</span><span class="p">},</span> <span class="o">/</span><span class="nb">course</span><span class="p">{</span><span class="nb">no</span><span class="p">,</span> <span class="nb">title</span><span class="p">}</span> <span class="p">}</span> <span class="o">/</span><span class="p">:</span><span class="nf">txt</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre> | department                                                                      |
+ +--------+-------------------------------+----------------------------------------+
+ |        | school                        | course                                 |
+ |        +-------------------------------+-----+----------------------------------+
+ | code   | name                          | no  | title                            |
+-+--------+-------------------------------+-----+----------------------------------+-
+ | acc    | School of Business            | 100 | Practical Bookkeeping            |
+ :        :                               | 200 | Introduction to Accounting       |
+ :        :                               | 234 | Accounting Information Systems   |
+ :        :                               | 315 | Financial Accounting             |
+ :        :                               | 322 | Managerial Accounting            |
+ :        :                               | 420 | Individual Taxation              |
+ :        :                               | 426 | Corporate Taxation               |
+ :        :                               | 431 | Nonprofit Organization           |
+ :        :                               :     : Accounting                       :
+…
+</pre></div>
+</div>
+</div>
+</div>
+
+</article>
+<article class="slide level-2" id="projections">
+<h2>Projections</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/distinct(school{campus})%20{campus,%20count(school)}" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/distinct(school{campus})%20{campus,%20count(school)}" target="_new" class="htsql-link"><span class="o">/</span><span class="nf">distinct</span><span class="p">(</span><span class="nb">school</span><span class="p">{</span><span class="nb">campus</span><span class="p">})</span> <span class="p">{</span><span class="nb">campus</span><span class="p">,</span> <span class="nf">count</span><span class="p">(</span><span class="nb">school</span><span class="p">)}</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="32%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">campus</th>
+<th class="head">count(school)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">north</td>
+<td class="htsql-integer-type">1</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">old</td>
+<td class="htsql-integer-type">4</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">south</td>
+<td class="htsql-integer-type">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</article>
+<article class="slide level-2" id="sorting-first">
+<h2>Sorting &amp; First</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school.sort(count(department)-)%20:top" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/school.sort(count(department)-)%20:top" target="_new" class="htsql-link"><span class="o">/</span><span class="nb">school</span><span class="p">.</span><span class="nf">sort</span><span class="p">(</span><span class="nf">count</span><span class="p">(</span><span class="nb">department</span><span class="p">)</span><span class="o">-</span><span class="p">)</span> <span class="p">:</span><span class="nf">top</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="74%" />
+<col width="15%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">la</td>
+<td class="htsql-text-type">School of Arts and Humanities</td>
+<td class="htsql-text-type">old</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</article>
+<article class="slide level-2" id="products">
+<h2>Products</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course?credits&gt;avg(@course.credits)" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/course?credits&gt;avg(@course.credits)" target="_new" class="htsql-link"><span class="o">/</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="nf">avg</span><span class="p">(</span><span class="o">@</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">)</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="2%" />
+<col width="17%" />
+<col width="4%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">315</td>
+<td class="htsql-text-type">Financial Accounting</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Integration of the conceptual and computational aspects of asset, liability and stockholders equity accounting.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">511</td>
+<td class="htsql-text-type">Audit</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">This course considers legal, procedural and ethical aspects of audit in accounting.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">620</td>
+<td class="htsql-text-type">Accounting Internship</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Supervised internship in a business or nonprofit organization on an accounting position.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">102</td>
+<td class="htsql-text-type">History of Art Criticism I</td>
+<td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">An introductory survey course of world art from Prehistoric through late-Medieval art history.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">209</td>
+<td class="htsql-text-type">Antique Art: Greece and Rome</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Visual art of antique period with emphasis on Greek and Roman art.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</article>
+<article class="slide level-2" id="definitions">
+<h2>Definitions</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/define($avg_credits:=avg(course.credits))%0A.course?credits&gt;$avg_credits" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/define($avg_credits:=avg(course.credits))%0A.course?credits&gt;$avg_credits" target="_new" class="htsql-link"><span class="o">/</span><span class="nf">define</span><span class="p">($</span><span class="nb">avg_credits</span><span class="o">:=</span><span class="nf">avg</span><span class="p">(</span><span class="nb">course</span><span class="p">.</span><span class="nb">credits</span><span class="p">))</span>
+<span class="p">.</span><span class="nb">course</span><span class="o">?</span><span class="nb">credits</span><span class="o">&gt;</span><span class="p">$</span><span class="nb">avg_credits</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="2%" />
+<col width="17%" />
+<col width="4%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">department_code</th>
+<th class="head">no</th>
+<th class="head">title</th>
+<th class="head">credits</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">315</td>
+<td class="htsql-text-type">Financial Accounting</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">Integration of the conceptual and computational aspects of asset, liability and stockholders equity accounting.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">511</td>
+<td class="htsql-text-type">Audit</td>
+<td class="htsql-integer-type">5</td>
+<td class="htsql-text-type">This course considers legal, procedural and ethical aspects of audit in accounting.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">acc</td>
+<td class="htsql-integer-type">620</td>
+<td class="htsql-text-type">Accounting Internship</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Supervised internship in a business or nonprofit organization on an accounting position.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">102</td>
+<td class="htsql-text-type">History of Art Criticism I</td>
+<td class="htsql-integer-type">4</td>
+<td class="htsql-text-type">An introductory survey course of world art from Prehistoric through late-Medieval art history.</td>
+</tr>
+<tr class="row-even"><td class="htsql-text-type">arthis</td>
+<td class="htsql-integer-type">209</td>
+<td class="htsql-text-type">Antique Art: Greece and Rome</td>
+<td class="htsql-integer-type">6</td>
+<td class="htsql-text-type">Visual art of antique period with emphasis on Greek and Roman art.</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+<td class="htsql-integer-type htsql-cut"></td>
+<td class="htsql-text-type htsql-cut"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</article>
+<article class="slide level-2" id="attachments-or-ad-hoc-joins">
+<h2>Attachments or Ad-Hoc Joins</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/semester%0A%20%20.define(starting_students:=%0A%20%20%20%20%20(begin_date&lt;=student.start_date&amp;%0A%20%20%20%20%20%20end_date&gt;=student.start_date)@student)%0A%20%20{year,%20season,%20/starting_students{id,name}}%0A%20%20/:txt" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/semester%0A%20%20.define(starting_students:=%0A%20%20%20%20%20(begin_date&lt;=student.start_date&amp;%0A%20%20%20%20%20%20end_date&gt;=student.start_date)@student)%0A%20%20{year,%20season,%20/starting_students{id,name}}%0A%20%20/:txt" target="_new" class="htsql-link"><span class="o">/</span><span class="nb">semester</span>
+  <span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nb">starting_students</span><span class="o">:=</span>
+     <span class="p">(</span><span class="nb">begin_date</span><span class="o">&lt;=</span><span class="nb">student</span><span class="p">.</span><span class="nb">start_date</span><span class="o">&amp;</span>
+      <span class="nb">end_date</span><span class="o">&gt;=</span><span class="nb">student</span><span class="p">.</span><span class="nb">start_date</span><span class="p">)</span><span class="o">@</span><span class="nb">student</span><span class="p">)</span>
+  <span class="p">{</span><span class="nb">year</span><span class="p">,</span> <span class="nb">season</span><span class="p">,</span> <span class="o">/</span><span class="nb">starting_students</span><span class="p">{</span><span class="nb">id</span><span class="p">,</span><span class="nb">name</span><span class="p">}}</span>
+  <span class="o">/</span><span class="p">:</span><span class="nf">txt</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<div class="highlight-text"><div class="highlight"><pre> | semester                                     |
+ +------+--------+------------------------------+
+ |      |        | starting_students            |
+ |      |        +--------+---------------------+
+ | year | season | id     | name                |
+-+------+--------+--------+---------------------+-
+ | 2007 | fall   |   1001 | Linda Wright        |
+ :      :        |   1002 | Beth Thompson       |
+ :      :        |   1003 | Sheri Sanchez       |
+ :      :        |   1004 | John Stone          |
+…
+</pre></div>
+</div>
+</div>
+</div>
+
+</article>
+<article class="slide level-2" id="identity-and-locator">
+<h2>Identity and Locator</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/course[acc.200]%20{id(),%20title}" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/course[acc.200]%20{id(),%20title}" target="_new" class="htsql-link"><span class="o">/</span><span class="nb">course</span><span class="p">[</span><span class="s">acc</span><span class="p">.</span><span class="s">200</span><span class="p">]</span> <span class="p">{</span><span class="nf">id</span><span class="p">(),</span> <span class="nb">title</span><span class="p">}</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="79%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">id()</th>
+<th class="head">title</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-identity-type">acc.200</td>
+<td class="htsql-text-type">Introduction to Accounting</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/school[edu].department" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/school[edu].department" target="_new" class="htsql-link"><span class="o">/</span><span class="nb">school</span><span class="p">[</span><span class="s">edu</span><span class="p">].</span><span class="nb">department</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="53%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">school_code</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-text-type">edpol</td>
+<td class="htsql-text-type">Educational Policy</td>
+<td class="htsql-text-type">edu</td>
+</tr>
+<tr class="row-odd"><td class="htsql-text-type">tched</td>
+<td class="htsql-text-type">Teacher Education</td>
+<td class="htsql-text-type">edu</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</article>
+<article class="slide level-2" id="insert-one-record">
+<h2>Insert (One Record)</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{'med'%20:as%20code,%0A%20%20'School%20of%20Medicine'%20:as%20name,%0A%20%20'new'%20:as%20campus}%20:as%20school" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/{'med'%20:as%20code,%0A%20%20'School%20of%20Medicine'%20:as%20name,%0A%20%20'new'%20:as%20campus}%20:as%20school" target="_new" class="htsql-link"><span class="o">/</span><span class="p">{</span><span class="s">&#39;med&#39;</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">code</span><span class="p">,</span>
+  <span class="s">&#39;School of Medicine&#39;</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">name</span><span class="p">,</span>
+  <span class="s">&#39;new&#39;</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">campus</span><span class="p">}</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">school</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="64%" />
+<col width="21%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">code</th>
+<th class="head">name</th>
+<th class="head">campus</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-untyped-type">med</td>
+<td class="htsql-untyped-type">School of Medicine</td>
+<td class="htsql-untyped-type">new</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="o">/</span><span class="p">{</span><span class="s">&#39;med&#39;</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">code</span><span class="p">,</span>
+  <span class="s">&#39;School of Medicine&#39;</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">name</span><span class="p">,</span>
+  <span class="s">&#39;new&#39;</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">campus</span><span class="p">}</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">school</span>
+<span class="o">/</span><span class="p">:</span><span class="nf">insert</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="update-one-record">
+<h2>Update (One Record)</h2>
+<div class="htsql-io container">
+<div class="htsql-input container">
+<div class="highlight-htsql"><div class="highlight"><pre><a href="http://demo.htsql.org/{[acc.100],%203%20:as%20credits}%20:as%20course" target="_new" class="htsql-arrow-link"></a><a href="http://demo.htsql.org/{[acc.100],%203%20:as%20credits}%20:as%20course" target="_new" class="htsql-link"><span class="o">/</span><span class="p">{[</span><span class="s">acc</span><span class="p">.</span><span class="s">100</span><span class="p">],</span> <span class="m">3</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">credits</span><span class="p">}</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">course</span>
+</a></pre></div></div>
+</div>
+<div class="htsql-output container">
+<table border="1" class="docutils">
+<colgroup>
+<col width="56%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">[acc.100]</th>
+<th class="head">credits</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td class="htsql-identity-type">acc.100</td>
+<td class="htsql-integer-type">3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="o">/</span><span class="p">{[</span><span class="s">acc</span><span class="p">.</span><span class="s">100</span><span class="p">],</span> <span class="m">3</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">credits</span><span class="p">}</span> <span class="p">:</span><span class="nf">as</span> <span class="nb">course</span>
+<span class="o">/</span><span class="p">:</span><span class="nf">update</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="batch-update">
+<h2>Batch Update</h2>
+<div class="highlight-htsql"><div class="highlight"><pre><span class="o">/</span><span class="nb">family</span><span class="p">[$</span><span class="nb">family</span><span class="p">]</span>
+<span class="p">.</span><span class="nb">individual</span>
+<span class="p">.</span><span class="nf">define</span><span class="p">(</span><span class="nb">birth_yearmo</span> <span class="o">:=</span>
+   <span class="nf">head</span><span class="p">(</span><span class="nf">string</span><span class="p">(</span><span class="nb">private_detail</span><span class="p">.</span><span class="nb">birth_date</span><span class="p">,</span><span class="m">7</span><span class="p">)))</span>
+<span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="nf">id</span><span class="p">(),</span> <span class="nb">birth_yearmo</span><span class="p">)</span>
+<span class="o">/</span><span class="p">:</span><span class="nf">update</span>
+</pre></div>
+</div>
+
+</article>
+<article class="slide level-2" id="where-to">
+<h2>Where to?</h2>
+<ul class="simple">
+<li>HTSQL is building block of OSS RexDB</li>
+<li>We're focused on RexDB currently</li>
+<li>We're working on refactor of HTSQL</li>
+<li>HTSQL 1.4 may be finalized next year</li>
+</ul>
+<p>Thanks!</p>
+
+</article>
+
+
+</section>
+
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '2013.09.17',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/common.js"></script>
+    <script type="text/javascript" src="_static/slides.js"></script>
+    <script type="text/javascript" src="_static/sync.js"></script>
+    <script type="text/javascript" src="_static/controller.js"></script>
+    <script type="text/javascript" src="_static/init.js"></script>
+    
+  </body>
+</html>

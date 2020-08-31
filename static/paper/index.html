@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>HTSQL &mdash; Papers &amp; Specification</title>
+    <link rel="stylesheet" href="../css/main.css" type="text/css">
+    <link rel="shortcut icon" href="../img/favicon_htsql.ico"
+          type="image/x-icon" />
+  </head>
+
+  <body>
+
+    <div id="page">
+
+      <div id="header">
+        <a id="logo" href="/">
+               <img src="../img/logo.png" alt="HTSQL(tm)"
+                    style="margin: 10px 0px 0px 0px"></a>
+        <p id="tagline">
+          a database query language
+          <br>
+          <em>for the accidental programmer</em>
+        </p>
+        <div class="clearfix"></div>
+      </div>
+
+      <div id="content">
+        <h1>/papers</h1>
+        <p>
+          Articles and Papers
+        </p>
+        <ul>
+            <li>ICOMP'07 <a href="./icomp07_paper.pdf">(pdf)</a>
+             (historical)
+            </li>
+        </ul>
+      </div>
+
+      <div id="content">
+        <h1>/specification</h1>
+        <p>
+        Specification
+        </p>
+        <ul>
+            <li>August 2006 
+              <a href="./htsql_200608.html">(html)</a>
+              <a href="./htsql_200608.pdf">(pdf)</a>
+              (historical)
+            </li>
+        </ul>
+      </div>
+
+     </div>
+
+      <div id="footer">
+        Copyright 2010 <a
+            href="http://prometheusresearch.com/">Prometheus Research
+            LLC</a>.
+      </div>
+
+    </div>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-11527623-4']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+    <script type="text/javascript">
+
+      var re = RegExp("^http://htsql.org(/.+)$");
+      var as = document.getElementsByTagName('a');
+      for (var i = 0; i < as.length; i++) {
+        var a = as[i];
+        if (a.href && re.test(a.href)) {
+          a.onclick = function() { try { _gaq.push(['_trackPageview', re.exec(this.href)[1]]); } catch(err) {} };
+        }
+      }
+
+    </script>
+
+  </body>
+
+</html>

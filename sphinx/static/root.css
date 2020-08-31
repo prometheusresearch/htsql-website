@@ -1,0 +1,15 @@
+
+#a-database-query-language h1 {
+  display: none;
+}
+
+#overview h2 {
+  display: none;
+}
+
+#overview strong {
+  font-size: 110%;
+  font-variant: small-caps;
+  font-weight: bold;
+}
+

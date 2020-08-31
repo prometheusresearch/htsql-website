@@ -1,0 +1,987 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>HTSQL: Hyper Text Structured Query Language</title>
+<!-- metadata -->
+<meta name="generator" content="S5" />
+<meta name="version" content="S5 1.1" />
+<meta name="presdate" content="20050728" />
+<meta name="author" content="Eric A. Meyer" />
+<meta name="company" content="Complex Spiral Consulting" />
+<!-- configuration parameters -->
+<meta name="defaultView" content="slideshow" />
+<meta name="controlVis" content="hidden" />
+<!-- style sheet links -->
+<link rel="stylesheet" href="ui/default/slides.css" type="text/css" media="projection" id="slideProj" />
+<link rel="stylesheet" href="ui/default/outline.css" type="text/css" media="screen" id="outlineStyle" />
+<link rel="stylesheet" href="ui/default/print.css" type="text/css" media="print" id="slidePrint" />
+<link rel="stylesheet" href="ui/default/opera.css" type="text/css" media="projection" id="operaFix" />
+<!-- S5 JS -->
+<script src="ui/default/slides.js" type="text/javascript"></script>
+<!-- Custom styles -->
+<style type="text/css">
+  pre.sql { font-size: 75%; }
+  pre.txt { font-size: 65%; }
+  strong.htsql { font-size: 110%; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+<div id="controls"><!-- DO NOT EDIT --></div>
+<div id="currentSlide"><!-- DO NOT EDIT --></div>
+<div id="header"></div>
+<div id="footer">
+<h1>PGCon 2008</h1>
+<h2>HTSQL: Hyper Text Structured Query Language</h2>
+</div>
+
+</div>
+
+
+<div class="presentation">
+
+<div class="slide">
+<h1>HTSQL</h1>
+<h2>Hyper Text Structured Query Language</h2>
+<h6>Clark C. Evans, Kirill Simonov<br/>
+Prometheus Research LLC</h6>
+<p>
+  An approch to schema-driven URL-to-SQL translation
+  for rapid application development and custom
+  report writing.
+</p>
+</div>
+
+<div class="slide">
+<h1>What is HTSQL</h1>
+<p>
+HTSQL is a schema-driven URL-to-SQL translator and
+query processing environment
+</p>
+<br/>
+<pre class="txt">
+/----------------\  HTTP Request    /------------------------\ 
+| Web Browser    | ---------------> --.                      |
+|  * Direct URLs |   URI, headers,  |  \      .--> Generated |
+|  * HTML / XSLT |   post/put body  |   .    /     SQL Query |
+|  * Javascript  |                  |   HTSQL         |      |
+| GUI Front End  |  HTTP Response   |   /  ^          v      |
+|  * Java / C#   | &lt;--------------  &lt;--.    \       DATABASE |
+|  * Python, etc |   status code,   |    Query        |      |
+| Excel /w Macro |   headers, and   |    Results &lt;..../      |
+| Command Line   |   formatted      |                        |
+\----------------/   results        \------------------------/  
+</pre>
+</div>
+
+<div class="slide">
+    <h2>HTSQL & XSLT</h2>
+    <h6 style="margin-top: 0px; margin-bottom: 3px;">/organization{*, division_of.*}/*project/*participation{*, person.*}.xml(stylesheet='/-/organization-project-person.xsl')</h6>
+    <img src="img/2008_3.png" height="400">
+</div>
+
+<div class="slide">
+<h1>Goals for HTSQL</h1>
+<ul>
+  <li>Remote access to PostgreSQL</li>
+  <li>Parsimonious, Consistent Syntax</li>
+  <li>Users are Casual Software Developers</li>
+  <li>Satisfy <i>most</i> Query Needs</li>
+  <li>Use HTTP for Transport</li>
+  <li>Leverage Information Schema</li>
+  <li>Work Smoothly with XSLT, AJAX</li>
+  <li>Be RESTFUL and HTML friendly</li>
+</ul>
+</div>
+
+<div class="slide">
+<h1>Walk Through</h1>
+<ol>
+  <li>Basic Queries</li>
+  <li>Selectors and Functions</li>
+  <li>Specifiers and Locators</li>
+  <li>Aggregates and Projections</li>
+  <li>Commands, Formatters</li>
+  <li>Path and Forest Queries</li>
+</ol>
+<h2>Wrap-Up</h2>
+<ul>
+  <li>Adoption and Experience</li>
+  <li>Towards 2 1/2 Tier?</li>
+  <li>Questions &amp; Answers</li>
+</ul>
+</div>
+
+
+
+
+<!-- AUTHOMATICALLY GENERATED OUTPUT -->
+
+
+<div class="slide">
+<pre class="txt">
++-------------------+              +-------------------+
+| OP.PROJECT        |              | OP.ORGANIZATION   |
++-------------------+              +-------------------+
+| prj_id         PK |--\       /---| org_id         PK |---\ ---\
+| name        NN,UK |  |       |   | name           NN |   |    |
+| status      NN,CK |  |       |   | is_active         |   |    |
+| client         FK |&gt;---------/   | division_of    FK |&gt;--/    |
+| start_date        |  |    .      +-------------------+  .     |
+| description       |  |     .                           .      |
++-------------------+  |   project is        an organization    |
+                      .|   related to        may be a division  |
+  a project has zero . |   at most one       of a larger        |
+  or more people who   |   organization      organization       |
+  participate in it    |                                        |
+                       |     +-------------------+              |
++-------------------+  |     | OP.PERSON         |              |
+| OP.PARTICIPATION  |  |     +-------------------+              |
++-------------------+  |     | org_id     FK,PK1 |&gt;-------------/
+| project    FK,PK1 |&gt;-/     | nickname   NN,PK2 |    .
+| _ppl_seq   FK,PK2 |&gt;-------| _ppl_seq    NN,UK |   .
+| billing_rate      |   .    | full_name      NN |  each person
++-------------------+  .     | email          UK |  is part of
+                      .      +-------------------+  exactly one
+  a person participates in                          organization
+  zero or more projects
+                       .
+PK - Primary Key      FK - Foreign Key          NN - Not NULL
+UK - Unique Key       CK - Check Constraint
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/organization</strong></p>
+<pre class="sql">
+SELECT * FROM op.organization
+ORDER BY org_id;
+</pre>
+<pre class="txt">
+op:organization
+---------------------------------------------------------------
+org_id      | name                    | is_active | division_of
+------------+-------------------------+-----------+------------
+acorn       | Acorn Architecture      | true      |
+lake-apts   | Lake Shore Apartments   | true      | lakeside
+lake-carmen | Lake Carmen Towers      | true      | lakeside
+lakeside    | Lake Side Partners, LLC |           |
+meyers      | Meyers Construction     | true      |
+meyers_elec | Meyers Electric         | false     | meyers
+smith       | Rudgen, Taupe, &amp; Smith  | false     |
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person?nickname='jack'</strong></p>
+<pre class="sql">
+SELECT * FROM op.person
+WHERE nickname = 'jack'
+ORDER BY org_id,  nickname
+</pre>
+<pre class="txt">
+op:person
+------------------------------------------------------------
+org_id | nickname | full_name      | email
+-------+----------+----------------+------------------------
+meyers | jack     | Jack C. Meyers | jack.meyers@example.com
+smith  | jack     | Jack Taupe     | jack.taupe@example.com
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project?status!='abandoned'&amp;name~'roof'</strong></p>
+<pre class="sql">
+SELECT * FROM op.project
+WHERE status != 'abandoned'
+  AND LOWER(name) LIKE '%roof%'
+ORDER BY prj_id;
+</pre>
+<pre class="txt">
+project
+-------------------------------------------------------+ ...
+prj_id | name                            | status      |
+-------+---------------------------------+-------------+ ...
+la-334 | Siding / roof at 334 Ocean Blvd | completed   |
+lt-802 | Toaster Re-Do and Roof Leak     | in-progress |
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project?status='planned'|status='in-progress'</strong></p>
+<pre class="sql">
+SELECT * FROM op.project
+ WHERE status = 'planned'
+    OR status = 'in-progress'
+ORDER BY proj_id
+</pre>
+<pre class="txt">
+project
+--------------------------------------------------+ ...
+prj_id   | status      | client      | start_date |
+---------+-------------+-------------+------------+ ...
+lt-711   | planned     | lake-carmen |            |
+lt-802   | in-progress | lake-carmen | 2006-11-23 |
+overhead | in-progress |             | 2003-06-12 |
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/organization?is_active&amp;division_of!=='meyers'</strong></p>
+<pre class="sql">
+SELECT * FROM op.organization
+WHERE is_active
+  AND division_of IS DISTINCT FROM 'meyers'
+ORDER BY org_id;
+</pre>
+<pre class="txt">
+organization
+------------------------------------------------------------
+org_id      | name                | is_active | division_of
+------------+---------------------+-----------+-------------
+acorn       | Acorn Architecture  | true      |
+lake-carmen | Lake Carmen Towers  | true      | lakeside
+meyers      | Meyers Construction | true      |
+shoe        | Rwyler's Shoes      | true      |
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project?client-&gt;!start_date</strong></p>
+<pre class="sql">
+SELECT * FROM op.project
+ WHERE NOT (client IS NOT NULL AND client != '')
+    OR (NOT (start_date IS NOT NULL))
+ORDER BY prj_id
+</pre>
+<pre class="txt">
+project
+-------------------------------------------------------------
+prj_id   | client      | start_date | name
+---------+-------------+------------+------------------------
+lt-711   | lake-carmen |            | Updating Fire Escape
+overhead |             | 2003-06-12 | General Management Work
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project?(start_date&lt;'2004-04-01'|start_date&gt;'2006-09-01')&amp;client</strong></p>
+<pre class="sql">
+SELECT * FROM op.project
+ WHERE (start_date &lt; '2004-04-01'
+     OR start_date &gt; '2006-09-01')
+   AND (client IS NOT NULL AND client != '')
+ORDER BY prj_id
+</pre>
+<pre class="txt">
+project
+-----------------------------------------------
+prj_id | start_date | client      | status
+-------+------------+-------------+------------
+la-102 | 2004-03-27 | lake-apts   | completed
+lt-802 | 2006-11-23 | lake-carmen | in-progress
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project{status+,start_date-,name}</strong></p>
+<pre class="sql">
+SELECT status, start_date, name
+FROM op.project
+ORDER BY status ASC, start_date DESC, prj_id ASC
+</pre>
+<pre class="txt">
+project
+-----------------------------------------------------------
+status      | start_date | name
+------------+------------+---------------------------------
+abandoned   | 2006-08-03 | Smith Associate Window and Roof
+completed   | 2005-08-09 | Smith Entry and Waiting Room
+completed   | 2005-02-03 | Smith Balcony Expansion
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/{today(),null(),true(),false(),pi()}</strong></p>
+<pre class="sql">
+SELECT CURRENT_DATE, NULL, TRUE, FALSE, PI()
+</pre>
+<pre class="txt">
+------------------------------------------------------
+today()    | null() | true() | false() | pi()
+------------+--------+--------+---------+-------------
+2008-05-22 |        | true   | false   | 3.14159265359
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project{prj_id,string(start_date)[-5:].replace('-','/')}</strong></p>
+<pre class="sql">
+SELECT prj_id,
+  REPLACE(
+    SUBSTRING(CAST(start_date AS TEXT)
+      FROM (((- 5) + (
+         CASE WHEN (- 5) &lt; 0
+         THEN CHARACTER_LENGTH(CAST(start_date AS TEXT))
+         ELSE 0 END))+1)
+  ), '-', '/')
+FROM op.project
+ORDER BY prj_id
+</pre>
+<pre class="txt">
+project                                                |
+-------------------------------------------------------+-
+prj_id   | string(start_date)[(-5):].replace('-', '/') |
+---------+---------------------------------------------+-
+la-102   | 03/27                                       |
+la-334   | 04/20                                       |
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project{prj_id,recode(status,'completed','done')}</strong></p>
+<pre class="sql">
+SELECT prj_id,
+       (CASE status
+        WHEN 'completed' THEN 'done'
+        ELSE status END)
+FROM op.project
+ORDER BY prj_id
+</pre>
+<pre class="txt">
+project                                          |
+-------------------------------------------------+-
+prj_id     | recode(status, 'completed', 'done') |
+-----------+-------------------------------------+-
+Bowl-Shoes | planned                             |
+la-102     | done                                |
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project{prj_id,start_date+time('03:30')+timedelta(365*4,1,5)}</strong></p>
+<pre class="sql">
+SELECT prj_id, ((start_date + TIME '03:30:00')+
+      CAST(( CAST(365 * 4 AS TEXT) || 'D '
+          || LPAD(CAST(1 AS TEXT), 2, '0') || ':'
+          || LPAD(CAST(5 AS TEXT), 2, '0') || ':'
+          || '00'
+      ) AS INTERVAL))
+FROM op.project
+ORDER BY prj_id
+</pre>
+<pre class="txt">
+project
+---------------------------------------------------------------
+prj_id  | ((start_date+time('03:30'))+timedelta((365*4), 1, 5))
+--------+------------------------------------------------------
+la-102  | 2008-03-26 04:35:00
+la-334  | 2008-04-19 04:35:00
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/participation{floor(billing_rate div 2),(billing_rate mod 3)}</strong></p>
+<pre class="sql">
+SELECT FLOOR(billing_rate / 3),
+       billing_rate % 3
+  FROM op.participation
+ORDER BY ...
+</pre>
+<pre class="txt">
+participation                                      |
+---------------------------------------------------+-
+floor((billing_rate div 3)) | (billing_rate mod 3) |
+----------------------------+----------------------+-
+18                          | 1.00                 |
+23                          | 0.00                 |
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project?client.is_active</strong></p>
+<pre class="sql">
+SELECT p.* FROM op.project AS p
+  LEFT OUTER JOIN op.organization AS o
+    ON (p.client = o.org_id)
+ WHERE o.is_active IS TRUE
+ORDER BY prj_id
+</pre>
+<pre class="txt">
+project
+------------------------------------------------- ...
+prj_id | status      | client      | start_date |
+-------+-------------+-------------+------------+ ...
+lt-711 | planned     | lake-carmen |            |
+lt-802 | in-progress | lake-carmen | 2006-11-23 |
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/participation?person.organization.is_active</strong></p>
+<pre class="sql">
+SELECT x.* FROM op.participation AS x
+  LEFT OUTER JOIN op.person AS p
+    ON (x._ppl_seq = p._ppl_seq)
+  LEFT OUTER JOIN op.organization AS o
+    ON (p.org_id = o.org_id)
+ WHERE o.is_active IS TRUE
+ORDER BY t.project, o.org_id, p.nickname
+</pre>
+<pre class="txt">
+participation
+-------------------------------------
+project  | person      | billing_rate
+---------+-------------+-------------
+la-102   | meyers.hill | 55.00
+la-102   | meyers.jack | 69.00
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person?organization.division_of.org_id='lakeside'</strong></p>
+<pre class="sql">
+SELECT p.* FROM op.person AS p
+  LEFT OUTER JOIN op.organization AS o1
+    ON (p.org_id = o1.org_id)
+  LEFT OUTER JOIN op.organization AS o2
+    ON (o1.org_id = o2.org_id)
+ WHERE o2.is_active IS TRUE
+ ORDER BY p.org_id, p.nickname
+</pre>
+<pre class="txt">
+person
+---------------------------------------------+-
+org_id    | nickname | full_name     | email |
+----------+----------+---------------+-------+-
+lake-apts | tom      | Tommy O'Mally |       |
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project{*,client.*}</strong></p>
+<pre class="sql">
+SELECT p.*,
+       o.org_id AS "organization.empl_code",
+       e.name AS "organization.name",
+       e.is_active AS "organization.is_active",
+       e.division_of AS "organization.division_of"
+  FROM op.project AS p
+       LEFT OUTER JOIN op.organization AS o
+         ON (o.org_id = p.client)
+ORDER BY p.prj_id
+</pre>
+<pre class="txt">
+project
+------------------------ . --------------------- ...
+prj_id   | status      | . |organization.org_id  ...
+---------+-------------+ . +-------------------- ...
+la-102   | completed   | . |lake-apts            ...
+la-334   | completed   | . |lake-apts            ...
+lt-711   | planned     | . |lake-carmen          ...
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project{prj_id,status,client{name,is_active}}</strong></p>
+<pre class="sql">
+SELECT p.prj_id, p.status,
+       o.name AS "client.name",
+       o.is_active AS "client.is_active"
+  FROM op.project AS p
+       LEFT OUTER JOIN op.organization AS o
+         ON (p.client = o.org_id)
+ORDER BY p.prj_id
+</pre>
+<pre class="txt">
+project
+---------------------------------------------------------------
+prj_id   | status      | client.name        | client.is_active
+---------+-------------+--------------------+------------------
+lt-711   | planned     | Lake Carmen Towers | true
+lt-802   | in-progress | Lake Carmen Towers | true
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/organization?project.status='completed'</strong></p>
+<pre class="sql">
+SELECT o.* FROM op.organization AS o
+ WHERE EXISTS
+   (SELECT * FROM op.project AS p
+     WHERE p.client = o.org_id
+       AND p.status = 'completed')
+ORDER BY e.org_id
+</pre>
+<pre class="txt">
+organization
+------------------------------------------------------------
+org_id    | name                   | is_active | division_of
+----------+------------------------+-----------+------------
+lake-apts | Lake Shore Apartments  | false     | lakeside
+smith     | Rudgen, Taupe, &amp; Smith | false     |
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/organization[meyers]</strong></p>
+<pre class="sql">
+SELECT * FROM op.organization
+WHERE org_id = 'meyers'
+ORDER BY org_id
+</pre>
+<pre class="txt">
+proj_id  | name               | description
+---------+--------------------+-----------------------------
+MEYERS   | Meyers' Residence  | insulation and winterizing
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person[meyers.jim]</strong></p>
+<pre class="sql">
+SELECT p.* FROM op.person AS p
+ WHERE p.org_id = 'meyers'
+   AND p.nickname='jim'
+ ORDER BY p.org_id, p.nickname
+</pre>
+<pre class="txt">
+person
+-------------------------------------------------------
+org_id | nickname | full_name  | email
+-------+----------+------------+-----------------------
+meyers | jim      | Jim Meyers | jim.meyers@example.com
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person[meyers.jim,meyers.hill]</strong></p>
+<pre class="sql">
+SELECT p.* FROM op.person AS p
+ WHERE p.org_id = 'meyers'
+   AND p.nickname IN ('jim','hill')
+ORDER BY p.org_id, p.nickname
+</pre>
+<pre class="txt">
+person
+--------------------------------------------------------------+-
+org_id | nickname | full_name        | email                  |
+-------+----------+------------------+------------------------+-
+meyers | hill     | Mark Thomas Hill | mark.hill@example.com  |
+meyers | jim      | Jim Meyers       | jim.meyers@example.com |
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person[meyers.*]</strong></p>
+<pre class="sql">
+SELECT p.* FROM op.person AS p
+ WHERE p.org_id = 'meyers'
+ORDER BY p.org_id, p.nickname
+</pre>
+<pre class="txt">
+person                                                         |
+---------------------------------------------------------------+-
+org_id | nickname | full_name        | email                   |
+-------+----------+------------------+-------------------------+-
+meyers | hill     | Mark Thomas Hill | mark.hill@example.com   |
+meyers | jack     | Jack C. Meyers   | jack.meyers@example.com |
+meyers | jim      | Jim Meyers       | jim.meyers@example.com  |
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person{id(),*}</strong></p>
+<pre class="sql">
+SELECT (p.org_id || '.' || p.nickname) AS "id()", p.*
+  FROM op.person AS p
+ORDER BY p.org_id, p.nickname
+</pre>
+<pre class="txt">
+person
+--------------------------------------------------------- ...
+id()          | org_id    | nickname | full_name        |
+--------------+-----------+----------+------------------+ ...
+acorn.hideo   | acorn     | hideo    | WATANABE Hideo   |
+lake-apts.tom | lake-apts | tom      | Tommy O'Mally    |
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/participation{id(),project,_ppl_seq,person.id()}</strong></p>
+<pre class="sql">
+SELECT (x.project || '.' ||
+        (p.org_id || '.' || p.nickname)) AS "id()",
+       x.project, x._ppl_seq,
+       (p.org_id || '.' || p.nickname) AS "person.id()"
+  FROM op.participation AS x
+    LEFT OUTER JOIN ON op.person AS p
+      ON (p._ppl_seq = x._ppl_seq)
+ORDER BY x.project, p.org_id, p.nickname
+</pre>
+<pre class="txt">
+participation
+------------------------------------------------------------
+id()                   | project  | _ppl_seq | person.id()
+-----------------------+----------+----------+--------------
+la-102.(lake-apts.tom) | la-102   | 33       | lake-apts.tom
+la-102.(lakeside.dave) | la-102   | 31       | lakeside.dave
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/organization{org_id,count(person)}</strong></p>
+<pre class="sql">
+SELECT o.org_id, COUNT(p)
+FROM op.organization AS o
+LEFT OUTER JOIN op.person AS p ON (o.org_id = p.org_id)
+GROUP BY o.org_id
+ORDER BY o.org_id;
+</pre>
+<pre class="txt">
+organization
+---------------------------
+org_id      | count(person)
+------------+--------------
+acorn       | 1
+attic       | 2
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/organization{org_id,count(person), max(project.participation.billing_rate)}</strong></p>
+<pre class="sql">
+SELECT o.org_id, p_branch.c, pr_branch.m
+FROM op.organization o
+LEFT OUTER JOIN
+    (SELECT o.org_id AS pk, COUNT(p) AS c
+     FROM op.organization o
+     LEFT OUTER JOIN op.person p ON (o.org_id = p.org_id)
+     GROUP BY o.org_id) AS p_branch
+  ON (o.org_id = p_branch.pk)
+LEFT OUTER JOIN
+    (SELECT o.org_id AS pk, MAX(pt.billing_rate) AS m
+     FROM op.organization o
+     LEFT OUTER JOIN op.project pr
+          ON (o.org_id = pr.client)
+     LEFT OUTER JOIN op.participation pt
+          ON (pr.prj_id = pt.project)
+     GROUP BY o.org_id) AS pr_branch
+  ON (o.org_id = pr_branch.pk)
+ORDER BY o.org_id;
+</pre>
+<pre class="txt">
+organization
+----------------------------------------------------------- ...
+org_id      | count(person) | max(project.participation.bil ...
+------------+---------------+------------------------------ ...
+acorn       | 1             |
+attic       | 2             | 23.50
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person{org_id^,count()}</strong></p>
+<pre class="sql">
+SELECT p.org_id, COUNT(*)
+FROM op.person AS p
+GROUP BY p.org_id
+ORDER BY p.org_id;
+</pre>
+<pre class="txt">
+person
+-------------------
+org_id    | count()
+----------+--------
+acorn     | 1
+attic     | 2
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person{org_id^,count()}</strong></p>
+<pre class="sql">
+SELECT p.org_id, COUNT(*)
+FROM op.person AS p
+GROUP BY p.org_id
+ORDER BY p.org_id;
+</pre>
+<pre class="txt">
+person
+-------------------
+org_id    | count()
+----------+--------
+acorn     | 1
+attic     | 2
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/organization{org_id,count(person)}?person.nickname='jack'</strong></p>
+<pre class="sql">
+SELECT o.org_id, COUNT(p)
+FROM op.organization o
+LEFT OUTER JOIN op.person p ON (o.org_id = p.org_id)
+GROUP BY o.org_id
+HAVING BOOL_OR(p.nickname = 'jack')
+</pre>
+<pre class="txt">
+organization           |
+-----------------------+-
+org_id | count(person) |
+-------+---------------+-
+meyers | 6             |
+smith  | 3             |
+...
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person{org_id^,count()}?nickname='jack'</strong></p>
+<pre class="sql">
+SELECT p.org_id, COUNT(*)
+FROM op.person p
+WHERE p.nickname = 'jack'
+GROUP BY p.org_id
+ORDER BY p.org_id;
+</pre>
+<pre class="unknown">
+(revise in new version)
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person/select(offset=3,limit=2)</strong></p>
+<pre class="sql">
+SELECT * FROM op.person
+ORDER BY org_id, nickname
+OFFSET 3 LIMIT 2               /* PostgreSQL Syntax */
+</pre>
+<pre class="txt">
+person
+------------------------------------------------------------------+-
+org_id   | nickname | full_name        | email                    |
+---------+----------+------------------+--------------------------+-
+lakeside | dave     | David Jones      | david.joines@example.com |
+meyers   | hill     | Mark Thomas Hill | mark.hill@example.com    |
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/project/insert()?prj_id:='albe'&amp;name:='Alberca'</strong></p>
+<pre class="sql">
+INSERT INTO op.project (proj_id, name)
+  VALUES ('albe','Alberca');
+</pre>
+<pre class="unknown">
+204 No Content
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/op:project[albe]{id(),name}/update()?description:='Leaky Pool'</strong></p>
+<pre class="sql">
+UPDATE op.project
+   SET description = 'Leaky Pool'
+ WHERE prj_id = 'albe'
+RETURNING prj_id, name
+</pre>
+<pre class="txt">
+project
+----------------
+id()   | name
+-------+--------
+albe   | Alberca
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/op:project/delete(expect=3)?description~'pool</strong></p>
+<pre class="sql">
+DELETE FROM op.project
+ WHERE LOWER(description) LIKE '%pool%';
+</pre>
+<pre class="unknown">
+204 No Content
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/op:project[able]/merge()?name:='SouthWest%20Alberca</strong></p>
+<pre class="sql">
+MERGE INTO op.project
+USING op.project ON prj_id = 'albe'
+WHEN MATCHED THEN UPDATE
+  SET name = 'SouthWest Alberca'
+WHEN NOT MATCHED THEN INSERT
+  (prj_id, name) VALUES
+  ('albe', 'SouthWest Alberca');
+</pre>
+<pre class="unknown">
+204 No Content
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/person[smith.*].xml</strong></p>
+<pre class="unknown">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;htsql:result xmlns:htsql="http://htsql.org/2006/"&gt;
+  &lt;person org_id="smith" nickname="jack"
+          full_name="Jack Taupe"
+          email="jack.taupe@example.com" /&gt;
+  &lt;person org_id="smith" nickname="jose"
+          full_name="José N. Marteñes"
+          email="jose.martenes@example.com" /&gt;
+  &lt;person org_id="smith" nickname="maggy"
+          full_name="Margret N. Smith"
+          email="" /&gt;
+&lt;/htsql:result&gt;
+</pre>
+</div>
+
+
+<div class="slide">
+<p><strong class="htsql">/organization{name}?org_id~'lake'
+/project{name,status}.xml</strong></p>
+<pre class="unknown">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;htsql:result xmlns:htsql="http://htsql.org/2006/"&gt;
+  &lt;organization name="Lake Shore Apartments"&gt;
+    &lt;project name="Kitchen Remodel at 102 N. Ocean View"
+             status="completed" /&gt;
+    &lt;project name="Siding / roof at 334 Ocean Blvd"
+             status="completed" /&gt;
+  &lt;/organization&gt;
+  &lt;organization name="Lake Carmen Towers"&gt;
+    &lt;project name="Updating Fire Escape"
+             status="planned" /&gt;
+    &lt;project name="Toaster Re-Do and Roof Leak"
+             status="in-progress" /&gt;
+  &lt;/organization&gt;
+  &lt;organization name="Lake Side Partners, LLC" /&gt;
+&lt;/htsql:result&gt;
+</pre>
+</div>
+
+<!-- END OF AUTHOMATICALLY GENERATED OUTPUT -->
+
+
+<div class="slide">
+<h1>Experience Report</h1>
+<ol>
+  <li>Rapid, Schema-Driven Development</li>
+  <li>Custom Client XSLT Reports</li>
+  <li>Simple HTML-based Wizards</li>
+  <li>3rd Party Reporting, Data Extraction</li>
+  <li>Success /w Stored Procedures</li>
+  <li>Splitting of Complexity</li>
+</ol>
+</div>
+
+<div class="slide">
+    <h2>DBGUI</h2>
+    <img src="img/2008_1.png" height="400">
+</div>
+
+<div class="slide">
+<h1>Towards 2 1/2 Tier</h1>
+<ol>
+  <li>90's RAD - Visual Basic &amp; Oracle</li>
+  <li>Business Logic in Client</li>
+  <li>Emergence of 3-Tier Architecture</li>
+  <li>Stable, Complex Systems</li>
+  <li>Yet, Prevalence of PHP+MySQL</li>
+  <li>Reporting vs Process</li>
+</ol>
+</div>
+
+<div class="slide">
+<h1>How to Contact Us</h1>
+<ol>
+  <li>http://htsql.org</li>
+  <li>#htsql on freenode.net</li>
+  <li>info@clarkevans.com</li>
+</ol>
+<h2>Special Thanks</h2>
+<ul>
+  <li>Simons Foundation</li>
+  <li>PostgreSQL Community</li>
+  <li>Python Community</li>
+</ul>
+</div>
+</div>
+
+   <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-11527623-4']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+</body>
+</html>

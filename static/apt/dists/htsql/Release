@@ -1,0 +1,40 @@
+Origin: Prometheus Research, LLC
+Label: HTSQL Releases Repository
+Suite: unstable
+Codename: htsql
+Date: Thu, 15 Dec 2011 18:38:34 UTC
+Architectures: i386 amd64
+Components: non-free
+Description: This repository is for the purposes of distributing HTSQL
+related debian package files.  This repository currently tracks work 
+on version 2.2 with regular updates.
+MD5Sum:
+ d1903c6bef12fb67d1e606d6c81ef5a6 2538 non-free/binary-i386/Packages
+ bf98a06c061dd9dd67d5c50405d2ecee 1169 non-free/binary-i386/Packages.gz
+ f8cbfdb88f1e051f2414ca1204e9b96f 301 non-free/binary-i386/Release
+ d1903c6bef12fb67d1e606d6c81ef5a6 2538 non-free/binary-amd64/Packages
+ bf98a06c061dd9dd67d5c50405d2ecee 1169 non-free/binary-amd64/Packages.gz
+ 038da7ff504521ad5f1a316c77decad3 302 non-free/binary-amd64/Release
+ d41d8cd98f00b204e9800998ecf8427e 0 non-free/source/Sources
+ 7029066c27ac6f5ef18d660d5741979a 20 non-free/source/Sources.gz
+ 0cb8160da44ca947831d1c08025bea3c 303 non-free/source/Release
+SHA1:
+ effd261e1402fd7fe94febd5636af0eb8498a73b 2538 non-free/binary-i386/Packages
+ 0bc0ddaa1b3c11f31300fc0bcddbfc5fd3e253d8 1169 non-free/binary-i386/Packages.gz
+ 681a6c5fa4e516b81183d0c644eb62b07d04e3fa 301 non-free/binary-i386/Release
+ effd261e1402fd7fe94febd5636af0eb8498a73b 2538 non-free/binary-amd64/Packages
+ 0bc0ddaa1b3c11f31300fc0bcddbfc5fd3e253d8 1169 non-free/binary-amd64/Packages.gz
+ b67ccc65b2365e59407532ef41beaadbbc5da387 302 non-free/binary-amd64/Release
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 non-free/source/Sources
+ 46c6643f07aa7f6bfe7118de926b86defc5087c4 20 non-free/source/Sources.gz
+ ea32e6683fd7abccff77f3131f6434286280f644 303 non-free/source/Release
+SHA256:
+ 286de0c685b007c37f6a8c11ce5e0ac812c22b0a5ae3685e7cf7031166d5f55d 2538 non-free/binary-i386/Packages
+ e536a32806545d801d600c6fd09ef76bf0ab3d3ae4333e3034135f0ede0bf6c7 1169 non-free/binary-i386/Packages.gz
+ 839467cd43e09984d0143ac18abda54e8587ffe0b14663395028e0d8409a7f08 301 non-free/binary-i386/Release
+ 286de0c685b007c37f6a8c11ce5e0ac812c22b0a5ae3685e7cf7031166d5f55d 2538 non-free/binary-amd64/Packages
+ e536a32806545d801d600c6fd09ef76bf0ab3d3ae4333e3034135f0ede0bf6c7 1169 non-free/binary-amd64/Packages.gz
+ 17c70830981645f24dc4e21b2d9d05e291558178c3b8aaa42b536acf666a7986 302 non-free/binary-amd64/Release
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 non-free/source/Sources
+ 59869db34853933b239f1e2219cf7d431da006aa919635478511fabbfc8849d2 20 non-free/source/Sources.gz
+ 693eba8b00ca8a625878cb15c3732ffc1c07f6202d5bea513ce3b9b36097d50d 303 non-free/source/Release
